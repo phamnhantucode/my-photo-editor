@@ -2,4 +2,6 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="bg_overlay_camera">#55000000</color>
+    <color name="text_selected">#F4CB36</color>
 </resources>

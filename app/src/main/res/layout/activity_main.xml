@@ -7,13 +7,52 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="0dp"
+        android:layout_height="?attr/actionBarSize"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:title="@string/app_name" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/btn_add"
+        android:layout_width="@dimen/size_ic_btn"
+        android:layout_height="@dimen/size_ic_btn"
+        android:src="@drawable/ic_add"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/btn_album"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar" />
+
     <TextView
+        android:id="@+id/tv_add"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
+        android:text="@string/add"
+        app:layout_constraintEnd_toEndOf="@id/btn_add"
+        app:layout_constraintStart_toStartOf="@id/btn_add"
+        app:layout_constraintTop_toBottomOf="@id/btn_add" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/btn_album"
+        android:layout_width="@dimen/size_ic_btn"
+        android:layout_height="@dimen/size_ic_btn"
+        android:src="@drawable/ic_gallery"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toEndOf="@id/btn_add"
+        app:layout_constraintTop_toBottomOf="@id/toolbar" />
+
+    <TextView
+        android:id="@+id/tv_album"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/album"
+        app:layout_constraintEnd_toEndOf="@id/btn_album"
+        app:layout_constraintStart_toStartOf="@id/btn_album"
+        app:layout_constraintTop_toBottomOf="@id/btn_album" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Photo Editor</string>
+    <string name="add">Add</string>
+    <string name="album">Album</string>
+    <string name="zoom_1x">1x</string>
+    <string name="zoom_2x">2x</string>
+    <string name="zoom_4x">4x</string>
 </resources>
