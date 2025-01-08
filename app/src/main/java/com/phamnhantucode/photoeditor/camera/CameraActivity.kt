@@ -2,6 +2,7 @@ package com.phamnhantucode.photoeditor.camera
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.ScaleGestureDetector
@@ -15,6 +16,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.phamnhantucode.photoeditor.R
 import com.phamnhantucode.photoeditor.databinding.ActivityCameraBinding
+import com.phamnhantucode.photoeditor.editor.EditorActivity
 import com.phamnhantucode.photoeditor.extension.hideSystemBars
 
 class CameraActivity() : AppCompatActivity() {
@@ -121,7 +123,9 @@ class CameraActivity() : AppCompatActivity() {
             binding.filterView.isVisible = isShowingFilters
         }
         viewModel.photoUri.observe(this) { uri ->
-            Toast.makeText(this, "Photo captured: $uri", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, EditorActivity::class.java).apply {
+                putExtra(EditorActivity.EXTRA_IMAGE_URI, uri.toString())
+            })
         }
     }
 

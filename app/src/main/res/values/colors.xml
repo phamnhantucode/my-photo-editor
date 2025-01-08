@@ -4,4 +4,7 @@
     <color name="white">#FFFFFFFF</color>
     <color name="bg_overlay_camera">#55000000</color>
     <color name="text_selected">#F4CB36</color>
+    <color name="blue">#41BDFF</color>
+    <color name="orange">#E0BB00</color>
+    <color name="bg_tool_box">#67545454</color>
 </resources>

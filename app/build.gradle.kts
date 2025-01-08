@@ -1,5 +1,3 @@
-import org.gradle.internal.impldep.com.fasterxml.jackson.core.JsonPointer.compile
-
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -63,5 +61,7 @@ dependencies {
     implementation(libs.androidx.camera.extensions)
     implementation(libs.androidphotofilters)
     implementation(libs.compressor)
+    implementation(libs.glide)
+    implementation(libs.ucrop)
 
 }
