@@ -1,5 +1,6 @@
 package com.phamnhantucode.photoeditor.views
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -24,10 +25,12 @@ class FilterView @JvmOverloads constructor(
     private var scrollX = 0
     private val scroller = Scroller(context)
     private var maxScrollX = 0
+    private val spacing = 10f
+    private val borderWidth = 4f
     private val selectedPaint = Paint().apply {
         color = Color.YELLOW
         style = Paint.Style.STROKE
-        strokeWidth = 10f
+        strokeWidth = borderWidth
     }
 
     private var filterSelected = FilterType.NONE
@@ -112,7 +115,7 @@ class FilterView @JvmOverloads constructor(
     }
 
     private fun updateMaxScroll() {
-        maxScrollX = max(0, (filteredBitmaps.size * DEFAULT_SIZE) - width)
+        maxScrollX = max(0, (filteredBitmaps.size * (DEFAULT_SIZE + spacing.toInt())) - width)
     }
 
     fun setOnFilterSelectedListener(listener: (FilterType) -> Unit) {
@@ -121,7 +124,7 @@ class FilterView @JvmOverloads constructor(
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val width = MeasureSpec.getSize(widthMeasureSpec)
-        setMeasuredDimension(width, DEFAULT_SIZE)
+        setMeasuredDimension(width, DEFAULT_SIZE + borderWidth.toInt())
         updateMaxScroll()
     }
 
@@ -132,14 +135,12 @@ class FilterView @JvmOverloads constructor(
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        // Handle touch events first through gesture detector
         val handled = gestureDetector.onTouchEvent(event)
 
-        // Handle the UP and CANCEL events
         when (event.action) {
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                // Handle any cleanup if needed
                 return true
             }
         }
@@ -149,14 +150,14 @@ class FilterView @JvmOverloads constructor(
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
-        val startIndex = scrollX / DEFAULT_SIZE
+        val startIndex = scrollX / (DEFAULT_SIZE + spacing.toInt())
         val endIndex = min(
-            ((scrollX + width) / DEFAULT_SIZE) + 1,
+            ((scrollX + width) / (DEFAULT_SIZE + spacing.toInt())) + 1,
             filteredBitmaps.size
         )
 
         for (i in startIndex until endIndex) {
-            val left = (i * DEFAULT_SIZE - scrollX).toFloat()
+            val left = (i * (DEFAULT_SIZE + spacing) - scrollX).toFloat()
             filteredBitmaps.getOrNull(i)?.let { bitmap ->
                 canvas.drawBitmap(bitmap, left, 0f, null)
                 if (filterSelected == FilterType.entries[i]) {
@@ -167,7 +168,6 @@ class FilterView @JvmOverloads constructor(
     }
 
     override fun setOnClickListener(l: OnClickListener?) {
-
         super.setOnClickListener(l)
     }
 

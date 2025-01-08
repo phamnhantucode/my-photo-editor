@@ -10,20 +10,7 @@ data class FilterCamera(
     val type: FilterType
 ) {
     fun applyFilter(): Bitmap {
-        return getFilter().processFilter(bitmap.copy(bitmap.config, true))
-    }
-
-    private fun getFilter(): Filter {
-        val filter = Filter()
-        return when (this.type) {
-            FilterType.NONE -> filter
-            FilterType.BRIGHTNESS -> SampleFilters.getStarLitFilter()
-            FilterType.CONTRAST -> SampleFilters.getBlueMessFilter()
-            FilterType.SATURATION -> SampleFilters.getLimeStutterFilter()
-            FilterType.HUE -> SampleFilters.getNightWhisperFilter()
-            FilterType.SHARPNESS -> SampleFilters.getAweStruckVibeFilter()
-            FilterType.FILTER -> SampleFilters.getAweStruckVibeFilter()
-        }
+        return type.getFilter().processFilter(bitmap.copy(bitmap.config, true))
     }
 }
 
@@ -34,5 +21,22 @@ enum class FilterType {
     SATURATION,
     HUE,
     SHARPNESS,
-    FILTER
+    FILTER;
+
+    fun getFilter(): Filter {
+        val filter = Filter()
+        return when (this) {
+            NONE -> filter
+            BRIGHTNESS -> SampleFilters.getStarLitFilter()
+            CONTRAST -> SampleFilters.getBlueMessFilter()
+            SATURATION -> SampleFilters.getLimeStutterFilter()
+            HUE -> SampleFilters.getNightWhisperFilter()
+            SHARPNESS -> SampleFilters.getAweStruckVibeFilter()
+            FILTER -> SampleFilters.getAweStruckVibeFilter()
+        }
+    }
+
+    fun applyFilter(bitmap: Bitmap): Bitmap {
+        return getFilter().processFilter(bitmap.copy(bitmap.config, true))
+    }
 }

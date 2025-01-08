@@ -25,8 +25,6 @@ class CameraActivity() : AppCompatActivity() {
 
     private lateinit var binding: ActivityCameraBinding
     private val viewModel: CameraViewModel by viewModels()
-    private val filterAdapter = FilterAdapter { filter ->
-    }
 
     private val scaleGestureDetector by lazy {
         ScaleGestureDetector(this, object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
@@ -104,12 +102,6 @@ class CameraActivity() : AppCompatActivity() {
         }
     }
 
-    private fun setupFilterRecyclerView() {
-        binding.apply {
-
-        }
-    }
-
     private fun observeViewModel() {
         viewModel.cameraState.observe(this) { state ->
             handleCameraState(state)
@@ -128,7 +120,8 @@ class CameraActivity() : AppCompatActivity() {
         viewModel.isShowingImageFilters.observe(this) { isShowingFilters ->
             binding.filterView.isVisible = isShowingFilters
         }
-        viewModel.selectedFilter.observe(this) { filter ->
+        viewModel.photoUri.observe(this) { uri ->
+            Toast.makeText(this, "Photo captured: $uri", Toast.LENGTH_SHORT).show()
         }
     }
 

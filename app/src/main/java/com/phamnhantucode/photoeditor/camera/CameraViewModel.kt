@@ -3,9 +3,10 @@ package com.phamnhantucode.photoeditor.camera
 import android.app.Application
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Matrix
+import android.media.ExifInterface
 import android.net.Uri
-import android.view.SurfaceHolder
-import android.view.SurfaceView
 import androidx.annotation.OptIn
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
@@ -158,37 +159,60 @@ class CameraViewModel(
         }
     }
 
-    fun takePicture() {
-        viewModelScope.launch {
-            _cameraState.value = CameraState.Processing
-            val imageCapture = imageCapture ?: return@launch
+fun takePicture() {
+    viewModelScope.launch {
+        _cameraState.value = CameraState.Processing
+        val imageCapture = imageCapture ?: return@launch
 
-            val photoFile = File(
-                getApplication<Application>().getExternalFilesDir(null),
-                SimpleDateFormat(FILENAME_FORMAT, Locale.US)
-                    .format(System.currentTimeMillis()) + ".jpg"
-            )
+        val photoFile = File(
+            getApplication<Application>().getExternalFilesDir(null),
+            SimpleDateFormat(FILENAME_FORMAT, Locale.US)
+                .format(System.currentTimeMillis()) + ".jpg"
+        )
 
-            val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
+        val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
 
-            imageCapture.takePicture(
-                outputOptions,
-                cameraExecutor,
-                object : ImageCapture.OnImageSavedCallback {
-                    override fun onImageSaved(output: ImageCapture.OutputFileResults) {
-                        val savedUri = Uri.fromFile(photoFile)
-                        _photoUri.postValue(savedUri)
-                        _cameraState.postValue(CameraState.Success)
+        imageCapture.takePicture(
+            outputOptions,
+            cameraExecutor,
+            object : ImageCapture.OnImageSavedCallback {
+                override fun onImageSaved(output: ImageCapture.OutputFileResults) {
+                    val bitmap = BitmapFactory.decodeFile(photoFile.absolutePath)
+                    val rotatedBitmap = bitmap?.let { rotateBitmapIfNeeded(it, photoFile.absolutePath) }
+                    val filteredBitmap = selectedFilter.value?.applyFilter(rotatedBitmap ?: bitmap)
+
+                    filteredBitmap?.let {
+                        _bitmapPreview.postValue(it)
+                        photoFile.outputStream()
+                            .use { os -> it.compress(Bitmap.CompressFormat.JPEG, 100, os) }
                     }
 
-                    override fun onError(exc: ImageCaptureException) {
-                        _cameraState.postValue(CameraState.Error(exc))
-                    }
+                    val savedUri = Uri.fromFile(photoFile)
+                    _photoUri.postValue(savedUri)
+                    _cameraState.postValue(CameraState.Success)
                 }
-            )
-        }
+
+                override fun onError(exc: ImageCaptureException) {
+                    _cameraState.postValue(CameraState.Error(exc))
+                }
+            }
+        )
+    }
+}
+
+private fun rotateBitmapIfNeeded(bitmap: Bitmap, photoPath: String): Bitmap {
+    val exif = ExifInterface(photoPath)
+    val orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
+    val matrix = Matrix()
+
+    when (orientation) {
+        ExifInterface.ORIENTATION_ROTATE_90 -> matrix.postRotate(90f)
+        ExifInterface.ORIENTATION_ROTATE_180 -> matrix.postRotate(180f)
+        ExifInterface.ORIENTATION_ROTATE_270 -> matrix.postRotate(270f)
     }
 
+    return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+}
     fun toggleImageFilters() {
         _isShowingImageFilters.value = isShowingImageFilters.value?.not()
     }
@@ -240,6 +264,5 @@ class CameraViewModel(
         private const val MIN_ZOOM = 1f
         private const val BIND_TIMEOUT = 5000L
         private const val UNBIND_TIMEOUT = 1000L
-        private const val TIME_STEP = 100L
     }
 }
