@@ -196,16 +196,13 @@
         app:layout_constraintBottom_toTopOf="@id/toolBox"
         app:layout_constraintEnd_toEndOf="@id/toolBox"
         app:layout_constraintStart_toStartOf="@id/toolBox">
-        <com.phamnhantucode.photoeditor.views.RulerView
+        <SeekBar
             android:id="@+id/rulerScale"
             android:layout_width="200dp"
-            android:layout_height="56dp"
+            android:layout_height="wrap_content"
+            android:paddingVertical="@dimen/padding_medium"
             android:layout_gravity="center"
-            android:layout_marginHorizontal="@dimen/margin_large"
-            app:numDigits="1"
-            app:numValue="0"
-            app:numMinValue="-45"
-            app:numMaxValue="45" />
+            android:layout_marginHorizontal="@dimen/margin_large"/>
     </LinearLayout>
 
 

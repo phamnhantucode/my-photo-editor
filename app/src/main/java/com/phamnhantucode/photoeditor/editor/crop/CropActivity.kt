@@ -5,6 +5,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
+import android.widget.SeekBar
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -13,6 +14,8 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import com.phamnhantucode.photoeditor.R
 import com.phamnhantucode.photoeditor.databinding.ActivityCropBinding
+import com.phamnhantucode.photoeditor.extension.positionFInRange
+import com.phamnhantucode.photoeditor.extension.valueBasedOnPosition
 import com.yalantis.ucrop.callback.BitmapCropCallback
 import com.yalantis.ucrop.view.CropImageView
 import com.yalantis.ucrop.view.TransformImageView
@@ -22,6 +25,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.lang.Exception
+import kotlin.math.abs
 
 class CropActivity : AppCompatActivity() {
     private lateinit var binding: ActivityCropBinding
@@ -29,6 +33,7 @@ class CropActivity : AppCompatActivity() {
 
     private val coroutineScope = CoroutineScope(Dispatchers.Main + Job())
     private var toolboxTimeoutJob: Job? = null
+    private var isUserTouchingScaleTool = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,7 +59,6 @@ class CropActivity : AppCompatActivity() {
             ucropView.apply {
                 cropImageView.setTransformImageListener(object : TransformImageView.TransformImageListener {
                     override fun onLoadComplete() {
-                        binding.rulerScale.setValue(binding.ucropView.cropImageView.currentScale)
                         binding.rulerRotation.setValue(binding.ucropView.cropImageView.currentAngle)
                         binding.rulerRotation.setStep(1f)
                     }
@@ -66,6 +70,13 @@ class CropActivity : AppCompatActivity() {
                     }
 
                     override fun onScale(currentScale: Float) {
+                        if (!isUserTouchingScaleTool) {
+                            binding.rulerScale.progress = currentScale.positionFInRange(
+                                binding.ucropView.cropImageView.minScale,
+                                binding.ucropView.cropImageView.maxScale
+                            )
+                            viewModel.setScale(currentScale)
+                        }
                     }
                 })
             }
@@ -136,15 +147,35 @@ class CropActivity : AppCompatActivity() {
                 binding.ucropView.cropImageView.setImageToWrapCropBounds()
             }
 
-            rulerScale.setOnValueChanged {value ->
-                resetToolboxTimeout()
-                viewModel.setScale(value)
-                if (value > binding.ucropView.cropImageView.currentScale) {
-                    binding.ucropView.cropImageView.zoomInImage(value - binding.ucropView.cropImageView.currentScale)
-                } else {
-                    binding.ucropView.cropImageView.zoomOutImage(value - binding.ucropView.cropImageView.currentScale)
+            rulerScale.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+                override fun onProgressChanged(
+                    seekBar: SeekBar?,
+                    progress: Int,
+                    fromUser: Boolean,
+                ) {
+                    if (fromUser) {
+                        resetToolboxTimeout()
+                        val scale = progress.valueBasedOnPosition(binding.ucropView.cropImageView.minScale, binding.ucropView.cropImageView.maxScale)
+                        viewModel.setScale(scale)
+                        val deltaScale = scale - binding.ucropView.cropImageView.currentScale
+                        if (deltaScale > 0) {
+                            binding.ucropView.cropImageView.zoomInImage(scale)
+                        } else if (deltaScale < 0) {
+                            binding.ucropView.cropImageView.zoomOutImage(scale)
+                        }
+                    }
                 }
-            }
+
+                override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                    isUserTouchingScaleTool = true
+                }
+
+                override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                    isUserTouchingScaleTool = false
+                    binding.ucropView.cropImageView.setImageToWrapCropBounds(true)
+
+                }
+            })
         }
     }
 
@@ -198,10 +229,12 @@ class CropActivity : AppCompatActivity() {
                     }
                 }
             }
-            viewModel.rotationAngle.observe(this) { angle ->
-                binding.ucropView.cropImageView.postRotate(angle - binding.ucropView.cropImageView.currentAngle)
-                binding.rulerRotation.setValue(angle)
-            }
+        }
+        viewModel.scale.observe(this) { scale ->
+        }
+        viewModel.rotationAngle.observe(this) { angle ->
+            binding.ucropView.cropImageView.postRotate(angle - binding.ucropView.cropImageView.currentAngle)
+            binding.rulerRotation.setValue(angle)
         }
         viewModel.selectedRatio.observe(this) {ratio ->
             binding.ucropView.cropImageView.setTargetAspectRatio(
@@ -293,5 +326,6 @@ class CropActivity : AppCompatActivity() {
     companion object {
         const val EXTRA_IMAGE_URI = "extra_image_uri"
         const val RESULT_CROPPED_URI = "result_cropped_uri"
+        const val POW_SCALE = 1000
     }
 }

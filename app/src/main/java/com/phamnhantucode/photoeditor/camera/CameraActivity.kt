@@ -152,7 +152,6 @@ class CameraActivity() : AppCompatActivity() {
         binding.apply {
             val selectedColor = getColor(R.color.text_selected)
             val defaultColor = getColor(R.color.white)
-
             zoom1x.setTextColor(if (zoom in 1f..1.99f) selectedColor else defaultColor)
             zoom2x.setTextColor(if (zoom in 2f..3.99f) selectedColor else defaultColor)
             zoom4x.setTextColor(if (zoom >= 4f) selectedColor else defaultColor)
