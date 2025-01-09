@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/black"
+    android:background="@color/white"
     tools:context=".editor.EditorActivity">
 
     <ImageView
@@ -13,33 +13,169 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:contentDescription="@null"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        />
-
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/shareBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/margin_large"
-        android:background="@drawable/bg_btn_round"
-        android:backgroundTint="@color/blue"
-        android:text="@string/share"
-        android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+<!--    <androidx.appcompat.widget.AppCompatButton-->
+<!--        android:id="@+id/shareBtn"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_margin="@dimen/margin_large"-->
+<!--        android:background="@drawable/bg_btn_round"-->
+<!--        android:backgroundTint="@color/blue"-->
+<!--        android:text="@string/share"-->
+<!--        android:textColor="@color/white"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent" />-->
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/cropBtn"
         android:layout_width="@dimen/size_ic_large_x"
         android:layout_height="@dimen/size_ic_large_x"
-        app:srcCompat="@drawable/ic_crop"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
         android:layout_margin="@dimen/margin_large_x"
+        android:contentDescription="@null"
         android:backgroundTint="@color/orange"
-        />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/ic_crop" />
+
+    <ImageView
+        android:id="@+id/backBtn"
+        android:layout_width="@dimen/xx_large"
+        android:layout_height="@dimen/xx_large"
+        android:layout_margin="@dimen/large"
+        android:background="@drawable/bg_btn_cirlce"
+        android:contentDescription="@null"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_back_ios"
+        app:tint="@color/white" />
+
+    <ImageView
+        android:id="@+id/moreBtn"
+        android:layout_width="@dimen/xx_large"
+        android:layout_height="@dimen/xx_large"
+        android:layout_margin="@dimen/large"
+        android:background="@drawable/bg_btn_cirlce"
+        android:contentDescription="@null"
+        android:padding="@dimen/padding_medium"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_more"
+        app:tint="@color/white" />
+
+
+    <ImageView
+        android:id="@+id/drawBtn"
+        android:layout_width="@dimen/xx_large"
+        android:layout_height="@dimen/xx_large"
+        android:layout_margin="@dimen/large"
+        android:background="@drawable/bg_btn_cirlce"
+        android:contentDescription="@null"
+        android:padding="@dimen/padding_medium"
+        app:layout_constraintEnd_toStartOf="@id/moreBtn"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_drawing"
+        app:tint="@color/white" />
+
+
+    <ImageView
+        android:id="@+id/stickerBtn"
+        android:layout_width="@dimen/xx_large"
+        android:layout_height="@dimen/xx_large"
+        android:layout_margin="@dimen/large"
+        android:background="@drawable/bg_btn_cirlce"
+        android:contentDescription="@null"
+        android:padding="@dimen/padding_medium"
+        app:layout_constraintEnd_toStartOf="@id/drawBtn"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_sticker"
+        app:tint="@color/white" />
+
+
+    <ImageView
+        android:id="@+id/textBtn"
+        android:layout_width="@dimen/xx_large"
+        android:layout_height="@dimen/xx_large"
+        android:layout_margin="@dimen/large"
+        android:background="@drawable/bg_btn_cirlce"
+        android:contentDescription="@null"
+        android:padding="@dimen/padding_medium_large"
+        app:layout_constraintEnd_toStartOf="@id/stickerBtn"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_text"
+        app:tint="@color/white" />
+
+    <LinearLayout
+        android:id="@+id/menuMore"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_box_round"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:layout_marginTop="@dimen/margin_large"
+        android:padding="@dimen/padding_medium"
+        app:layout_constraintEnd_toEndOf="@+id/moreBtn"
+        app:layout_constraintStart_toStartOf="@+id/textBtn"
+        app:layout_constraintTop_toBottomOf="@+id/moreBtn">
+
+        <LinearLayout
+            android:id="@+id/shareBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/shareBtnIv"
+                android:layout_width="@dimen/xx_large"
+                android:layout_height="@dimen/xx_large"
+                android:contentDescription="@null"
+                android:padding="@dimen/padding_medium_large"
+                app:srcCompat="@drawable/ic_share"
+                app:tint="@color/white" />
+
+            <TextView
+                android:id="@+id/lbShare"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/share"
+                android:textColor="@color/white" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/removeBgBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/removeBgBtnIv"
+                android:layout_width="@dimen/xx_large"
+                android:layout_height="@dimen/xx_large"
+                android:contentDescription="@null"
+                android:padding="@dimen/padding_medium_large"
+                app:srcCompat="@drawable/ic_remove_bg"
+                app:tint="@color/white" />
+
+            <TextView
+                android:id="@+id/lbRemoveBg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/remove_background"
+                android:textColor="@color/white" />
+        </LinearLayout>
+
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

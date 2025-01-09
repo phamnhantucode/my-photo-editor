@@ -15,4 +15,8 @@
     <dimen name="margin_large_x">24dp</dimen>
     <dimen name="margin_small">4dp</dimen>
     <dimen name="padding_small">4dp</dimen>
+    <dimen name="x_large">30dp</dimen>
+    <dimen name="xx_large">40dp</dimen>
+    <dimen name="padding_medium_large">12dp</dimen>
+    <dimen name="radius_large">24dp</dimen>
 </resources>

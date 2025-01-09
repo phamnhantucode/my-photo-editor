@@ -7,4 +7,5 @@
     <color name="blue">#41BDFF</color>
     <color name="orange">#E0BB00</color>
     <color name="bg_tool_box">#67545454</color>
+    <color name="bg_btn_circle">#DAA4A4A4</color>
 </resources>

@@ -17,6 +17,9 @@ class EditorViewModel(
     val originBitmap: LiveData<Bitmap> = _originBitmap
     var originUri: Uri? = null
 
+    private val _moreOptionsVisible = MutableLiveData(false)
+    val moreOptionsVisible: LiveData<Boolean> = _moreOptionsVisible
+
     fun setOriginBitmapBy(photoUri: Uri) {
         _originBitmap.value = BitmapFactory.decodeFile(photoUri.path)
         originUri = photoUri
@@ -36,4 +39,8 @@ class EditorViewModel(
         ".jpg",
         getApplication<Application>().cacheDir
     )
+
+    fun toggleMoreOptions() {
+        _moreOptionsVisible.value = !_moreOptionsVisible.value!!
+    }
 }

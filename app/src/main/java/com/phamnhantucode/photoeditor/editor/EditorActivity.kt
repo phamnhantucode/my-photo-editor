@@ -11,7 +11,9 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
+import com.phamnhantucode.photoeditor.MainActivity
 import com.phamnhantucode.photoeditor.R
 import com.phamnhantucode.photoeditor.databinding.ActivityEditorBinding
 import com.phamnhantucode.photoeditor.editor.crop.CropActivity
@@ -63,6 +65,9 @@ class EditorActivity : AppCompatActivity() {
                 .load(bitmap)
                 .into(binding.image)
         }
+        viewModel.moreOptionsVisible.observe(this) { flag ->
+            binding.menuMore.isVisible = flag
+        }
     }
 
     private fun setupUI() {
@@ -75,6 +80,13 @@ class EditorActivity : AppCompatActivity() {
                     }
                 )
             }
+        }
+        binding.backBtn.setOnClickListener {
+            finish()
+            startActivity(Intent(this, MainActivity::class.java))
+        }
+        binding.moreBtn.setOnClickListener {
+            viewModel.toggleMoreOptions()
         }
     }
 

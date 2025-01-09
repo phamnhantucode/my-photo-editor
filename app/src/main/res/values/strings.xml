@@ -11,4 +11,5 @@
     <string name="origin">Origin</string>
     <string name="threeByTwo">3:2</string>
     <string name="sixTeenByNine">16:9</string>
+    <string name="remove_background">Remove background</string>
 </resources>
