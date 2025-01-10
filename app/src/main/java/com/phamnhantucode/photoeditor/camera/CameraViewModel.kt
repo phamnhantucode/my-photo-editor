@@ -20,7 +20,7 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
-import toBitmap
+import com.phamnhantucode.photoeditor.extension.toBitmap
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Locale

@@ -63,5 +63,6 @@ dependencies {
     implementation(libs.compressor)
     implementation(libs.glide)
     implementation(libs.ucrop)
+    implementation(libs.colorpicker)
 
 }

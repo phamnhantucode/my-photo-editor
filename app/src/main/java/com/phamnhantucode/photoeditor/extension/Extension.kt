@@ -1,3 +1,5 @@
+package com.phamnhantucode.photoeditor.extension
+
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.ImageFormat
@@ -6,6 +8,12 @@ import android.graphics.Rect
 import android.graphics.YuvImage
 import androidx.camera.core.ImageProxy
 import java.io.ByteArrayOutputStream
+
+fun doIfAboveApi(api: Int, block: () -> Unit) {
+    if (android.os.Build.VERSION.SDK_INT >= api) {
+        block()
+    }
+}
 
 fun ImageProxy.toBitmap(options: BitmapFactory.Options? = null): Bitmap? {
     val rotate = imageInfo.rotationDegrees

@@ -15,7 +15,12 @@ class EditorViewModel(
 ) : AndroidViewModel(application) {
     private val _originBitmap = MutableLiveData<Bitmap>()
     val originBitmap: LiveData<Bitmap> = _originBitmap
+
+    private val _drawBitmap = MutableLiveData<Bitmap>()
+    val drawBitmap: LiveData<Bitmap> = _drawBitmap
+
     var originUri: Uri? = null
+    var drawUri: Uri? = null
 
     private val _moreOptionsVisible = MutableLiveData(false)
     val moreOptionsVisible: LiveData<Boolean> = _moreOptionsVisible
@@ -42,5 +47,10 @@ class EditorViewModel(
 
     fun toggleMoreOptions() {
         _moreOptionsVisible.value = !_moreOptionsVisible.value!!
+    }
+
+    fun setDrawBitmapBy(parse: Uri?) {
+        _drawBitmap.value = BitmapFactory.decodeFile(parse?.path)
+        drawUri = parse
     }
 }

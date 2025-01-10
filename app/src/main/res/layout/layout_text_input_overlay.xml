@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_view_overlay">
+    <com.phamnhantucode.photoeditor.views.VerticalSeekBar
+        android:id="@+id/verticalSeekbar"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_marginHorizontal="@dimen/medium"
+        android:elevation="@dimen/medium"
+        android:layout_gravity="center_vertical"
+        />
+
+</FrameLayout>

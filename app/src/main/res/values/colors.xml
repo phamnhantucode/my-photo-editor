@@ -8,4 +8,6 @@
     <color name="orange">#E0BB00</color>
     <color name="bg_tool_box">#67545454</color>
     <color name="bg_btn_circle">#DAA4A4A4</color>
+    <color name="white_overlay">#69FFFFFF</color>
+    <color name="bg_view_overlay">#51000000</color>
 </resources>

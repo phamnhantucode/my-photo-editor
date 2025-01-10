@@ -2,6 +2,7 @@ package com.phamnhantucode.photoeditor.editor
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
@@ -17,6 +18,7 @@ import com.phamnhantucode.photoeditor.MainActivity
 import com.phamnhantucode.photoeditor.R
 import com.phamnhantucode.photoeditor.databinding.ActivityEditorBinding
 import com.phamnhantucode.photoeditor.editor.crop.CropActivity
+import com.phamnhantucode.photoeditor.editor.draw.DrawActivity
 
 class EditorActivity : AppCompatActivity() {
     private lateinit var binding: ActivityEditorBinding
@@ -29,6 +31,17 @@ class EditorActivity : AppCompatActivity() {
             result.data?.getStringExtra(CropActivity.RESULT_CROPPED_URI)?.let { uri ->
                 viewModel.setOriginBitmapBy(Uri.parse(uri))
             }
+        }
+    }
+
+    private val drawActivityLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            result.data?.getStringExtra(DrawActivity.DRAW_OVERLAY_URI)?.let { uri ->
+                viewModel.setDrawBitmapBy(Uri.parse(uri))
+            }
+
         }
     }
 
@@ -68,6 +81,11 @@ class EditorActivity : AppCompatActivity() {
         viewModel.moreOptionsVisible.observe(this) { flag ->
             binding.menuMore.isVisible = flag
         }
+        viewModel.drawBitmap.observe(this) { bitmap ->
+            Glide.with(this)
+                .load(bitmap)
+                .into(binding.drawOverlay)
+        }
     }
 
     private fun setupUI() {
@@ -87,6 +105,17 @@ class EditorActivity : AppCompatActivity() {
         }
         binding.moreBtn.setOnClickListener {
             viewModel.toggleMoreOptions()
+        }
+        binding.drawBtn.setOnClickListener {
+            drawActivityLauncher.launch(
+                Intent(this, DrawActivity::class.java).apply {
+                    addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
+                    putExtra(DrawActivity.EXTRA_IMAGE_URI, viewModel.originUri.toString())
+                    if (viewModel.drawBitmap.value != null) {
+                        putExtra(DrawActivity.DRAW_OVERLAY_URI, viewModel.drawUri.toString())
+                    }
+                }
+            )
         }
     }
 

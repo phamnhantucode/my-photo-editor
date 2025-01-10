@@ -6,13 +6,13 @@ val Int.dp: Int
     get() = (this * Resources.getSystem().displayMetrics.density).toInt()
 
 val Int.px: Int
-    get() = (this / Resources.getSystem().displayMetrics.density).toInt()
+    get() = this
 
 val Float.dp: Float
     get() = this * Resources.getSystem().displayMetrics.density
 
 val Float.px: Float
-    get() = this / Resources.getSystem().displayMetrics.density
+    get() = this
 
 fun Float.positionFInRange(min: Float, max: Float): Int {
     return ((this - min) / (max - min) * 100).toInt()
