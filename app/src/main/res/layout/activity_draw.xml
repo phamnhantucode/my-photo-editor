@@ -126,7 +126,7 @@
         app:shapeAppearanceOverlay="@style/roundedCircle"
         app:srcCompat="@drawable/ic_color_picker"
         app:tint="@color/white"
-        />
+        tools:ignore="UnusedAttribute" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

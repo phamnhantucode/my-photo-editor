@@ -20,6 +20,7 @@ class VerticalSeekBar @JvmOverloads constructor(
 ) : View(context, attrs, defStyleAttr) {
 
 
+    var shouldShowCircle: Boolean = true
     var onValueChangeListener = { _: Float -> }
 
     var minValue = 0f
@@ -111,13 +112,15 @@ class VerticalSeekBar @JvmOverloads constructor(
     }
 
     private fun drawCircleDemonstrate(canvas: Canvas) {
-        isFromUser.then {
-            canvas.drawCircle(
-                centerPoint.x.toFloat(),
-                centerPoint.y.toFloat(),
-                circleRadiusTransformer(currentValue.dp / 2),
-                circleDemonstratePaint
-            )
+        shouldShowCircle.then {
+            isFromUser.then {
+                canvas.drawCircle(
+                    centerPoint.x.toFloat(),
+                    centerPoint.y.toFloat(),
+                    circleRadiusTransformer(currentValue.dp / 2),
+                    circleDemonstratePaint
+                )
+            }
         }
     }
 

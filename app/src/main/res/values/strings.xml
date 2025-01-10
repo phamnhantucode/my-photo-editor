@@ -12,4 +12,7 @@
     <string name="threeByTwo">3:2</string>
     <string name="sixTeenByNine">16:9</string>
     <string name="remove_background">Remove background</string>
+    <string name="enter_text_here">Enter text here</string>
+    <string name="save">Save</string>
+    <string name="demo_text">Aa</string>
 </resources>

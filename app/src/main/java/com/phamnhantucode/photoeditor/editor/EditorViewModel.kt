@@ -3,6 +3,7 @@ package com.phamnhantucode.photoeditor.editor
 import android.app.Application
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
@@ -18,6 +19,16 @@ class EditorViewModel(
 
     private val _drawBitmap = MutableLiveData<Bitmap>()
     val drawBitmap: LiveData<Bitmap> = _drawBitmap
+
+    private val _textEditorState = MutableLiveData(
+        TextEditorState(
+            text = "",
+            mode = TextEditorMode.FILL,
+            color = Color.WHITE,
+            size = 0f,
+        )
+    )
+    val textEditorState: LiveData<TextEditorState> = _textEditorState
 
     var originUri: Uri? = null
     var drawUri: Uri? = null
@@ -53,4 +64,33 @@ class EditorViewModel(
         _drawBitmap.value = BitmapFactory.decodeFile(parse?.path)
         drawUri = parse
     }
+
+    fun setToNextTextMode() {
+        _textEditorState.value = _textEditorState.value?.copy(
+            mode = when (_textEditorState.value?.mode) {
+                TextEditorMode.FILL -> TextEditorMode.STROKE
+                TextEditorMode.STROKE -> TextEditorMode.NONE
+                else -> TextEditorMode.FILL
+            }
+        )
+    }
+
+    fun setTextOverlaySize(value: Float) {
+        _textEditorState.value = _textEditorState.value?.copy(size = value)
+    }
+
+    fun setTextOverlayColor(color: Int) {
+        _textEditorState.value = _textEditorState.value?.copy(color = color)
+    }
+
+    enum class TextEditorMode {
+        FILL, STROKE, NONE
+    }
+
+    data class TextEditorState(
+        val text: String,
+        val mode: TextEditorMode,
+        val color: Int,
+        val size: Float,
+    )
 }

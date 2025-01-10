@@ -19,4 +19,7 @@
     <dimen name="xx_large">40dp</dimen>
     <dimen name="padding_medium_large">12dp</dimen>
     <dimen name="radius_large">24dp</dimen>
+    <dimen name="margin_large_xx">32dp</dimen>
+    <dimen name="width_menu_more">250dp</dimen>
+    <dimen name="stroke_width_2dp">2dp</dimen>
 </resources>
