@@ -8,8 +8,8 @@
     android:background="@color/white"
     tools:context=".editor.EditorActivity">
 
-    <ImageView
-        android:id="@+id/image"
+    <com.phamnhantucode.photoeditor.views.EditorView
+        android:id="@+id/editor"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:contentDescription="@null"
@@ -23,10 +23,10 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:contentDescription="@null"
-        app:layout_constraintBottom_toBottomOf="@id/image"
-        app:layout_constraintEnd_toEndOf="@id/image"
-        app:layout_constraintStart_toStartOf="@id/image"
-        app:layout_constraintTop_toTopOf="@id/image" />
+        app:layout_constraintBottom_toBottomOf="@id/editor"
+        app:layout_constraintEnd_toEndOf="@id/editor"
+        app:layout_constraintStart_toStartOf="@id/editor"
+        app:layout_constraintTop_toTopOf="@id/editor" />
 
 <!--    <androidx.appcompat.widget.AppCompatButton-->
 <!--        android:id="@+id/shareBtn"-->

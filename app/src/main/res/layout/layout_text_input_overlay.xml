@@ -45,6 +45,20 @@
         android:paddingVertical="@dimen/padding_medium"
         android:text="@string/save" />
 
+
+    <TextView
+        android:id="@+id/cancelBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|start"
+        android:layout_margin="@dimen/margin_large"
+        android:background="@drawable/bg_box_round"
+        android:backgroundTint="@color/white"
+        android:elevation="@dimen/medium"
+        android:paddingHorizontal="@dimen/padding_large"
+        android:paddingVertical="@dimen/padding_medium"
+        android:text="@string/cancel" />
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/colorPickerBtn"
         android:layout_width="@dimen/size_ic_large"

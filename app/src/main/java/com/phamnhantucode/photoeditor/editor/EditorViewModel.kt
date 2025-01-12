@@ -8,6 +8,9 @@ import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.phamnhantucode.photoeditor.editor.core.Editor
+import com.phamnhantucode.photoeditor.editor.core.text.TextEditorMode
+import com.phamnhantucode.photoeditor.editor.core.text.TextEditorState
 import java.io.File
 import java.io.FileOutputStream
 
@@ -25,7 +28,7 @@ class EditorViewModel(
             text = "",
             mode = TextEditorMode.FILL,
             color = Color.WHITE,
-            size = 0f,
+            size = Editor.TEXT_SIZE_DEFAULT,
         )
     )
     val textEditorState: LiveData<TextEditorState> = _textEditorState
@@ -83,14 +86,16 @@ class EditorViewModel(
         _textEditorState.value = _textEditorState.value?.copy(color = color)
     }
 
-    enum class TextEditorMode {
-        FILL, STROKE, NONE
+    fun setTextOverlayText(text: String) {
+        _textEditorState.value = _textEditorState.value?.copy(text = text)
     }
 
-    data class TextEditorState(
-        val text: String,
-        val mode: TextEditorMode,
-        val color: Int,
-        val size: Float,
-    )
+    fun clearTextOverlayState() {
+        _textEditorState.value = _textEditorState.value?.copy(
+            text = "",
+            mode = TextEditorMode.FILL,
+            color = Color.WHITE,
+            size = Editor.TEXT_SIZE_DEFAULT,
+        )
+    }
 }

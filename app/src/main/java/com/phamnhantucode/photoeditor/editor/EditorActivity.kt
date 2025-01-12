@@ -23,6 +23,9 @@ import com.phamnhantucode.photoeditor.MainActivity
 import com.phamnhantucode.photoeditor.R
 import com.phamnhantucode.photoeditor.databinding.ActivityEditorBinding
 import com.phamnhantucode.photoeditor.databinding.LayoutTextInputOverlayBinding
+import com.phamnhantucode.photoeditor.editor.core.Editor
+import com.phamnhantucode.photoeditor.editor.core.text.TextEditorMode
+import com.phamnhantucode.photoeditor.editor.core.text.TextEditorState
 import com.phamnhantucode.photoeditor.editor.crop.CropActivity
 import com.phamnhantucode.photoeditor.editor.draw.DrawActivity
 import com.phamnhantucode.photoeditor.extension.getContrastTextColor
@@ -31,6 +34,7 @@ import com.phamnhantucode.photoeditor.extension.getContrastTextColor
 class EditorActivity : AppCompatActivity() {
     private lateinit var binding: ActivityEditorBinding
     private val viewModel: EditorViewModel by viewModels()
+    private lateinit var editor: Editor
 
     private val cropActivityLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -68,7 +72,6 @@ class EditorActivity : AppCompatActivity() {
                 )
             )
         }
-
         setupUI()
         observeViewModel()
 
@@ -88,7 +91,7 @@ class EditorActivity : AppCompatActivity() {
         viewModel.originBitmap.observe(this) { bitmap ->
             Glide.with(this)
                 .load(bitmap)
-                .into(binding.image)
+                .into(binding.editor.source)
         }
         viewModel.moreOptionsVisible.observe(this) { flag ->
             binding.menuMore.isVisible = flag
@@ -105,15 +108,16 @@ class EditorActivity : AppCompatActivity() {
         }
     }
 
-    private fun updateColorPickerButton(color: Int){
+    private fun updateColorPickerButton(color: Int) {
         binding.textInputOverlay.colorPickerBtn.backgroundTintList = ColorStateList.valueOf(color)
-        binding.textInputOverlay.colorPickerBtn.imageTintList = ColorStateList.valueOf(color.getContrastTextColor())
+        binding.textInputOverlay.colorPickerBtn.imageTintList =
+            ColorStateList.valueOf(color.getContrastTextColor())
     }
 
-    private fun LayoutTextInputOverlayBinding.updateTextEditor(state: EditorViewModel.TextEditorState) {
+    private fun LayoutTextInputOverlayBinding.updateTextEditor(state: TextEditorState) {
         etTextInput.textSize = state?.size ?: 0f
         when (state.mode) {
-            EditorViewModel.TextEditorMode.FILL -> {
+            TextEditorMode.FILL -> {
                 etTextInput.setTextColor(state.color.getContrastTextColor())
                 etTextInput.background = ResourcesCompat.getDrawable(
                     resources,
@@ -123,8 +127,8 @@ class EditorActivity : AppCompatActivity() {
                 etTextInput.backgroundTintList = ColorStateList.valueOf(state.color)
             }
 
-            EditorViewModel.TextEditorMode.STROKE -> {
-                etTextInput.setTextColor(Color.WHITE)
+            TextEditorMode.STROKE -> {
+                etTextInput.setTextColor(state.color)
                 etTextInput.backgroundTintList = null
                 (ResourcesCompat.getDrawable(
                     resources,
@@ -139,6 +143,7 @@ class EditorActivity : AppCompatActivity() {
                     etTextInput.background = this
                 }
             }
+
             else -> {
                 etTextInput.setTextColor(state.color)
                 etTextInput.setBackgroundColor(Color.TRANSPARENT)
@@ -146,9 +151,9 @@ class EditorActivity : AppCompatActivity() {
         }
     }
 
-    private fun LayoutTextInputOverlayBinding.updateTextDemoIcon(mode: EditorViewModel.TextEditorMode) {
+    private fun LayoutTextInputOverlayBinding.updateTextDemoIcon(mode: TextEditorMode) {
         when (mode) {
-            EditorViewModel.TextEditorMode.FILL -> {
+            TextEditorMode.FILL -> {
                 tvDemonstrateText.setTextColor(Color.BLACK)
                 tvDemonstrateText.background = ResourcesCompat.getDrawable(
                     resources,
@@ -158,7 +163,7 @@ class EditorActivity : AppCompatActivity() {
                 tvDemonstrateText.backgroundTintList = ColorStateList.valueOf(Color.WHITE)
             }
 
-            EditorViewModel.TextEditorMode.STROKE -> {
+            TextEditorMode.STROKE -> {
                 tvDemonstrateText.setTextColor(Color.WHITE)
                 tvDemonstrateText.background = ResourcesCompat.getDrawable(
                     resources,
@@ -175,6 +180,7 @@ class EditorActivity : AppCompatActivity() {
     }
 
     private fun setupUI() {
+        setupEditor()
         binding.cropBtn.setOnClickListener {
             viewModel.originUri?.let { uri ->
                 cropActivityLauncher.launch(
@@ -216,14 +222,26 @@ class EditorActivity : AppCompatActivity() {
         }
         binding.textInputOverlay.apply {
             verticalSeekbar.apply {
+                currentValue = Editor.TEXT_SIZE_DEFAULT
                 shouldShowCircle = false
                 setOnValueChanged {
                     viewModel.setTextOverlaySize(it)
                 }
             }
+            cancelBtn.setOnClickListener {
+                binding.textInputOverlay.root.isVisible = false
+                viewModel.clearTextOverlayState()
+                etTextInput.text.clear()
+                val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+                imm.hideSoftInputFromWindow(binding.textInputOverlay.etTextInput.windowToken, 0)
+                showTools()
+            }
             saveBtn.setOnClickListener {
                 binding.textInputOverlay.root.isVisible = false
-
+                viewModel.setTextOverlayText(etTextInput.text.toString())
+                editor.addText(viewModel.textEditorState.value!!.copy())
+                viewModel.clearTextOverlayState()
+                etTextInput.text.clear()
                 val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
                 imm.hideSoftInputFromWindow(binding.textInputOverlay.etTextInput.windowToken, 0)
                 showTools()
@@ -241,6 +259,11 @@ class EditorActivity : AppCompatActivity() {
             }
         }
 
+    }
+
+    private fun setupEditor() {
+        editor = Editor.Builder(this, binding.editor)
+            .build()
     }
 
     private fun showTools() {
