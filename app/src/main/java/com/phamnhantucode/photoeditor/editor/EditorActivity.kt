@@ -10,6 +10,8 @@ import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.net.Uri
 import android.os.Bundle
+import android.view.MotionEvent
+import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
@@ -27,17 +29,21 @@ import com.phamnhantucode.photoeditor.core.BitmapUtil
 import com.phamnhantucode.photoeditor.databinding.ActivityEditorBinding
 import com.phamnhantucode.photoeditor.databinding.LayoutTextInputOverlayBinding
 import com.phamnhantucode.photoeditor.editor.core.Editor
+import com.phamnhantucode.photoeditor.editor.core.OnEditorListener
+import com.phamnhantucode.photoeditor.editor.core.ViewType
 import com.phamnhantucode.photoeditor.editor.core.text.TextEditorMode
 import com.phamnhantucode.photoeditor.editor.core.text.TextEditorState
 import com.phamnhantucode.photoeditor.editor.crop.CropActivity
 import com.phamnhantucode.photoeditor.editor.draw.DrawActivity
 import com.phamnhantucode.photoeditor.extension.getContrastTextColor
+import com.phamnhantucode.photoeditor.views.StyleableTextView
 
 
 class EditorActivity : AppCompatActivity() {
     private lateinit var binding: ActivityEditorBinding
     private val viewModel: EditorViewModel by viewModels()
     private lateinit var editor: Editor
+    private var currentSelectedTextView: StyleableTextView? = null
 
     private val cropActivityLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -108,6 +114,9 @@ class EditorActivity : AppCompatActivity() {
             binding.textInputOverlay.updateTextDemoIcon(state.mode)
             binding.textInputOverlay.updateTextEditor(state)
             updateColorPickerButton(state.color)
+            if (viewModel.isEditingText && state.text != binding.textInputOverlay.etTextInput.text.toString()) {
+                binding.textInputOverlay.etTextInput.setText(state.text)
+            }
         }
     }
 
@@ -213,15 +222,7 @@ class EditorActivity : AppCompatActivity() {
             )
         }
         binding.textBtn.setOnClickListener {
-            binding.textInputOverlay.root.isVisible = true
-            binding.textInputOverlay.etTextInput.requestFocus()
-
-            val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.showSoftInput(
-                binding.textInputOverlay.etTextInput,
-                InputMethodManager.SHOW_IMPLICIT
-            )
-            hideTools()
+            showTextEditingOverlay()
         }
         binding.saveBtn.setOnClickListener {
             val bitmap = Bitmap.createBitmap(binding.editor.width, binding.editor.height, Bitmap.Config.ARGB_8888)
@@ -249,7 +250,11 @@ class EditorActivity : AppCompatActivity() {
             saveBtn.setOnClickListener {
                 binding.textInputOverlay.root.isVisible = false
                 viewModel.setTextOverlayText(etTextInput.text.toString())
-                editor.addText(viewModel.textEditorState.value!!.copy())
+                if (viewModel.isEditingText && currentSelectedTextView != null) {
+                    editor.editText(currentSelectedTextView!!, viewModel.textEditorState.value!!)
+                } else {
+                    editor.addText(viewModel.textEditorState.value!!)
+                }
                 viewModel.clearTextOverlayState()
                 etTextInput.text.clear()
                 val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
@@ -271,9 +276,46 @@ class EditorActivity : AppCompatActivity() {
 
     }
 
+    private fun showTextEditingOverlay() {
+        binding.textInputOverlay.root.isVisible = true
+        binding.textInputOverlay.etTextInput.requestFocus()
+
+        val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.showSoftInput(
+            binding.textInputOverlay.etTextInput,
+            InputMethodManager.SHOW_IMPLICIT
+        )
+        hideTools()
+    }
+
     private fun setupEditor() {
         editor = Editor.Builder(this, binding.editor)
             .build()
+        editor.setOnEditorListener(object : OnEditorListener {
+            override fun onEditTextChangeListener(
+                rootView: StyleableTextView,
+                textEditorState: TextEditorState,
+            ) {
+                currentSelectedTextView = rootView
+                viewModel.setTextEditorState(textEditorState, true)
+                showTextEditingOverlay()
+            }
+
+            override fun onAddViewListener(viewType: ViewType, numberOfAddedViews: Int) {
+            }
+
+            override fun onRemoveViewListener(viewType: ViewType, numberOfAddedViews: Int) {
+            }
+
+            override fun onStartViewChangeListener(viewType: ViewType) {
+            }
+
+            override fun onStopViewChangeListener(viewType: ViewType) {
+            }
+
+            override fun onTouchSourceImage(event: MotionEvent) {
+            }
+        })
     }
 
     private fun showTools() {

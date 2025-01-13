@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.isVisible
 import com.phamnhantucode.photoeditor.R
 import com.phamnhantucode.photoeditor.editor.core.text.TextEditorMode
 import com.phamnhantucode.photoeditor.editor.core.text.TextEditorState
@@ -18,6 +19,7 @@ class StyleableTextView @JvmOverloads constructor(
     var textViewState: TextEditorState? = null
 
     fun setStyleableTextViewState(textViewState: TextEditorState) {
+        isVisible = true
         this.textViewState = textViewState
         setText(textViewState.text)
         textSize = textViewState.size

@@ -1,6 +1,7 @@
 package com.phamnhantucode.photoeditor.editor.core.text
 
 import android.graphics.Typeface
+import androidx.core.view.isVisible
 import androidx.viewbinding.ViewBinding
 import com.phamnhantucode.photoeditor.databinding.ItemTextEditorBinding
 import com.phamnhantucode.photoeditor.editor.core.EditorViewState
@@ -44,8 +45,9 @@ class TextEditor(
     }
 
     override fun updateView() {
+        binding.tvEditorText.isVisible = false
         binding.tvEditorText.textViewState?.let {
-            graphicManager.onEditorListener?.onEditTextChangeListener(binding.root,
+            graphicManager.onEditorListener?.onEditTextChangeListener(binding.tvEditorText,
                 it
             )
         }
@@ -53,5 +55,20 @@ class TextEditor(
 
     fun buildView(textViewState: TextEditorState) {
         binding.tvEditorText.setStyleableTextViewState(textViewState)
+    }
+
+    override fun buildGestureController(
+        editorView: EditorView,
+        viewState: EditorViewState
+    ): MultiTouchListener.OnGestureControl {
+        return object : MultiTouchListener.OnGestureControl {
+            override fun onClick() {
+                updateView()
+            }
+
+            override fun onLongClick() {
+                updateView()
+            }
+        }
     }
 }

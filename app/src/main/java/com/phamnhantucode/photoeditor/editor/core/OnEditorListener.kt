@@ -3,10 +3,11 @@ package com.phamnhantucode.photoeditor.editor.core
 import android.view.MotionEvent
 import android.view.View
 import com.phamnhantucode.photoeditor.editor.core.text.TextEditorState
+import com.phamnhantucode.photoeditor.views.StyleableTextView
 
 interface OnEditorListener {
 
-    fun onEditTextChangeListener(rootView: View, textEditorState: TextEditorState)
+    fun onEditTextChangeListener(rootView: StyleableTextView, textEditorState: TextEditorState)
 
     fun onAddViewListener(viewType: ViewType, numberOfAddedViews: Int)
 

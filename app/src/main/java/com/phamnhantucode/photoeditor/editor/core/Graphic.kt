@@ -29,13 +29,12 @@ abstract class Graphic(
         rootView.toggleSelection()
     }
 
-    fun buildGestureController(
+    open fun buildGestureController(
         editorView: EditorView,
         viewState: EditorViewState,
     ): MultiTouchListener.OnGestureControl {
         return object : MultiTouchListener.OnGestureControl {
             override fun onClick() {
-                toggleSelection()
                 viewState.currentSelectedView = rootView
             }
 

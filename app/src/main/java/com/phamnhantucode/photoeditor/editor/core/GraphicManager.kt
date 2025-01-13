@@ -6,9 +6,9 @@ import com.phamnhantucode.photoeditor.views.EditorView
 
 class GraphicManager(
     val editorView: EditorView,
-    val editorViewState: EditorViewState
-){
+    val editorViewState: EditorViewState,
     var onEditorListener: OnEditorListener? = null
+){
 
     fun addView(graphic: Graphic) {
         val view = graphic.rootView

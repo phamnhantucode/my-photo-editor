@@ -32,6 +32,8 @@ class EditorViewModel(
         )
     )
     val textEditorState: LiveData<TextEditorState> = _textEditorState
+    private val _isEditingText = MutableLiveData(false)
+    var isEditingText: Boolean = false
 
     var originUri: Uri? = null
     var drawUri: Uri? = null
@@ -91,11 +93,17 @@ class EditorViewModel(
     }
 
     fun clearTextOverlayState() {
+        this.isEditingText = false
         _textEditorState.value = _textEditorState.value?.copy(
             text = "",
             mode = TextEditorMode.FILL,
             color = Color.WHITE,
             size = Editor.TEXT_SIZE_DEFAULT,
         )
+    }
+
+    fun setTextEditorState(textEditorState: TextEditorState, isEditingText: Boolean = false) {
+        this.isEditingText = isEditingText
+        _textEditorState.value = textEditorState
     }
 }

@@ -47,11 +47,11 @@ class EditorImpl(
 
     override fun editText(textView: StyleableTextView, textViewState: TextEditorState) {
         textView.setStyleableTextViewState(textViewState)
-        onEditorListener?.onEditTextChangeListener(editorView, textViewState)
     }
 
     override fun setOnEditorListener(onEditorListener: OnEditorListener) {
         this.onEditorListener = onEditorListener
+        graphicManager.onEditorListener = onEditorListener
     }
 
     override fun removeView(v: View) {
