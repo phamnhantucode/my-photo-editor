@@ -1,11 +1,15 @@
 package com.phamnhantucode.photoeditor.editor.core
 
+import android.annotation.SuppressLint
 import android.graphics.Rect
 import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
 import android.view.View.OnTouchListener
+import androidx.core.view.isVisible
+import com.phamnhantucode.photoeditor.core.isCenterInside
+import com.phamnhantucode.photoeditor.extension.getVisibleRect
 import com.phamnhantucode.photoeditor.views.EditorView
 import kotlin.math.max
 import kotlin.math.min
@@ -13,8 +17,9 @@ import kotlin.math.min
 class MultiTouchListener(
     private val editorView: EditorView,
     private val onEditorListener: OnEditorListener?,
-    private val viewState: EditorViewState
-): OnTouchListener {
+    private val viewState: EditorViewState,
+    private val editor: Editor,
+) : OnTouchListener {
     private var onGestureControl: OnGestureControl? = null
     private val gestureListener = GestureDetector(editorView.context, GestureListener())
     private val isRotateEnabled = true
@@ -29,7 +34,9 @@ class MultiTouchListener(
     private var prevRawY = 0f
     private val scaleGestureDetector = ScaleGestureDetector(ScaleListener())
     private val location = IntArray(2)
+    private var isViewScaled = false
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onTouch(v: View, event: MotionEvent): Boolean {
         scaleGestureDetector.onTouchEvent(v, event)
         gestureListener.onTouchEvent(event)
@@ -52,9 +59,10 @@ class MultiTouchListener(
                 viewState.currentSelectedView = v
                 fireEditorSDKListener(v, true)
             }
-            MotionEvent.ACTION_MOVE -> {
 
+            MotionEvent.ACTION_MOVE -> {
                 if (v === viewState.currentSelectedView) {
+                    editorView.deleteView.isVisible = true
                     val pointerIndexMove = event.findPointerIndex(activePointerId)
                     if (pointerIndexMove != -1) {
                         val currX = event.getX(pointerIndexMove)
@@ -62,18 +70,36 @@ class MultiTouchListener(
                         if (!scaleGestureDetector.isInProgress) {
                             adjustTranslation(v, currX - prevX, currY - prevY)
                         }
+
+                        val isInsideDeleteArea =
+                            editorView.getDeleteViewDeletableArea().contains(x, y)
+
+                        if (isInsideDeleteArea && !isViewScaled) {
+                            editorView.scaleDeleteArea()
+                            isViewScaled = true
+                        } else if (!isInsideDeleteArea && isViewScaled) {
+                            editorView.scaleDeleteArea(1.0f)
+                            isViewScaled = false
+                        }
                     }
                 }
             }
+
             MotionEvent.ACTION_CANCEL -> activePointerId = INVALID_POINTER_ID
             MotionEvent.ACTION_UP -> {
                 activePointerId = INVALID_POINTER_ID
                 fireEditorSDKListener(v, false)
-                if (!isInViewBounds(editorView.source, x, y)) {
-                    viewState.currentSelectedView = null
-                    v.animate().translationY(0f).translationY(0f)
+                if (v.getVisibleRect().isCenterInside(editorView.getDeleteViewDeletableArea())) {
+                    editor.removeView(v)
+                } else {
+                    if (!isInViewBounds(editorView.source, x, y)) {
+                        viewState.currentSelectedView = null
+                        v.animate().translationY(0f).translationY(0f)
+                    }
                 }
 
+
+                editorView.deleteView.isVisible = false
             }
         }
 
@@ -135,7 +161,7 @@ class MultiTouchListener(
         }
     }
 
-    private inner class ScaleListener :ScaleGestureDetector.SimpleOnScaleGestureListener() {
+    private inner class ScaleListener : ScaleGestureDetector.SimpleOnScaleGestureListener() {
         private var pivotX = 0f
         private var pivotY = 0f
         private var prevSpanVector = Vector2D()
@@ -177,9 +203,11 @@ class MultiTouchListener(
                 degrees > 180.0f -> {
                     degrees - 360.0f
                 }
+
                 degrees < -180.0f -> {
                     degrees + 360.0f
                 }
+
                 else -> degrees
             }
         }

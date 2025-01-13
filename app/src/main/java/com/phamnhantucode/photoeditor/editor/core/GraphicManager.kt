@@ -1,5 +1,6 @@
 package com.phamnhantucode.photoeditor.editor.core
 
+import android.view.View
 import android.widget.RelativeLayout
 import com.phamnhantucode.photoeditor.views.EditorView
 
@@ -28,17 +29,20 @@ class GraphicManager(
         )
     }
 
-    fun removeView(graphic: Graphic) {
-        val view = graphic.rootView
-        if (editorViewState.containsAddedView(view)) {
+    fun removeView(view: View) {
+        if (view.tag is ViewType) {
             editorView.removeView(view)
             editorViewState.removeAddedView(view)
             editorViewState.pushRedoView(view)
             onEditorListener?.onRemoveViewListener(
-                graphic.viewType,
+                view.tag as ViewType,
                 editorViewState.addedViewsCount
             )
         }
+    }
+
+    fun removeView(graphic: Graphic) {
+        removeView(graphic.rootView)
     }
 
     fun updateView(view: RelativeLayout) {

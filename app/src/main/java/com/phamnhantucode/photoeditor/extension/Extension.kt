@@ -9,9 +9,11 @@ import android.graphics.YuvImage
 import androidx.camera.core.ImageProxy
 import java.io.ByteArrayOutputStream
 
-fun doIfAboveApi(api: Int, block: () -> Unit) {
+fun doIfAboveApi(api: Int, block: () -> Unit): Unit? {
     if (android.os.Build.VERSION.SDK_INT >= api) {
-        block()
+        return block()
+    } else {
+        return null
     }
 }
 

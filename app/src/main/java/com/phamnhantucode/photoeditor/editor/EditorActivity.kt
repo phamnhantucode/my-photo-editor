@@ -3,7 +3,9 @@ package com.phamnhantucode.photoeditor.editor
 import android.app.Activity
 import android.content.Intent
 import android.content.res.ColorStateList
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.net.Uri
@@ -21,6 +23,7 @@ import com.bumptech.glide.Glide
 import com.github.dhaval2404.colorpicker.ColorPickerDialog
 import com.phamnhantucode.photoeditor.MainActivity
 import com.phamnhantucode.photoeditor.R
+import com.phamnhantucode.photoeditor.core.BitmapUtil
 import com.phamnhantucode.photoeditor.databinding.ActivityEditorBinding
 import com.phamnhantucode.photoeditor.databinding.LayoutTextInputOverlayBinding
 import com.phamnhantucode.photoeditor.editor.core.Editor
@@ -99,7 +102,7 @@ class EditorActivity : AppCompatActivity() {
         viewModel.drawBitmap.observe(this) { bitmap ->
             Glide.with(this)
                 .load(bitmap)
-                .into(binding.drawOverlay)
+                .into(binding.editor.overlay)
         }
         viewModel.textEditorState.observe(this) { state ->
             binding.textInputOverlay.updateTextDemoIcon(state.mode)
@@ -219,6 +222,13 @@ class EditorActivity : AppCompatActivity() {
                 InputMethodManager.SHOW_IMPLICIT
             )
             hideTools()
+        }
+        binding.saveBtn.setOnClickListener {
+            val bitmap = Bitmap.createBitmap(binding.editor.width, binding.editor.height, Bitmap.Config.ARGB_8888)
+            val canvas = Canvas(bitmap)
+            binding.editor.draw(canvas)
+            BitmapUtil.removeTransparency(bitmap)
+            //save bitmap to album
         }
         binding.textInputOverlay.apply {
             verticalSeekbar.apply {

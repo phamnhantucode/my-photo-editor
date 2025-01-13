@@ -2,6 +2,7 @@ package com.phamnhantucode.photoeditor.editor.core
 
 import android.content.Context
 import android.graphics.Typeface
+import android.view.View
 import android.widget.ImageView
 import com.phamnhantucode.photoeditor.editor.core.text.TextEditorState
 import com.phamnhantucode.photoeditor.extension.sp
@@ -14,6 +15,8 @@ interface Editor {
     fun editText(textView: StyleableTextView, textViewState: TextEditorState)
 
     fun setOnEditorListener(onEditorListener: OnEditorListener)
+
+    fun removeView(v: View)
 
     class Builder(
         val context: Context,

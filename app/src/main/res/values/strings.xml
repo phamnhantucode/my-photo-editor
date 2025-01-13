@@ -16,4 +16,5 @@
     <string name="save">Save</string>
     <string name="demo_text">Aa</string>
     <string name="cancel">Cancel</string>
+    <string name="drag_to_delete">Drag to delete</string>
 </resources>

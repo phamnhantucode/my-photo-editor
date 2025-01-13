@@ -1,6 +1,7 @@
 package com.phamnhantucode.photoeditor.editor.core
 
 import android.view.LayoutInflater
+import android.view.View
 import com.phamnhantucode.photoeditor.databinding.ItemTextEditorBinding
 import com.phamnhantucode.photoeditor.editor.core.text.TextEditor
 import com.phamnhantucode.photoeditor.editor.core.text.TextEditorState
@@ -39,6 +40,7 @@ class EditorImpl(
             editorView,
             onEditorListener,
             editorViewState,
+            this,
         )
 
     }
@@ -50,5 +52,9 @@ class EditorImpl(
 
     override fun setOnEditorListener(onEditorListener: OnEditorListener) {
         this.onEditorListener = onEditorListener
+    }
+
+    override fun removeView(v: View) {
+        graphicManager.removeView(v)
     }
 }

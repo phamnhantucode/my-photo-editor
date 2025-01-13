@@ -2,6 +2,7 @@ package com.phamnhantucode.photoeditor.editor.draw
 
 import android.app.Application
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
@@ -29,6 +30,6 @@ class DrawViewModel(application: Application): AndroidViewModel(application) {
     }
 
     fun setDrawBitmapBy(toUri: Uri) {
-
+        _drawBitmap.value = Bitmap.createBitmap(BitmapFactory.decodeFile(toUri.path))
     }
 }

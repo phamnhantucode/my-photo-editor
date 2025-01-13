@@ -9,7 +9,6 @@ import com.phamnhantucode.photoeditor.editor.core.GraphicManager
 import com.phamnhantucode.photoeditor.editor.core.MultiTouchListener
 import com.phamnhantucode.photoeditor.editor.core.ViewType
 import com.phamnhantucode.photoeditor.views.EditorView
-import com.phamnhantucode.photoeditor.views.GraphicView
 
 class TextEditor(
     private val editorView: EditorView,
