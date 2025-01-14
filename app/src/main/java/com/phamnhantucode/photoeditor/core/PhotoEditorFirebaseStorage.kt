@@ -92,6 +92,18 @@ class PhotoEditorFirebaseStorage {
         }
     }
 
+    fun getLocalUriIfExists(context: Context, filePath: String): Uri? {
+        val file = File(context.filesDir, filePath)
+        return if (file.exists()) {
+            dataCenter.stickers?.stickers?.find { it.path == filePath }?.isDownloaded = true
+            Uri.fromFile(file)
+        } else {
+            null
+        }
+    }
+
+    fun getImageRef(path: String) = storageRef.child(path)
+
     fun downloadFile(path: String, file: File, onSuccessCallback: () -> Unit) {
         storageRef.child(path).getFile(file).addOnSuccessListener {
             onSuccessCallback()

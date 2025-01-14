@@ -14,7 +14,7 @@ import com.phamnhantucode.photoeditor.core.model.firebase.Sticker
 import com.phamnhantucode.photoeditor.databinding.ItemStickerBinding
 
 class StickerAdapter(
-    private val onStickerClickListener: (Uri) -> Unit
+    private val onStickerClickListener: (Uri) -> Unit,
 ) : ListAdapter<Sticker, StickerAdapter.StickerViewHolder>(StickerDiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StickerViewHolder {
@@ -32,7 +32,7 @@ class StickerAdapter(
     }
 
     inner class StickerViewHolder(
-        private val binding: ItemStickerBinding
+        private val binding: ItemStickerBinding,
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(sticker: Sticker) {
@@ -41,16 +41,18 @@ class StickerAdapter(
         }
 
         private fun setupStickerImage(sticker: Sticker) {
+            val firebaseStorageInstance = PhotoEditorFirebaseStorage.getInstance()
             sticker.path?.let { path ->
-                PhotoEditorFirebaseStorage.getInstance().getFileUrl(binding.root.context, path) { uri ->
-                    Glide.with(itemView.context)
-                        .load(uri)
-                        .placeholder(R.drawable.sample_img)
-                        .into(binding.stickerIv)
+                Glide.with(itemView.context)
+                    .load(
+                        firebaseStorageInstance.getLocalUriIfExists(itemView.context, path)
+                            ?: firebaseStorageInstance.getImageRef(path)
+                    )
+                    .placeholder(R.drawable.sample_img)
+                    .into(binding.stickerIv)
 
-                    if (sticker.isDownloaded) {
-                        binding.downloadBtn.setImageResource(0)
-                    }
+                if (sticker.isDownloaded) {
+                    binding.downloadBtn.setImageResource(0)
                 }
             }
         }
@@ -70,16 +72,19 @@ class StickerAdapter(
         private fun handleStickerClick(sticker: Sticker) {
             sticker.path?.let { path ->
                 if (sticker.isDownloaded) {
-                    PhotoEditorFirebaseStorage.getInstance().getFileUrl(itemView.context, path) { uri ->
-                        onStickerClickListener(uri)
-                    }
+                    PhotoEditorFirebaseStorage.getInstance()
+                        .getFileUrl(itemView.context, path) { uri ->
+                            onStickerClickListener(uri)
+                        }
                 } else {
                     updateDownloadingState(isDownloading = true)
-                    PhotoEditorFirebaseStorage.getInstance().downloadFile(itemView.context, path) { uri ->
-                        updateDownloadingState(isDownloading = false)
-                        onStickerClickListener(uri
-                        )
-                    }
+                    PhotoEditorFirebaseStorage.getInstance()
+                        .downloadFile(itemView.context, path) { uri ->
+                            updateDownloadingState(isDownloading = false)
+                            onStickerClickListener(
+                                uri
+                            )
+                        }
                 }
             }
         }

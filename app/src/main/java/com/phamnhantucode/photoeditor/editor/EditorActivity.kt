@@ -17,6 +17,7 @@ import android.widget.SeekBar
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.ViewCompat
@@ -28,9 +29,13 @@ import com.github.dhaval2404.colorpicker.ColorPickerDialog
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.phamnhantucode.photoeditor.MainActivity
 import com.phamnhantucode.photoeditor.R
+import com.phamnhantucode.photoeditor.album.AlbumActivity
+import com.phamnhantucode.photoeditor.album.preview.PreviewImageActivity
 import com.phamnhantucode.photoeditor.core.BitmapUtil
+import com.phamnhantucode.photoeditor.core.PhotoEditorGallery
 import com.phamnhantucode.photoeditor.core.model.ui.ImageFilter
 import com.phamnhantucode.photoeditor.databinding.ActivityEditorBinding
+import com.phamnhantucode.photoeditor.databinding.DialogLoadingBinding
 import com.phamnhantucode.photoeditor.databinding.LayoutTextInputOverlayBinding
 import com.phamnhantucode.photoeditor.editor.adapter.FilterAdapter
 import com.phamnhantucode.photoeditor.editor.core.Editor
@@ -253,8 +258,15 @@ class EditorActivity : AppCompatActivity() {
             showTextEditingOverlay()
         }
         binding.saveBtn.setOnClickListener {
+            val layout = DialogLoadingBinding.inflate(layoutInflater)
+            val dialog = AlertDialog.Builder(this)
+                .setView(layout.root)
+                .setCancelable(false)
+                .create()
+            dialog.show()
             lifecycleScope.launch(Dispatchers.Main) {
                 binding.editor.applyFilter()
+                binding.editor.filterOverlay.visibility = View.INVISIBLE
                 withContext(Dispatchers.IO) {
                     val bitmap = Bitmap.createBitmap(
                         binding.editor.width,
@@ -263,8 +275,17 @@ class EditorActivity : AppCompatActivity() {
                     )
                     val canvas = Canvas(bitmap)
                     binding.editor.draw(canvas)
-                    BitmapUtil.removeTransparency(bitmap)
+                    val imageUri = PhotoEditorGallery.saveImage(this@EditorActivity, BitmapUtil.removeTransparency(bitmap))
+                    dialog.cancel()
+                    startActivity(
+                        Intent(this@EditorActivity, AlbumActivity::class.java).apply {
+                            action = AlbumActivity.ACTION_IMAGE_PREVIEW
+                            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                            putExtra(PreviewImageActivity.EXTRA_IMAGE_URI, imageUri.toString())
+                        }
+                    )
                 }
+                binding.editor.filterOverlay.visibility = View.VISIBLE
             }
         }
         binding.stickerBtn.setOnClickListener {

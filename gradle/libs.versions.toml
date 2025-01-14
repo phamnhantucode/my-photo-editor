@@ -5,6 +5,7 @@ cameraLifecycle = "1.2.2"
 colorpicker = "2.3"
 compressor = "3.0.1"
 firebaseBom = "33.7.0"
+firebaseUiStorage = "8.0.2"
 fotoapparat = "2.7.0"
 gpuimage = "2.1.0"
 gson = "2.10.1"
@@ -14,6 +15,7 @@ junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 appcompat = "1.7.0"
+lottie = "3.4.0"
 material = "1.12.0"
 activity = "1.9.3"
 constraintlayout = "2.2.0"
@@ -33,6 +35,7 @@ colorpicker = { module = "com.github.Dhaval2404:ColorPicker", version.ref = "col
 compressor = { module = "id.zelory:compressor", version.ref = "compressor" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 firebase-storage = { module = "com.google.firebase:firebase-storage" }
+firebase-ui-storage = { module = "com.firebaseui:firebase-ui-storage", version.ref = "firebaseUiStorage" }
 fotoapparat = { module = "io.fotoapparat:fotoapparat", version.ref = "fotoapparat" }
 gpuimage = { module = "jp.co.cyberagent.android:gpuimage", version.ref = "gpuimage" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
@@ -40,6 +43,7 @@ junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+lottie = { module = "com.airbnb.android:lottie", version.ref = "lottie" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
