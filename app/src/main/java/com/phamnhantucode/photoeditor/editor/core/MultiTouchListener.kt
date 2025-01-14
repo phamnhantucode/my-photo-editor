@@ -89,7 +89,10 @@ class MultiTouchListener(
             MotionEvent.ACTION_UP -> {
                 activePointerId = INVALID_POINTER_ID
                 fireEditorSDKListener(v, false)
-                if (v.getVisibleRect().isCenterInside(editorView.getDeleteViewDeletableArea())) {
+
+                val isInsideDeleteArea =
+                    editorView.getDeleteViewDeletableArea().contains(x, y)
+                if (isInsideDeleteArea) {
                     editor.removeView(v)
                 } else {
                     if (!isInViewBounds(editorView.source, x, y)) {

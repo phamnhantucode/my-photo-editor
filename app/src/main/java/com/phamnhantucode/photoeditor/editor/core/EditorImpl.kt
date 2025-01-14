@@ -1,8 +1,11 @@
 package com.phamnhantucode.photoeditor.editor.core
 
+import android.graphics.Bitmap
 import android.view.LayoutInflater
 import android.view.View
+import com.phamnhantucode.photoeditor.databinding.ItemStickerEditorBinding
 import com.phamnhantucode.photoeditor.databinding.ItemTextEditorBinding
+import com.phamnhantucode.photoeditor.editor.core.sticker.StickerEditor
 import com.phamnhantucode.photoeditor.editor.core.text.TextEditor
 import com.phamnhantucode.photoeditor.editor.core.text.TextEditorState
 import com.phamnhantucode.photoeditor.views.EditorView
@@ -30,9 +33,9 @@ class EditorImpl(
         addToEditor(textEditor)
     }
 
-    private fun addToEditor(textEditor: TextEditor) {
-        graphicManager.addView(textEditor)
-        editorViewState.currentSelectedView = textEditor.rootView
+    private fun addToEditor(graphic: Graphic) {
+        graphicManager.addView(graphic)
+        editorViewState.currentSelectedView = graphic.rootView
     }
 
     private fun getMultiTouchListener(): MultiTouchListener {
@@ -47,6 +50,20 @@ class EditorImpl(
 
     override fun editText(textView: StyleableTextView, textViewState: TextEditorState) {
         textView.setStyleableTextViewState(textViewState)
+    }
+
+    override fun addSticker(bitmap: Bitmap) {
+        val multiTouchListener = getMultiTouchListener()
+        val sticker =  StickerEditor(
+            editorView,
+            multiTouchListener,
+            builder.textTypeface,
+            graphicManager,
+            editorViewState,
+            ItemStickerEditorBinding.inflate(LayoutInflater.from(editorView.context))
+        )
+        sticker.buildView(bitmap)
+        addToEditor(sticker)
     }
 
     override fun setOnEditorListener(onEditorListener: OnEditorListener) {

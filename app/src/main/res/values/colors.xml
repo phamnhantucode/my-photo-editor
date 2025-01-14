@@ -10,4 +10,5 @@
     <color name="bg_btn_circle">#DAA4A4A4</color>
     <color name="white_overlay">#69FFFFFF</color>
     <color name="bg_view_overlay">#51000000</color>
+    <color name="green_400">#4BD1A9</color>
 </resources>

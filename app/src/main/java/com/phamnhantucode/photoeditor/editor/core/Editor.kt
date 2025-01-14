@@ -1,6 +1,7 @@
 package com.phamnhantucode.photoeditor.editor.core
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.Typeface
 import android.view.View
 import android.widget.ImageView
@@ -13,6 +14,8 @@ interface Editor {
     fun addText(textViewState: TextEditorState)
 
     fun editText(textView: StyleableTextView, textViewState: TextEditorState)
+
+    fun addSticker(bitmap: Bitmap)
 
     fun setOnEditorListener(onEditorListener: OnEditorListener)
 

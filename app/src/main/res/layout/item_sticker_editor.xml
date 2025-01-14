@@ -3,11 +3,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
-    <com.phamnhantucode.photoeditor.views.StyleableTextView
-        android:id="@+id/tvEditorText"
+    <ImageView
+        android:id="@+id/ivSticker"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingVertical="@dimen/padding_medium"
-        android:paddingHorizontal="@dimen/padding_large"
+        android:contentDescription="@null"
         />
 </com.phamnhantucode.photoeditor.views.GraphicView>

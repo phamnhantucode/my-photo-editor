@@ -11,7 +11,6 @@ import android.graphics.drawable.GradientDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.view.MotionEvent
-import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
@@ -35,6 +34,7 @@ import com.phamnhantucode.photoeditor.editor.core.text.TextEditorMode
 import com.phamnhantucode.photoeditor.editor.core.text.TextEditorState
 import com.phamnhantucode.photoeditor.editor.crop.CropActivity
 import com.phamnhantucode.photoeditor.editor.draw.DrawActivity
+import com.phamnhantucode.photoeditor.editor.fragment.StickerBottomSheetDialogFragment
 import com.phamnhantucode.photoeditor.extension.getContrastTextColor
 import com.phamnhantucode.photoeditor.views.StyleableTextView
 
@@ -84,7 +84,7 @@ class EditorActivity : AppCompatActivity() {
         setupUI()
         observeViewModel()
 
-        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             binding.mainToolBox.setPadding(
                 systemBars.left,
@@ -127,7 +127,7 @@ class EditorActivity : AppCompatActivity() {
     }
 
     private fun LayoutTextInputOverlayBinding.updateTextEditor(state: TextEditorState) {
-        etTextInput.textSize = state?.size ?: 0f
+        etTextInput.textSize = state.size
         when (state.mode) {
             TextEditorMode.FILL -> {
                 etTextInput.setTextColor(state.color.getContrastTextColor())
@@ -225,11 +225,21 @@ class EditorActivity : AppCompatActivity() {
             showTextEditingOverlay()
         }
         binding.saveBtn.setOnClickListener {
-            val bitmap = Bitmap.createBitmap(binding.editor.width, binding.editor.height, Bitmap.Config.ARGB_8888)
+            val bitmap = Bitmap.createBitmap(
+                binding.editor.width,
+                binding.editor.height,
+                Bitmap.Config.ARGB_8888
+            )
             val canvas = Canvas(bitmap)
             binding.editor.draw(canvas)
             BitmapUtil.removeTransparency(bitmap)
             //save bitmap to album
+        }
+        binding.stickerBtn.setOnClickListener {
+            val fragment = StickerBottomSheetDialogFragment {
+                editor.addSticker(it)
+            }
+            fragment.show(supportFragmentManager, fragment.tag)
         }
         binding.textInputOverlay.apply {
             verticalSeekbar.apply {

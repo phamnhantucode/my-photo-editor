@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -64,5 +65,8 @@ dependencies {
     implementation(libs.glide)
     implementation(libs.ucrop)
     implementation(libs.colorpicker)
-
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.storage)
+    implementation(libs.gson)
+    implementation(libs.gpuimage)
 }

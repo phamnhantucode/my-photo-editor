@@ -18,15 +18,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-<!--    <ImageView-->
-<!--        android:id="@+id/drawOverlay"-->
-<!--        android:layout_width="0dp"-->
-<!--        android:layout_height="0dp"-->
-<!--        android:contentDescription="@null"-->
-<!--        app:layout_constraintBottom_toBottomOf="@id/editor"-->
-<!--        app:layout_constraintEnd_toEndOf="@id/editor"-->
-<!--        app:layout_constraintStart_toStartOf="@id/editor"-->
-<!--        app:layout_constraintTop_toTopOf="@id/editor" />-->
+    <!--    <ImageView-->
+    <!--        android:id="@+id/drawOverlay"-->
+    <!--        android:layout_width="0dp"-->
+    <!--        android:layout_height="0dp"-->
+    <!--        android:contentDescription="@null"-->
+    <!--        app:layout_constraintBottom_toBottomOf="@id/editor"-->
+    <!--        app:layout_constraintEnd_toEndOf="@id/editor"-->
+    <!--        app:layout_constraintStart_toStartOf="@id/editor"-->
+    <!--        app:layout_constraintTop_toTopOf="@id/editor" />-->
 
     <!--    <androidx.appcompat.widget.AppCompatButton-->
     <!--        android:id="@+id/shareBtn"-->
@@ -125,64 +125,53 @@
             android:background="@drawable/bg_box_round"
             android:orientation="vertical"
             android:padding="@dimen/padding_medium"
-            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="@+id/moreBtn"
             app:layout_constraintStart_toStartOf="@id/textBtn"
             app:layout_constraintTop_toBottomOf="@+id/moreBtn">
-
-            <LinearLayout
-                android:id="@+id/shareBtn"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <ImageView
-                    android:id="@+id/shareBtnIv"
-                    android:layout_width="@dimen/xx_large"
-                    android:layout_height="@dimen/xx_large"
-                    android:contentDescription="@null"
-                    android:padding="@dimen/padding_medium_large"
-                    app:srcCompat="@drawable/ic_share"
-                    app:tint="@color/white" />
-
-                <TextView
-                    android:id="@+id/lbShare"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="@string/share"
-                    android:textColor="@color/white" />
-            </LinearLayout>
-
-            <LinearLayout
+            <TextView
                 android:id="@+id/removeBgBtn"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                android:layout_gravity="start"
+                android:text="@string/remove_background"
+                android:padding="@dimen/padding_medium"
+                android:textColor="@color/white"
+                app:drawableStartCompat="@drawable/ic_remove_bg"
+                android:drawablePadding="@dimen/padding_medium_large"
+                app:drawableTint="@color/white"
+                android:gravity="center"
+                />
 
-                <ImageView
-                    android:id="@+id/removeBgBtnIv"
-                    android:layout_width="@dimen/xx_large"
-                    android:layout_height="@dimen/xx_large"
-                    android:contentDescription="@null"
-                    android:padding="@dimen/padding_medium_large"
-                    app:srcCompat="@drawable/ic_remove_bg"
-                    app:tint="@color/white" />
+            <TextView
+                android:id="@+id/filterBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:text="@string/filter"
+                android:padding="@dimen/padding_medium"
+                android:textColor="@color/white"
+                app:drawableStartCompat="@drawable/ic_filter"
+                android:drawablePadding="@dimen/padding_medium_large"
+                app:drawableTint="@color/white"
+                android:gravity="center"
+                />
 
-                <TextView
-                    android:id="@+id/lbRemoveBg"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="@string/remove_background"
-                    android:textColor="@color/white" />
-            </LinearLayout>
+            <TextView
+                android:id="@+id/shareBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:text="@string/share"
+                android:padding="@dimen/padding_medium"
+                android:textColor="@color/white"
+                app:drawableStartCompat="@drawable/ic_share"
+                android:drawablePadding="@dimen/padding_medium_large"
+                app:drawableTint="@color/white"
+                android:gravity="center"
+                />
+
+
+
         </LinearLayout>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
