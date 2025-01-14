@@ -1,7 +1,9 @@
 package com.phamnhantucode.photoeditor.views
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.Rect
+import android.opengl.GLSurfaceView
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
@@ -10,8 +12,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
 import android.widget.RelativeLayout
+import androidx.core.graphics.drawable.toBitmap
+import com.phamnhantucode.photoeditor.core.model.ui.ImageFilter
 import com.phamnhantucode.photoeditor.databinding.LayoutDeleteGraphicBinding
 import com.phamnhantucode.photoeditor.extension.doIfAboveApi
+import jp.co.cyberagent.android.gpuimage.GPUImage
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class EditorView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null,
@@ -20,6 +27,11 @@ class EditorView @JvmOverloads constructor(
     val source: ImageView
         get() = imgSource
 
+    private val glFilterOverlay = GLSurfaceView(context)
+    val filterOverlay: GLSurfaceView
+        get() = glFilterOverlay
+
+
     private val drawOverlay: ImageView = ImageView(context)
     val overlay: ImageView
         get() = drawOverlay
@@ -27,9 +39,14 @@ class EditorView @JvmOverloads constructor(
     private val deleteViewBinding = LayoutDeleteGraphicBinding.inflate(LayoutInflater.from(context))
     val deleteView: View
         get() = deleteViewBinding.root
+
+    private val gpuImage = GPUImage(context)
+    private var currentFilter: ImageFilter? = null
     init {
         val sourceParams = setupImageSource()
         addView(imgSource, sourceParams)
+        addView(glFilterOverlay, sourceParams)
+
         val overlayParams = LayoutParams(
             LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT
         )
@@ -38,6 +55,7 @@ class EditorView @JvmOverloads constructor(
             LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT
         )
         addView(deleteView, deleteParams)
+        gpuImage.setGLSurfaceView(glFilterOverlay)
     }
 
     private fun setupImageSource(): LayoutParams {
@@ -76,6 +94,25 @@ class EditorView @JvmOverloads constructor(
                     vibrate.vibrate(VibrationEffect.createOneShot(100, VibrationEffect.EFFECT_TICK))
                 } ?: vibrate.vibrate(VibrationEffect.createOneShot(100, VibrationEffect.DEFAULT_AMPLITUDE))
             } ?: vibrate.vibrate(100)
+        }
+    }
+
+    fun setFilter(filter: ImageFilter?) {
+        gpuImage.setFilter(filter?.getFilter())
+        currentFilter = filter
+    }
+
+    fun setImageFilter(bitmap: Bitmap?) {
+        gpuImage.setImage(bitmap)
+
+    }
+
+    suspend fun applyFilter() = withContext(Dispatchers.IO) {
+        val gpuImage = GPUImage(context)
+        gpuImage.setImage(imgSource.drawable.toBitmap())
+        gpuImage.setFilter(currentFilter?.getFilter())
+        withContext(Dispatchers.Main) {
+            imgSource.setImageBitmap(gpuImage.bitmapWithFilterApplied)
         }
     }
 

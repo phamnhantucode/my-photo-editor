@@ -3,6 +3,7 @@ package com.phamnhantucode.photoeditor.editor.core
 import android.graphics.Bitmap
 import android.view.LayoutInflater
 import android.view.View
+import com.phamnhantucode.photoeditor.core.model.ui.ImageFilter
 import com.phamnhantucode.photoeditor.databinding.ItemStickerEditorBinding
 import com.phamnhantucode.photoeditor.databinding.ItemTextEditorBinding
 import com.phamnhantucode.photoeditor.editor.core.sticker.StickerEditor
@@ -45,7 +46,6 @@ class EditorImpl(
             editorViewState,
             this,
         )
-
     }
 
     override fun editText(textView: StyleableTextView, textViewState: TextEditorState) {
@@ -73,5 +73,13 @@ class EditorImpl(
 
     override fun removeView(v: View) {
         graphicManager.removeView(v)
+    }
+
+    override fun setFilter(filter: ImageFilter?) {
+        editorView.setFilter(filter)
+    }
+
+    override fun setImageFilter(bitmap: Bitmap?) {
+        editorView.setImageFilter(bitmap)
     }
 }

@@ -9,8 +9,8 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.phamnhantucode.photoeditor.R
-import com.phamnhantucode.photoeditor.core.model.PhotoEditorFirebaseStorage
-import com.phamnhantucode.photoeditor.core.model.Sticker
+import com.phamnhantucode.photoeditor.core.PhotoEditorFirebaseStorage
+import com.phamnhantucode.photoeditor.core.model.firebase.Sticker
 import com.phamnhantucode.photoeditor.databinding.ItemStickerBinding
 
 class StickerAdapter(

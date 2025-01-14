@@ -10,7 +10,7 @@ import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.phamnhantucode.photoeditor.core.model.PhotoEditorFirebaseStorage
+import com.phamnhantucode.photoeditor.core.PhotoEditorFirebaseStorage
 import com.phamnhantucode.photoeditor.databinding.FragmentStickerBottomDialogBinding
 import com.phamnhantucode.photoeditor.editor.adapter.StickerAdapter
 

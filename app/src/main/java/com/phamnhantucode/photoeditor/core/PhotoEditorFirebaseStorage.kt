@@ -1,4 +1,4 @@
-package com.phamnhantucode.photoeditor.core.model
+package com.phamnhantucode.photoeditor.core
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -6,6 +6,9 @@ import android.net.Uri
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import com.google.gson.Gson
+import com.phamnhantucode.photoeditor.core.model.Version
+import com.phamnhantucode.photoeditor.core.model.firebase.DataCenter
+import com.phamnhantucode.photoeditor.core.model.firebase.Sticker
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream

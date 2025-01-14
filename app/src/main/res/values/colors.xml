@@ -11,4 +11,5 @@
     <color name="white_overlay">#69FFFFFF</color>
     <color name="bg_view_overlay">#51000000</color>
     <color name="green_400">#4BD1A9</color>
+    <color name="bottomsheet">#F8F8F8</color>
 </resources>

@@ -8,6 +8,7 @@ import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.phamnhantucode.photoeditor.core.model.ui.ImageFilter
 import com.phamnhantucode.photoeditor.editor.core.Editor
 import com.phamnhantucode.photoeditor.editor.core.text.TextEditorMode
 import com.phamnhantucode.photoeditor.editor.core.text.TextEditorState
@@ -40,6 +41,9 @@ class EditorViewModel(
 
     private val _moreOptionsVisible = MutableLiveData(false)
     val moreOptionsVisible: LiveData<Boolean> = _moreOptionsVisible
+
+    private val _selectedFilter = MutableLiveData<ImageFilter>()
+    val selectedFilter: LiveData<ImageFilter> = _selectedFilter
 
     fun setOriginBitmapBy(photoUri: Uri) {
         _originBitmap.value = BitmapFactory.decodeFile(photoUri.path)
@@ -90,6 +94,10 @@ class EditorViewModel(
 
     fun setTextOverlayText(text: String) {
         _textEditorState.value = _textEditorState.value?.copy(text = text)
+    }
+
+    fun setSelectedFilter(filter: ImageFilter) {
+        _selectedFilter.value = filter
     }
 
     fun clearTextOverlayState() {

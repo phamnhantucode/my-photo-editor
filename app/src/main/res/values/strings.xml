@@ -19,4 +19,5 @@
     <string name="drag_to_delete">Drag to delete</string>
     <string name="search">Search</string>
     <string name="filter">Filter</string>
+    <string name="filter_name">Filter Name</string>
 </resources>

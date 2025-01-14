@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.Typeface
 import android.view.View
 import android.widget.ImageView
+import com.phamnhantucode.photoeditor.core.model.ui.ImageFilter
 import com.phamnhantucode.photoeditor.editor.core.text.TextEditorState
 import com.phamnhantucode.photoeditor.extension.sp
 import com.phamnhantucode.photoeditor.views.EditorView
@@ -20,6 +21,8 @@ interface Editor {
     fun setOnEditorListener(onEditorListener: OnEditorListener)
 
     fun removeView(v: View)
+    fun setFilter(filter: ImageFilter?)
+    fun setImageFilter(bitmap: Bitmap?)
 
     class Builder(
         val context: Context,

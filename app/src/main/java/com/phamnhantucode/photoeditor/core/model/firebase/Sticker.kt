@@ -1,4 +1,4 @@
-package com.phamnhantucode.photoeditor.core.model
+package com.phamnhantucode.photoeditor.core.model.firebase
 
 import com.google.gson.annotations.SerializedName
 

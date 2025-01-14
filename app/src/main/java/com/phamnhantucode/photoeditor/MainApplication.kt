@@ -1,8 +1,7 @@
 package com.phamnhantucode.photoeditor
 
 import android.app.Application
-import com.google.firebase.FirebaseApp
-import com.phamnhantucode.photoeditor.core.model.PhotoEditorFirebaseStorage
+import com.phamnhantucode.photoeditor.core.PhotoEditorFirebaseStorage
 
 class MainApplication: Application() {
     override fun onCreate() {

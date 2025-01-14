@@ -11,7 +11,9 @@ import android.graphics.drawable.GradientDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.view.MotionEvent
+import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.SeekBar
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -20,13 +22,17 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.github.dhaval2404.colorpicker.ColorPickerDialog
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.phamnhantucode.photoeditor.MainActivity
 import com.phamnhantucode.photoeditor.R
 import com.phamnhantucode.photoeditor.core.BitmapUtil
+import com.phamnhantucode.photoeditor.core.model.ui.ImageFilter
 import com.phamnhantucode.photoeditor.databinding.ActivityEditorBinding
 import com.phamnhantucode.photoeditor.databinding.LayoutTextInputOverlayBinding
+import com.phamnhantucode.photoeditor.editor.adapter.FilterAdapter
 import com.phamnhantucode.photoeditor.editor.core.Editor
 import com.phamnhantucode.photoeditor.editor.core.OnEditorListener
 import com.phamnhantucode.photoeditor.editor.core.ViewType
@@ -37,6 +43,9 @@ import com.phamnhantucode.photoeditor.editor.draw.DrawActivity
 import com.phamnhantucode.photoeditor.editor.fragment.StickerBottomSheetDialogFragment
 import com.phamnhantucode.photoeditor.extension.getContrastTextColor
 import com.phamnhantucode.photoeditor.views.StyleableTextView
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 class EditorActivity : AppCompatActivity() {
@@ -44,6 +53,8 @@ class EditorActivity : AppCompatActivity() {
     private val viewModel: EditorViewModel by viewModels()
     private lateinit var editor: Editor
     private var currentSelectedTextView: StyleableTextView? = null
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<*>
+    private lateinit var adapter: FilterAdapter
 
     private val cropActivityLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -83,7 +94,6 @@ class EditorActivity : AppCompatActivity() {
         }
         setupUI()
         observeViewModel()
-
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             binding.mainToolBox.setPadding(
@@ -91,6 +101,12 @@ class EditorActivity : AppCompatActivity() {
                 resources.getDimensionPixelSize(R.dimen.padding_large) + systemBars.top,
                 systemBars.right,
                 systemBars.bottom
+            )
+            binding.bottomSheetFilter.setPadding(
+                systemBars.left,
+                0,
+                systemBars.right,
+                resources.getDimensionPixelSize(R.dimen.padding_large) + systemBars.bottom
             )
             insets
         }
@@ -101,6 +117,7 @@ class EditorActivity : AppCompatActivity() {
             Glide.with(this)
                 .load(bitmap)
                 .into(binding.editor.source)
+            editor.setImageFilter(bitmap)
         }
         viewModel.moreOptionsVisible.observe(this) { flag ->
             binding.menuMore.isVisible = flag
@@ -117,6 +134,10 @@ class EditorActivity : AppCompatActivity() {
             if (viewModel.isEditingText && state.text != binding.textInputOverlay.etTextInput.text.toString()) {
                 binding.textInputOverlay.etTextInput.setText(state.text)
             }
+        }
+        viewModel.selectedFilter.observe(this) { filter ->
+            editor.setFilter(filter)
+            binding.seekBarFilter.isVisible = filter.filterType.isAdjustable
         }
     }
 
@@ -193,6 +214,13 @@ class EditorActivity : AppCompatActivity() {
 
     private fun setupUI() {
         setupEditor()
+        setupFilterBottomSheet()
+        binding.root.setOnClickListener {
+            if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
+                bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+            }
+            viewModel.toggleMoreOptions()
+        }
         binding.cropBtn.setOnClickListener {
             viewModel.originUri?.let { uri ->
                 cropActivityLauncher.launch(
@@ -225,15 +253,19 @@ class EditorActivity : AppCompatActivity() {
             showTextEditingOverlay()
         }
         binding.saveBtn.setOnClickListener {
-            val bitmap = Bitmap.createBitmap(
-                binding.editor.width,
-                binding.editor.height,
-                Bitmap.Config.ARGB_8888
-            )
-            val canvas = Canvas(bitmap)
-            binding.editor.draw(canvas)
-            BitmapUtil.removeTransparency(bitmap)
-            //save bitmap to album
+            lifecycleScope.launch(Dispatchers.Main) {
+                binding.editor.applyFilter()
+                withContext(Dispatchers.IO) {
+                    val bitmap = Bitmap.createBitmap(
+                        binding.editor.width,
+                        binding.editor.height,
+                        Bitmap.Config.ARGB_8888
+                    )
+                    val canvas = Canvas(bitmap)
+                    binding.editor.draw(canvas)
+                    BitmapUtil.removeTransparency(bitmap)
+                }
+            }
         }
         binding.stickerBtn.setOnClickListener {
             val fragment = StickerBottomSheetDialogFragment {
@@ -284,6 +316,62 @@ class EditorActivity : AppCompatActivity() {
             }
         }
 
+    }
+
+    private fun setupFilterBottomSheet() {
+        binding.apply {
+            bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetFilter)
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+            adapter = FilterAdapter(
+                viewModel.originBitmap.value!!,
+                onFilterClickListener = { filter ->
+                    viewModel.setSelectedFilter(filter)
+                    seekBarFilter.progress =
+                        filter.filterType.normalizeToValueSeekbar(filter.currentValue)
+                }
+            )
+            val filters = ImageFilter.mockFilters()
+            viewModel.setSelectedFilter(filters.first())
+            adapter.submitList(filters)
+            rvFilter.adapter = adapter
+            bottomSheetBehavior.addBottomSheetCallback(object :
+                BottomSheetBehavior.BottomSheetCallback() {
+                override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                }
+
+                override fun onStateChanged(bottomSheet: View, newState: Int) {
+                    if (newState == BottomSheetBehavior.STATE_HIDDEN) {
+                        showTools()
+                    }
+                    if (newState == BottomSheetBehavior.STATE_EXPANDED) {
+                        hideTools()
+                    }
+                }
+            })
+            filterBtn.setOnClickListener {
+                bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+                hideTools()
+            }
+            seekBarFilter.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+                override fun onProgressChanged(
+                    seekBar: SeekBar?,
+                    progress: Int,
+                    fromUser: Boolean,
+                ) {
+                    adapter.selectedFilter?.let { filter ->
+                        val currentValue = filter.filterType.normalizeToValueFilter(progress)
+                        viewModel.setSelectedFilter(filter.copy(currentValue = currentValue))
+                    }
+                }
+
+                override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                }
+
+                override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                }
+
+            })
+        }
     }
 
     private fun showTextEditingOverlay() {
