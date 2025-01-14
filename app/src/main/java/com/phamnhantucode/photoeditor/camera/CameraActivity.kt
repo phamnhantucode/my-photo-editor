@@ -125,6 +125,7 @@ class CameraActivity() : AppCompatActivity() {
         viewModel.photoUri.observe(this) { uri ->
             startActivity(Intent(this, EditorActivity::class.java).apply {
                 putExtra(EditorActivity.EXTRA_IMAGE_URI, uri.toString())
+                finish()
             })
         }
     }

@@ -280,8 +280,8 @@ class EditorActivity : AppCompatActivity() {
                     startActivity(
                         Intent(this@EditorActivity, AlbumActivity::class.java).apply {
                             action = AlbumActivity.ACTION_IMAGE_PREVIEW
-                            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
                             putExtra(PreviewImageActivity.EXTRA_IMAGE_URI, imageUri.toString())
+                            finish()
                         }
                     )
                 }

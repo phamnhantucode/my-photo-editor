@@ -7,6 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.phamnhantucode.photoeditor.album.AlbumActivity
 import com.phamnhantucode.photoeditor.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -18,6 +19,9 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         binding.btnAdd.setOnClickListener {
             startActivity(Intent(this, CameraActivity::class.java))
+        }
+        binding.btnAlbum.setOnClickListener {
+            startActivity(Intent(this, AlbumActivity::class.java))
         }
         setupEdgeInsets()
     }
