@@ -1,6 +1,7 @@
 [versions]
 agp = "8.7.2"
 androidphotofilters = "1.0.2"
+cameraEffects = "1.4.1"
 cameraLifecycle = "1.2.2"
 colorpicker = "2.3"
 compressor = "3.0.1"
@@ -27,6 +28,7 @@ glide = "4.14.2"
 androidphotofilters = { module = "com.github.zomato:androidphotofilters", version.ref = "androidphotofilters" }
 androidx-camera-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "cameraLifecycle" }
 androidx-camera-core = { module = "androidx.camera:camera-core", version.ref = "cameraLifecycle" }
+androidx-camera-effects = { module = "androidx.camera:camera-effects", version.ref = "cameraEffects" }
 androidx-camera-extensions = { module = "androidx.camera:camera-extensions", version.ref = "cameraLifecycle" }
 androidx-camera-lifecycle = { module = "androidx.camera:camera-lifecycle", version.ref = "cameraLifecycle" }
 androidx-camera-view = { module = "androidx.camera:camera-view", version.ref = "cameraLifecycle" }

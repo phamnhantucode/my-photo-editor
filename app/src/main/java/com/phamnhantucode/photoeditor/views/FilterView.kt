@@ -11,8 +11,8 @@ import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
 import android.widget.Scroller
-import com.phamnhantucode.photoeditor.camera.FilterCamera
-import com.phamnhantucode.photoeditor.camera.FilterType
+import com.phamnhantucode.photoeditor.core.model.ui.ImageFilter
+import jp.co.cyberagent.android.gpuimage.GPUImage
 import kotlin.math.max
 import kotlin.math.min
 
@@ -22,6 +22,7 @@ class FilterView @JvmOverloads constructor(
 
     private var originPhoto: Bitmap? = null
     private var filteredBitmaps: MutableList<Bitmap> = mutableListOf()
+    private var filters: List<ImageFilter> = ImageFilter.mockCameraFilters()
     private var scrollX = 0
     private val scroller = Scroller(context)
     private var maxScrollX = 0
@@ -33,8 +34,9 @@ class FilterView @JvmOverloads constructor(
         strokeWidth = borderWidth
     }
 
-    private var filterSelected = FilterType.NONE
-    private var filterSelectedListener: ((FilterType) -> Unit)? = null
+    private var selectedFilter = ImageFilter()
+    private var filterSelectedListener: ((ImageFilter) -> Unit)? = null
+    private var gpuImage: GPUImage? = null
 
     private val gestureDetector = GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
         override fun onDown(e: MotionEvent): Boolean {
@@ -42,9 +44,10 @@ class FilterView @JvmOverloads constructor(
         }
 
         override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
-            val index= ((scrollX + e.x) / DEFAULT_SIZE).toInt()
-            filterSelected = FilterType.entries.getOrNull(index) ?: FilterType.NONE
-            filterSelectedListener?.invoke(filterSelected)
+            val index = ((scrollX + e.x) / DEFAULT_SIZE).toInt()
+            selectedFilter = filters.getOrNull(index) ?: ImageFilter()
+            filterSelectedListener?.invoke(selectedFilter)
+            invalidate()
             return super.onSingleTapConfirmed(e)
         }
 
@@ -84,10 +87,12 @@ class FilterView @JvmOverloads constructor(
     init {
         isClickable = true
         isFocusable = true
+        gpuImage = GPUImage(context)
     }
 
     fun setOriginalPhoto(bitmap: Bitmap) {
         originPhoto = bitmap
+        gpuImage?.setImage(bitmap)
         updateFilteredBitmaps()
         invalidate()
     }
@@ -95,20 +100,18 @@ class FilterView @JvmOverloads constructor(
     private fun updateFilteredBitmaps() {
         filteredBitmaps.clear()
         originPhoto?.let { original ->
-            FilterType.entries.forEach { filterType ->
-                val filter = FilterCamera(
-                    filterType.name,
-                    original,
-                    filterType
-                )
-                val filtered = filter.applyFilter()
-                val scaledBitmap = Bitmap.createScaledBitmap(
-                    filtered,
-                    DEFAULT_SIZE,
-                    DEFAULT_SIZE,
-                    true
-                )
-                filteredBitmaps.add(scaledBitmap)
+            filters.forEach { filter ->
+                gpuImage?.let { gpu ->
+                    gpu.setFilter(filter.getFilter())
+                    val filtered = gpu.bitmapWithFilterApplied
+                    val scaledBitmap = Bitmap.createScaledBitmap(
+                        filtered,
+                        DEFAULT_SIZE,
+                        DEFAULT_SIZE,
+                        true
+                    )
+                    filteredBitmaps.add(scaledBitmap)
+                }
             }
         }
         updateMaxScroll()
@@ -118,8 +121,11 @@ class FilterView @JvmOverloads constructor(
         maxScrollX = max(0, (filteredBitmaps.size * (DEFAULT_SIZE + spacing.toInt())) - width)
     }
 
-    fun setOnFilterSelectedListener(listener: (FilterType) -> Unit) {
+    fun setOnFilterSelectedListener(listener: (ImageFilter) -> Unit) {
         filterSelectedListener = listener
+        if (filters.isNotEmpty()) {
+            listener(filters.first())
+        }
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -160,15 +166,11 @@ class FilterView @JvmOverloads constructor(
             val left = (i * (DEFAULT_SIZE + spacing) - scrollX).toFloat()
             filteredBitmaps.getOrNull(i)?.let { bitmap ->
                 canvas.drawBitmap(bitmap, left, 0f, null)
-                if (filterSelected == FilterType.entries[i]) {
+                if (selectedFilter == filters[i]) {
                     canvas.drawRect(left, 0f, left + DEFAULT_SIZE, DEFAULT_SIZE.toFloat(), selectedPaint)
                 }
             }
         }
-    }
-
-    override fun setOnClickListener(l: OnClickListener?) {
-        super.setOnClickListener(l)
     }
 
     companion object {

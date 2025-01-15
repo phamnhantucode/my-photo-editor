@@ -1,12 +1,18 @@
 package com.phamnhantucode.photoeditor.core.model.ui
 
+import androidx.camera.core.CameraEffect
+import com.phamnhantucode.photoeditor.camera.effect.FilterMappingSurfaceEffect
+import com.phamnhantucode.photoeditor.camera.effect.processor.FilterProcessor
+import jp.co.cyberagent.android.gpuimage.filter.GPUImageBoxBlurFilter
 import jp.co.cyberagent.android.gpuimage.filter.GPUImageBrightnessFilter
 import jp.co.cyberagent.android.gpuimage.filter.GPUImageContrastFilter
 import jp.co.cyberagent.android.gpuimage.filter.GPUImageExposureFilter
 import jp.co.cyberagent.android.gpuimage.filter.GPUImageFilter
+import jp.co.cyberagent.android.gpuimage.filter.GPUImageHazeFilter
 import jp.co.cyberagent.android.gpuimage.filter.GPUImageHueFilter
 import jp.co.cyberagent.android.gpuimage.filter.GPUImageRGBDilationFilter
 import jp.co.cyberagent.android.gpuimage.filter.GPUImageSaturationFilter
+import jp.co.cyberagent.android.gpuimage.filter.GPUImageSharpenFilter
 import java.util.Locale
 import java.util.logging.Filter
 
@@ -23,13 +29,24 @@ data class ImageFilter(
             FilterType.HUE -> GPUImageHueFilter().apply { setHue(currentValue) }
             FilterType.EXPOSURE -> GPUImageExposureFilter().apply { setExposure(currentValue) }
             FilterType.RGB_DILATION -> GPUImageRGBDilationFilter(currentValue.toInt())
-            else -> GPUImageFilter()
+            FilterType.SHARPEN -> GPUImageSharpenFilter().apply { setSharpness(currentValue) }
+            FilterType.BOX_BLUR -> GPUImageBoxBlurFilter().apply { setBlurSize(currentValue) }
+            else -> GPUImageBoxBlurFilter(1.5f)
         }
     }
 
     fun setFilterValue(value: Float) {
         val maxMinValue = filterType.getMaxMinValue()
         currentValue = value.coerceIn(maxMinValue.first, maxMinValue.second)
+    }
+
+    fun toCameraEffect(): CameraEffect {
+        return FilterMappingSurfaceEffect(
+            processor = FilterProcessor(
+                value = currentValue,
+                filterType = filterType
+            )
+        )
     }
 
     companion object {
@@ -67,6 +84,21 @@ data class ImageFilter(
                 createFilter(FilterType.HUE),
                 createFilter(FilterType.EXPOSURE),
                 createFilter(FilterType.RGB_DILATION),
+                createFilter(FilterType.SHARPEN),
+                createFilter(FilterType.BOX_BLUR),
+            )
+        }
+
+        fun mockCameraFilters(): List<ImageFilter> {
+            return listOf(
+                createFilter(FilterType.NONE),
+                createFilter(FilterType.BRIGHTNESS),
+                createFilter(FilterType.CONTRAST),
+                createFilter(FilterType.SATURATION),
+                createFilter(FilterType.HUE),
+                createFilter(FilterType.EXPOSURE),
+                createFilter(FilterType.SHARPEN),
+                createFilter(FilterType.BOX_BLUR),
             )
         }
     }
@@ -80,6 +112,8 @@ enum class FilterType {
     HUE,
     EXPOSURE,
     RGB_DILATION,
+    SHARPEN,
+    BOX_BLUR,
     ;
 
     val isAdjustable: Boolean
@@ -91,8 +125,10 @@ enum class FilterType {
             CONTRAST -> 0.0f to 4.0f
             SATURATION -> 0f to 2f
             HUE -> -180f to 180f
-            EXPOSURE -> -4f to 4f
+            EXPOSURE -> -3f to 3f
             RGB_DILATION -> 1f to 4f
+            SHARPEN -> -4f to 4f
+            BOX_BLUR -> 1f to 2f
             else -> 0f to 0f
         }
     }
@@ -105,6 +141,8 @@ enum class FilterType {
             HUE -> 90f
             EXPOSURE -> 0f
             RGB_DILATION -> 1f
+            SHARPEN -> 0f
+            BOX_BLUR -> 1f
             else -> 0f
         }
     }

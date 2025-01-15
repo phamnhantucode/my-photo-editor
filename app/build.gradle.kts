@@ -58,6 +58,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.camera.core)
     implementation(libs.androidx.camera.camera2)
+    implementation(libs.androidx.camera.effects)
     implementation(libs.androidx.camera.lifecycle)
     implementation(libs.androidx.camera.view)
     implementation(libs.androidx.camera.extensions)
@@ -71,6 +72,7 @@ dependencies {
     implementation(libs.gson)
     implementation(libs.gpuimage)
     implementation(libs.lottie)
-    kapt("com.github.bumptech.glide:compiler:4.16.0")
+    implementation("com.github.bumptech.glide:compiler:4.16.0")
     implementation(libs.firebase.ui.storage)
+    implementation("com.google.mediapipe:tasks-vision:0.10.14")
 }

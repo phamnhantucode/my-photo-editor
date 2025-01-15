@@ -12,7 +12,9 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.isVisible
 import com.phamnhantucode.photoeditor.R
 import com.phamnhantucode.photoeditor.databinding.ActivityCameraBinding
@@ -79,6 +81,8 @@ class CameraActivity() : AppCompatActivity() {
 
     @SuppressLint("ClickableViewAccessibility")
     private fun setupUI() {
+        AppCompatResources.getDrawable(this, R.drawable.filter_demo)
+            ?.let { binding.filterView.setOriginalPhoto(it.toBitmap()) }
         binding.apply {
             captureBtn.setOnClickListener { viewModel.takePicture() }
             switchCameraBtn.setOnClickListener {
@@ -115,9 +119,6 @@ class CameraActivity() : AppCompatActivity() {
 
         viewModel.currentZoom.observe(this) { zoom ->
             updateZoomUI(zoom)
-        }
-        viewModel.bitmapPreview.observe(this) { bitmap ->
-            binding.filterView.setOriginalPhoto(bitmap)
         }
         viewModel.isShowingImageFilters.observe(this) { isShowingFilters ->
             binding.filterView.isVisible = isShowingFilters
