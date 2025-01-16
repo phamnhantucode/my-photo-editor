@@ -80,6 +80,6 @@ class EditorImpl(
     }
 
     override fun setImageFilter(bitmap: Bitmap?) {
-        editorView.setImageFilter(bitmap)
+        editorView.setImageNeedFilter(bitmap)
     }
 }

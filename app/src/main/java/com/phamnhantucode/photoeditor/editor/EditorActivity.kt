@@ -265,8 +265,7 @@ class EditorActivity : AppCompatActivity() {
                 .create()
             dialog.show()
             lifecycleScope.launch(Dispatchers.Main) {
-                binding.editor.applyFilter()
-                binding.editor.filterOverlay.visibility = View.INVISIBLE
+//                binding.editor.applyFilter()
                 withContext(Dispatchers.IO) {
                     val bitmap = Bitmap.createBitmap(
                         binding.editor.width,
@@ -285,7 +284,6 @@ class EditorActivity : AppCompatActivity() {
                         }
                     )
                 }
-                binding.editor.filterOverlay.visibility = View.VISIBLE
             }
         }
         binding.stickerBtn.setOnClickListener {

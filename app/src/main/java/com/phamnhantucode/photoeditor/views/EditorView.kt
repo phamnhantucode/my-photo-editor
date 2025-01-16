@@ -3,7 +3,6 @@ package com.phamnhantucode.photoeditor.views
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Rect
-import android.opengl.GLSurfaceView
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
@@ -27,11 +26,6 @@ class EditorView @JvmOverloads constructor(
     val source: ImageView
         get() = imgSource
 
-    private val glFilterOverlay = GLSurfaceView(context)
-    val filterOverlay: GLSurfaceView
-        get() = glFilterOverlay
-
-
     private val drawOverlay: ImageView = ImageView(context)
     val overlay: ImageView
         get() = drawOverlay
@@ -40,12 +34,11 @@ class EditorView @JvmOverloads constructor(
     val deleteView: View
         get() = deleteViewBinding.root
 
-    private val gpuImage = GPUImage(context)
     private var currentFilter: ImageFilter? = null
+    private var originBitmap: Bitmap? = null
     init {
         val sourceParams = setupImageSource()
         addView(imgSource, sourceParams)
-        addView(glFilterOverlay, sourceParams)
 
         val overlayParams = LayoutParams(
             LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT
@@ -55,7 +48,6 @@ class EditorView @JvmOverloads constructor(
             LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT
         )
         addView(deleteView, deleteParams)
-        gpuImage.setGLSurfaceView(glFilterOverlay)
     }
 
     private fun setupImageSource(): LayoutParams {
@@ -98,13 +90,33 @@ class EditorView @JvmOverloads constructor(
     }
 
     fun setFilter(filter: ImageFilter?) {
+        val gpuImage = GPUImage(context)
+        gpuImage.setImage(originBitmap)
         gpuImage.setFilter(filter?.getFilter())
+        imgSource.setImageBitmap(gpuImage.bitmapWithFilterApplied)
         currentFilter = filter
     }
 
-    fun setImageFilter(bitmap: Bitmap?) {
-        gpuImage.setImage(bitmap)
-
+    fun setImageNeedFilter(bitmap: Bitmap?) {
+        originBitmap = bitmap
+//        gpuImage = GPUImage(context)
+//        gpuImage.setImage(bitmap)
+//        removeView(glFilterOverlay)
+//        glFilterOverlay = GLSurfaceView(context)
+//        val width = imgSource.width
+//        val height = imgSource.height
+//        val layoutParams = if (width > 0 && height > 0) {
+//            LayoutParams(width, height)
+//        } else {
+//            LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
+//        }.apply {
+//            addRule(CENTER_IN_PARENT, TRUE)
+//        }
+//        addView(glFilterOverlay, layoutParams)
+//        drawOverlay.bringToFront()
+//        deleteView.bringToFront()
+//        gpuImage.setGLSurfaceView(glFilterOverlay)
+//        requestLayout()
     }
 
     suspend fun applyFilter() = withContext(Dispatchers.IO) {
