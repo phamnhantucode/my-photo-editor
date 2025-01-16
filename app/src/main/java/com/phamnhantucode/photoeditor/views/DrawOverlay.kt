@@ -54,6 +54,7 @@ class DrawOverlay @JvmOverloads constructor(
         }
 
     private val penPaint = Paint().apply {
+        xfermode = PorterDuffXfermode(PorterDuff.Mode.OVERLAY)
         color = paintColor
         strokeWidth = paintStrokeWidth
         style = Paint.Style.STROKE
@@ -72,6 +73,7 @@ class DrawOverlay @JvmOverloads constructor(
     }
 
     private val neonPaint = Paint().apply {
+        xfermode = PorterDuffXfermode(PorterDuff.Mode.OVERLAY)
         color = paintColor
         strokeWidth = paintStrokeWidth
         maskFilter = BlurMaskFilter(12f, BlurMaskFilter.Blur.NORMAL)
@@ -82,6 +84,7 @@ class DrawOverlay @JvmOverloads constructor(
     }
 
     private val brushPaint = Paint().apply {
+        xfermode = PorterDuffXfermode(PorterDuff.Mode.OVERLAY)
         color = paintColor
         strokeWidth = paintStrokeWidth
         style = Paint.Style.STROKE
@@ -142,6 +145,7 @@ class DrawOverlay @JvmOverloads constructor(
     private fun drawBottomLayer() {
         bitmapBottomLayer?.let {
             canvasBm!!.drawBitmap(it, 0f, 0f, null)
+            bitmap?.let { it1 -> canvasBm!!.drawBitmap(it1, 0f, 0f, null) }
         }
     }
 

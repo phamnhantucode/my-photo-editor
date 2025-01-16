@@ -13,4 +13,5 @@
     <color name="green_400">#4BD1A9</color>
     <color name="bottomsheet">#F8F8F8</color>
     <color name="iv_mask">#5D434343</color>
+    <color name="color_overlay_camera">#50000000</color>
 </resources>

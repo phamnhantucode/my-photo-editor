@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.ScaleGestureDetector
 import android.view.View
+import android.widget.SeekBar
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
@@ -105,6 +106,21 @@ class CameraActivity() : AppCompatActivity() {
                 scaleGestureDetector.onTouchEvent(event)
                 true
             }
+
+            filterSeekbar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+                override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                }
+
+                override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+
+                override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                    viewModel.selectedFilter.value?.let { filter ->
+                        val value = filter.filterType.normalizeToValueFilter(seekBar?.progress ?: 0)
+                        filter.currentValue = value
+                        viewModel.applyFilter(filter)
+                    }
+                }
+            })
         }
     }
 
@@ -120,14 +136,28 @@ class CameraActivity() : AppCompatActivity() {
         viewModel.currentZoom.observe(this) { zoom ->
             updateZoomUI(zoom)
         }
+
         viewModel.isShowingImageFilters.observe(this) { isShowingFilters ->
             binding.filterView.isVisible = isShowingFilters
+            binding.filterSeekbar.isVisible = isShowingFilters || viewModel.selectedFilter.value?.filterType?.isAdjustable == true
         }
+
         viewModel.photoUri.observe(this) { uri ->
             startActivity(Intent(this, EditorActivity::class.java).apply {
                 putExtra(EditorActivity.EXTRA_IMAGE_URI, uri.toString())
                 finish()
             })
+        }
+        viewModel.selectedFilter.observe(this) { filter ->
+            binding.filterSeekbar.visibility = if (filter.filterType.isAdjustable) View.VISIBLE else View.INVISIBLE
+            binding.filterSeekbar.progress = filter.filterType.normalizeToValueSeekbar(filter.currentValue)
+        }
+        viewModel.faceDetectorResult.observe(this) { bundle ->
+            binding.faceDetectOverlay.setResults(
+                bundle.results[0],
+                bundle.inputImageHeight,
+                bundle.inputImageWidth,
+            )
         }
     }
 

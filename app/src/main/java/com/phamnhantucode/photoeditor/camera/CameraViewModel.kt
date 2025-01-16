@@ -9,13 +9,16 @@ import android.media.ExifInterface
 import android.net.Uri
 import androidx.annotation.OptIn
 import androidx.camera.core.*
+import androidx.camera.core.ImageAnalysis.OUTPUT_IMAGE_FORMAT_RGBA_8888
 import androidx.camera.view.LifecycleCameraController
 import androidx.camera.view.PreviewView
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.google.mediapipe.tasks.vision.facedetector.FaceDetectorResult
 import com.phamnhantucode.photoeditor.camera.effect.FilterMappingSurfaceEffect
+import com.phamnhantucode.photoeditor.camera.helper.FaceDetectorHelper
 import com.phamnhantucode.photoeditor.core.model.ui.ImageFilter
 import kotlinx.coroutines.launch
 import java.io.File
@@ -26,7 +29,7 @@ import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 class CameraViewModel(
-    application: Application,
+    private val application: Application,
 ) : AndroidViewModel(application) {
     private var cameraController: LifecycleCameraController? = null
     private var cameraExecutor: ExecutorService = Executors.newSingleThreadExecutor()
@@ -46,8 +49,8 @@ class CameraViewModel(
     private val _filters = MutableLiveData<List<FilterCamera>>()
     val filters: LiveData<List<FilterCamera>> = _filters
 
-    private val _selectedFilter = MutableLiveData<FilterType>(FilterType.NONE)
-    val selectedFilter: LiveData<FilterType> = _selectedFilter
+    private val _selectedFilter = MutableLiveData<ImageFilter>()
+    val selectedFilter: LiveData<ImageFilter> = _selectedFilter
 
     private var _bitmapPreview = MutableLiveData<Bitmap>()
     val bitmapPreview: LiveData<Bitmap> = _bitmapPreview
@@ -56,6 +59,11 @@ class CameraViewModel(
 
     private var cameraEffect: CameraEffect? = null
 
+    private val _faceDetectorResult = MutableLiveData<FaceDetectorHelper.ResultBundle>()
+    val faceDetectorResult: LiveData<FaceDetectorHelper.ResultBundle> = _faceDetectorResult
+
+    private lateinit var faceDetectorHelper: FaceDetectorHelper
+
     @OptIn(ExperimentalGetImage::class)
     fun initializeCamera(context: Context, surfaceView: PreviewView) {
         try {
@@ -63,6 +71,20 @@ class CameraViewModel(
             cameraController?.bindToLifecycle(context as androidx.lifecycle.LifecycleOwner)
             cameraController?.cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
             surfaceView.controller = cameraController
+            faceDetectorHelper = FaceDetectorHelper(context = application, faceDetectorListener = object : FaceDetectorHelper.DetectorListener {
+                override fun onError(error: String, errorCode: Int) {
+
+                }
+
+                override fun onResults(resultBundle: FaceDetectorHelper.ResultBundle) {
+                    _faceDetectorResult.postValue(resultBundle)
+                }
+
+            })
+            cameraController?.setImageAnalysisAnalyzer(cameraExecutor, { imageProxy ->
+                faceDetectorHelper.detectLivestreamFrame(imageProxy)
+                imageProxy.close()
+            })
             _cameraState.postValue(CameraState.Success)
         } catch (e: Exception) {
             _cameraState.postValue(CameraState.Error(e))
@@ -103,7 +125,12 @@ class CameraViewModel(
                     override fun onImageSaved(output: ImageCapture.OutputFileResults) {
                         val bitmap = BitmapFactory.decodeFile(photoFile.absolutePath)
                         val rotatedBitmap = bitmap?.let { rotateBitmapIfNeeded(it, photoFile.absolutePath) }
-                        val filteredBitmap = selectedFilter.value?.applyFilter(rotatedBitmap ?: bitmap)
+                        val filteredBitmap =
+                            rotatedBitmap?.let {
+                                selectedFilter.value?.applyFilter(application,
+                                    it
+                                )
+                            }
 
                         filteredBitmap?.let {
                             _bitmapPreview.postValue(it)
@@ -160,6 +187,7 @@ class CameraViewModel(
         try {
             cameraExecutor.shutdown()
             cameraExecutor.awaitTermination(1000, TimeUnit.MILLISECONDS)
+            faceDetectorHelper.clearFaceDetector()
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -170,6 +198,7 @@ class CameraViewModel(
         filter.toCameraEffect().let { effects.add(it) }
         cameraEffect = effects.first()
         cameraController?.setEffects(effects)
+        _selectedFilter.postValue(filter)
     }
 
     sealed class CameraState {

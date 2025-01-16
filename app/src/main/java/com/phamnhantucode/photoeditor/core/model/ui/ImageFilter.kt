@@ -1,8 +1,11 @@
 package com.phamnhantucode.photoeditor.core.model.ui
 
+import android.content.Context
+import android.graphics.Bitmap
 import androidx.camera.core.CameraEffect
 import com.phamnhantucode.photoeditor.camera.effect.FilterMappingSurfaceEffect
 import com.phamnhantucode.photoeditor.camera.effect.processor.FilterProcessor
+import jp.co.cyberagent.android.gpuimage.GPUImage
 import jp.co.cyberagent.android.gpuimage.filter.GPUImageBoxBlurFilter
 import jp.co.cyberagent.android.gpuimage.filter.GPUImageBrightnessFilter
 import jp.co.cyberagent.android.gpuimage.filter.GPUImageContrastFilter
@@ -31,7 +34,7 @@ data class ImageFilter(
             FilterType.RGB_DILATION -> GPUImageRGBDilationFilter(currentValue.toInt())
             FilterType.SHARPEN -> GPUImageSharpenFilter().apply { setSharpness(currentValue) }
             FilterType.BOX_BLUR -> GPUImageBoxBlurFilter().apply { setBlurSize(currentValue) }
-            else -> GPUImageBoxBlurFilter(1.5f)
+            else -> GPUImageFilter()
         }
     }
 
@@ -47,6 +50,13 @@ data class ImageFilter(
                 filterType = filterType
             )
         )
+    }
+
+    fun applyFilter(context: Context, bitmap: Bitmap): Bitmap {
+        val gpuImage = GPUImage(context)
+        gpuImage.setImage(bitmap)
+        gpuImage.setFilter(getFilter())
+        return gpuImage.bitmapWithFilterApplied
     }
 
     companion object {

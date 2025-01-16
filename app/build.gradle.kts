@@ -72,7 +72,7 @@ dependencies {
     implementation(libs.gson)
     implementation(libs.gpuimage)
     implementation(libs.lottie)
-    implementation("com.github.bumptech.glide:compiler:4.16.0")
+    kapt("com.github.bumptech.glide:compiler:4.16.0")
     implementation(libs.firebase.ui.storage)
     implementation("com.google.mediapipe:tasks-vision:0.10.14")
 }

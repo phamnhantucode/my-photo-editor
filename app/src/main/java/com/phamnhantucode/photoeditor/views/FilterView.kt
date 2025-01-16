@@ -118,13 +118,14 @@ class FilterView @JvmOverloads constructor(
     }
 
     private fun updateMaxScroll() {
-        maxScrollX = max(0, (filteredBitmaps.size * (DEFAULT_SIZE + spacing.toInt())) - width)
+        maxScrollX = max(0, ((filteredBitmaps.size * (DEFAULT_SIZE + spacing.toInt())) -  width) / 2)
     }
 
     fun setOnFilterSelectedListener(listener: (ImageFilter) -> Unit) {
         filterSelectedListener = listener
         if (filters.isNotEmpty()) {
             listener(filters.first())
+            selectedFilter = filters.first()
         }
     }
 

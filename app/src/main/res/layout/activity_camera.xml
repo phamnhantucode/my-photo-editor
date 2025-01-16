@@ -2,8 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:layout_height="match_parent">
 
     <androidx.camera.view.PreviewView
         android:id="@+id/camera_view"
@@ -13,6 +12,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <com.phamnhantucode.photoeditor.views.CameraFaceDetectOverlayView
+        android:id="@+id/face_detect_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="@id/camera_view"
+        app:layout_constraintEnd_toEndOf="@id/camera_view"
+        app:layout_constraintStart_toStartOf="@id/camera_view"
+        app:layout_constraintTop_toTopOf="@id/camera_view" />
 
     <ProgressBar
         android:id="@+id/progressbar"
@@ -69,24 +77,24 @@
         android:id="@+id/camera_tools"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/bg_overlay"
-        android:padding="@dimen/padding_medium"
         android:layout_marginTop="@dimen/margin_large"
         android:layout_marginEnd="@dimen/margin_large"
+        android:background="@drawable/bg_overlay"
+        android:padding="@dimen/padding_medium"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent">
+
         <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/filter_btn"
             android:layout_width="32dp"
             android:layout_height="32dp"
+            android:background="@android:color/transparent"
             android:contentDescription="@null"
             android:src="@drawable/ic_filter_camera"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:background="@android:color/transparent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            />
+            app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <LinearLayout
@@ -130,13 +138,34 @@
             android:textColor="@color/white" />
     </LinearLayout>
 
-    <com.phamnhantucode.photoeditor.views.FilterView
-        android:id="@+id/filter_view"
+    <LinearLayout
+        android:id="@+id/filter_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/margin_large"
+        android:orientation="vertical"
         app:layout_constraintBottom_toTopOf="@+id/camera_zoom"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent">
+
+
+        <com.phamnhantucode.photoeditor.views.FilterView
+            android:id="@+id/filter_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/margin_large" />
+
+
+        <SeekBar
+            android:id="@+id/filterSeekbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_overlay"
+            android:progressTint="@color/white"
+            android:thumbTint="@color/white"
+            android:layout_marginHorizontal="@dimen/margin_medium"
+            android:paddingVertical="@dimen/padding_small"
+            android:layout_marginBottom="@dimen/margin_large_x" />
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
