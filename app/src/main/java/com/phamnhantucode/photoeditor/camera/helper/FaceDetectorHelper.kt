@@ -32,7 +32,7 @@ class FaceDetectorHelper(
     private var faceDetector: FaceDetector? = null
 
     init {
-//        setupFaceDetector()
+        setupFaceDetector()
     }
 
     fun clearFaceDetector() {
@@ -216,28 +216,28 @@ class FaceDetectorHelper(
     // Runs face detection on live streaming cameras frame-by-frame and returns the results
     // asynchronously to the caller.
     fun detectLivestreamFrame(imageProxy: ImageProxy) {
-//        val frameTime = SystemClock.uptimeMillis()
-//        val bitmap = imageProxy.toBitmap()
-//        val matrix =
-//            Matrix().apply {
-//                postRotate(imageProxy.imageInfo.rotationDegrees.toFloat())
-//            }
-//
-//        val rotatedBitmap =
-//            Bitmap.createBitmap(
-//                bitmap,
-//                0,
-//                0,
-//                bitmap.width,
-//                bitmap.height,
-//                matrix,
-//                true
-//            )
-//
-//        // Convert the input Bitmap face to an MPImage face to run inference
-//        val mpImage = BitmapImageBuilder(rotatedBitmap).build()
-//
-//        detectAsync(mpImage, frameTime)
+        val frameTime = SystemClock.uptimeMillis()
+        val bitmap = imageProxy.toBitmap()
+        val matrix =
+            Matrix().apply {
+                postRotate(imageProxy.imageInfo.rotationDegrees.toFloat())
+            }
+
+        val rotatedBitmap =
+            Bitmap.createBitmap(
+                bitmap,
+                0,
+                0,
+                bitmap.width,
+                bitmap.height,
+                matrix,
+                true
+            )
+
+        // Convert the input Bitmap face to an MPImage face to run inference
+        val mpImage = BitmapImageBuilder(rotatedBitmap).build()
+
+        detectAsync(mpImage, frameTime)
     }
 
     // Run face detection using MediaPipe Face Detector API

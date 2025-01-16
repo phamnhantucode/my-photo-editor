@@ -1,6 +1,7 @@
 package com.phamnhantucode.photoeditor.views
 
 import android.content.Context
+import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Matrix
@@ -9,15 +10,10 @@ import android.graphics.Rect
 import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.View
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
-import androidx.core.graphics.drawable.toBitmap
 import com.google.mediapipe.tasks.vision.facedetector.FaceDetectorResult
 import com.phamnhantucode.photoeditor.R
 import com.phamnhantucode.photoeditor.core.model.firebase.CameraSticker
-import com.phamnhantucode.photoeditor.core.model.firebase.CameraStickerPartial
-import com.phamnhantucode.photoeditor.core.model.firebase.CameraStickerPosition
-import com.phamnhantucode.photoeditor.extension.then
 
 class CameraFaceDetectOverlayView(context: Context?, attrs: AttributeSet?) :
     View(context, attrs) {
@@ -34,15 +30,9 @@ class CameraFaceDetectOverlayView(context: Context?, attrs: AttributeSet?) :
 
     private var isFrontCamera = true
 
-    val cameraSticker = CameraSticker(
-        partials = arrayListOf(
-            CameraStickerPartial(
-                position = CameraStickerPosition.TOP_OF_HEAD
-            )
-        )
-    )
+    private var cameraSticker: CameraSticker? = null
 
-    var boxDrawGuideRect: RectF? = null
+    var boxDrawGuideRect = listOf<RectF>()
 
     init {
         initPaints()
@@ -76,16 +66,20 @@ class CameraFaceDetectOverlayView(context: Context?, attrs: AttributeSet?) :
 
         results?.let {
             for (faceRect in faceRects) {
-                canvas.drawRect(faceRect, boxPaint)
+//                canvas.drawRect(faceRect, boxPaint)
             }
-            val sticker =
-                AppCompatResources.getDrawable(context, R.drawable.same_face_sticker)!!.toBitmap()
-            boxDrawGuideRect?.let { it1 ->
-                canvas.drawBitmap(
-                    sticker, Rect(
-                        0, 0, sticker.width, sticker.height
-                    ), it1, null
-                )
+            boxDrawGuideRect.forEach { rect ->
+                val sticker =
+                    cameraSticker?.partials?.get(boxDrawGuideRect.indexOf(rect))?.uri?.let {
+                        BitmapFactory.decodeFile(it.path)
+                    }
+                if (sticker != null) {
+                    canvas.drawBitmap(
+                        sticker, Rect(
+                            0, 0, sticker.width, sticker.height
+                        ), rect, null
+                    )
+                }
             }
         }
     }
@@ -130,17 +124,28 @@ class CameraFaceDetectOverlayView(context: Context?, attrs: AttributeSet?) :
         }
 
         if (detectionResults.detections().isNotEmpty()) {
-            val rect = cameraSticker.partials.first().position?.getDrawGuideBy(
-                detectionResults.detections().first()
-            )?.getRectF()
-            (rect != null).then {
-                matrix.mapRect(rect)
-                boxDrawGuideRect = rect
-            }
+//            val rect = cameraSticker?.partials.first().position?.getDrawGuideBy(
+//                detectionResults.detections().first()
+//            )?.getRectF()
+//            (rect != null).then {
+//                matrix.mapRect(rect)
+//                boxDrawGuideRect = rect
+//            }
+
+            boxDrawGuideRect = cameraSticker?.partials?.mapNotNull { partial ->
+                val rect = partial.position?.getDrawGuideBy(detectionResults.detections().first())
+                    ?.getRectF()
+                rect?.let {
+                    matrix.mapRect(it)
+                }
+                rect
+            } ?: emptyList()
         }
-
-
         invalidate()
+    }
+
+    fun setFaceSticker(sticker: CameraSticker?) {
+        cameraSticker = sticker
     }
 
     companion object {

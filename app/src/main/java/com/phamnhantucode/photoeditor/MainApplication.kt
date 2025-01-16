@@ -17,6 +17,8 @@ class MainApplication: Application() {
         super.onCreate()
         PhotoEditorFirebaseStorage.getInstance().loadConfigFile(this)
     }
+
+
 }
 
 @GlideModule

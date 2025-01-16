@@ -86,8 +86,8 @@
 
         <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/filter_btn"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="@dimen/size_ic_medium_large"
+            android:layout_height="@dimen/size_ic_medium_large"
             android:background="@android:color/transparent"
             android:contentDescription="@null"
             android:src="@drawable/ic_filter_camera"
@@ -96,6 +96,33 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ImageView
+        android:id="@+id/face_sticker_btn"
+        android:layout_width="@dimen/size_ic_large"
+        android:layout_height="@dimen/size_ic_large"
+        android:layout_margin="@dimen/margin_large"
+        android:background="@drawable/bg_overlay"
+        android:contentDescription="@null"
+        android:padding="@dimen/padding_medium"
+        android:src="@drawable/ic_sticker"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/white" />
+
+    <ImageView
+        android:id="@+id/cancel_face_sticker_btn"
+        android:layout_width="@dimen/size_ic_medium_large"
+        android:layout_height="@dimen/size_ic_medium_large"
+        android:background="@drawable/bg_overlay"
+        android:contentDescription="@null"
+        android:layout_marginTop="@dimen/margin_medium"
+        android:padding="@dimen/padding_medium"
+        android:src="@drawable/ic_x"
+        app:layout_constraintEnd_toEndOf="@+id/face_sticker_btn"
+        app:layout_constraintStart_toStartOf="@+id/face_sticker_btn"
+        app:layout_constraintTop_toBottomOf="@id/face_sticker_btn"
+        app:tint="@color/white" />
 
     <LinearLayout
         android:id="@+id/camera_zoom"
@@ -159,12 +186,12 @@
             android:id="@+id/filterSeekbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_overlay"
-            android:progressTint="@color/white"
-            android:thumbTint="@color/white"
             android:layout_marginHorizontal="@dimen/margin_medium"
+            android:layout_marginBottom="@dimen/margin_large_x"
+            android:background="@drawable/bg_overlay"
             android:paddingVertical="@dimen/padding_small"
-            android:layout_marginBottom="@dimen/margin_large_x" />
+            android:progressTint="@color/white"
+            android:thumbTint="@color/white" />
 
     </LinearLayout>
 

@@ -19,6 +19,7 @@ import androidx.lifecycle.viewModelScope
 import com.google.mediapipe.tasks.vision.facedetector.FaceDetectorResult
 import com.phamnhantucode.photoeditor.camera.effect.FilterMappingSurfaceEffect
 import com.phamnhantucode.photoeditor.camera.helper.FaceDetectorHelper
+import com.phamnhantucode.photoeditor.core.model.firebase.CameraSticker
 import com.phamnhantucode.photoeditor.core.model.ui.ImageFilter
 import kotlinx.coroutines.launch
 import java.io.File
@@ -51,6 +52,9 @@ class CameraViewModel(
 
     private val _selectedFilter = MutableLiveData<ImageFilter>()
     val selectedFilter: LiveData<ImageFilter> = _selectedFilter
+
+    private val _faceSticker = MutableLiveData<CameraSticker?>(null)
+    val faceSticker: LiveData<CameraSticker?> = _faceSticker
 
     private var _bitmapPreview = MutableLiveData<Bitmap>()
     val bitmapPreview: LiveData<Bitmap> = _bitmapPreview
@@ -199,6 +203,10 @@ class CameraViewModel(
         cameraEffect = effects.first()
         cameraController?.setEffects(effects)
         _selectedFilter.postValue(filter)
+    }
+
+    fun setFaceSticker(sticker: CameraSticker?) {
+        _faceSticker.postValue(sticker)
     }
 
     sealed class CameraState {

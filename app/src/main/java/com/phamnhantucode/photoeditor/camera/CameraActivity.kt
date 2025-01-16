@@ -4,6 +4,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.ScaleGestureDetector
 import android.view.View
@@ -18,6 +19,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.isVisible
 import com.phamnhantucode.photoeditor.R
+import com.phamnhantucode.photoeditor.camera.fragment.CameraStickerBottomSheetDialogFragment
 import com.phamnhantucode.photoeditor.databinding.ActivityCameraBinding
 import com.phamnhantucode.photoeditor.editor.EditorActivity
 import com.phamnhantucode.photoeditor.extension.hideSystemBars
@@ -121,6 +123,16 @@ class CameraActivity() : AppCompatActivity() {
                     }
                 }
             })
+
+            faceStickerBtn.setOnClickListener {
+                val fragment = CameraStickerBottomSheetDialogFragment {
+                    viewModel.setFaceSticker(it)
+                }
+                fragment.show(supportFragmentManager, fragment.tag)
+            }
+            cancelFaceStickerBtn.setOnClickListener {
+                viewModel.setFaceSticker(null)
+            }
         }
     }
 
@@ -158,6 +170,16 @@ class CameraActivity() : AppCompatActivity() {
                 bundle.inputImageHeight,
                 bundle.inputImageWidth,
             )
+        }
+        viewModel.faceSticker.observe(this) { sticker ->
+
+            binding.cancelFaceStickerBtn.isVisible = sticker != null
+            if (sticker == null) {
+                binding.faceStickerBtn.imageTintList = ColorStateList.valueOf(getColor(R.color.white))
+            } else {
+                binding.faceStickerBtn.imageTintList = ColorStateList.valueOf(getColor(R.color.text_selected))
+            }
+            binding.faceDetectOverlay.setFaceSticker(sticker)
         }
     }
 

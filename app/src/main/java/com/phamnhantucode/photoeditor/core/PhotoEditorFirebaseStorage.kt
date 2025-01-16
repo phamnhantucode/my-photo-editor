@@ -7,6 +7,7 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import com.google.gson.Gson
 import com.phamnhantucode.photoeditor.core.model.Version
+import com.phamnhantucode.photoeditor.core.model.firebase.CameraSticker
 import com.phamnhantucode.photoeditor.core.model.firebase.DataCenter
 import com.phamnhantucode.photoeditor.core.model.firebase.Sticker
 import java.io.File
@@ -81,6 +82,7 @@ class PhotoEditorFirebaseStorage {
         val file = File(context.filesDir, filePath)
         if (file.exists()) {
             dataCenter.stickers?.stickers?.find { it.path == filePath }?.isDownloaded = true
+            dataCenter.cameraStickers?.stickers?.find { it.partials.any { it.path == filePath } }?.isDownloaded = true
             onSuccessCallback(Uri.fromFile(file))
         } else {
             storageRef.child(filePath).downloadUrl.addOnSuccessListener { uri ->
@@ -96,6 +98,7 @@ class PhotoEditorFirebaseStorage {
         val file = File(context.filesDir, filePath)
         return if (file.exists()) {
             dataCenter.stickers?.stickers?.find { it.path == filePath }?.isDownloaded = true
+            dataCenter.cameraStickers?.stickers?.find { it.partials.any { it.path == filePath } }?.isDownloaded = true
             Uri.fromFile(file)
         } else {
             null
@@ -121,6 +124,12 @@ class PhotoEditorFirebaseStorage {
         }.addOnFailureListener {
             println("Error downloading file")
         }
+    }
+
+    fun getCameraStickers(searchKey: String = ""): ArrayList<CameraSticker> {
+        return dataCenter.cameraStickers?.stickers?.filter {
+            it.name!!.contains(searchKey, ignoreCase = true)
+        } as ArrayList<CameraSticker>
     }
 
     companion object {

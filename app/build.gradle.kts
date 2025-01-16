@@ -75,4 +75,5 @@ dependencies {
     kapt("com.github.bumptech.glide:compiler:4.16.0")
     implementation(libs.firebase.ui.storage)
     implementation("com.google.mediapipe:tasks-vision:0.10.14")
+    implementation("com.google.mlkit:face-detection:16.1.7")
 }

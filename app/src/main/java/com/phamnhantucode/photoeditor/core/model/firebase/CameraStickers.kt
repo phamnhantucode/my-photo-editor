@@ -1,6 +1,7 @@
 package com.phamnhantucode.photoeditor.core.model.firebase
 
 import android.graphics.RectF
+import android.net.Uri
 import com.google.gson.annotations.SerializedName
 import com.google.mediapipe.tasks.components.containers.Detection
 
@@ -13,7 +14,6 @@ data class CameraSticker(
     @SerializedName("id") var id: Int? = null,
     @SerializedName("name") var name: String? = null,
     @SerializedName("partials") var partials: ArrayList<CameraStickerPartial> = arrayListOf(),
-    @SerializedName("url") var url: String? = null,
     var isDownloaded: Boolean = false,
 )
 
@@ -21,6 +21,7 @@ data class CameraStickerPartial(
     @SerializedName("fileName") var fileName: String? = null,
     @SerializedName("path") var path: String? = null,
     @SerializedName("position") var position: CameraStickerPosition? = null,
+    var uri: Uri? = null,
 )
 
 enum class CameraStickerPosition {
@@ -61,7 +62,7 @@ enum class CameraStickerPosition {
             TOP_OF_HEAD -> {
                 DrawGuide(
                     faceBox.left + faceBox.width() / 2,
-                    faceBox.top - faceBox.height() / 2,
+                    faceBox.top - faceBox.height() / 2 - faceBox.height() / 10,
                     faceBox.width(),
                     faceBox.height()
                 )
