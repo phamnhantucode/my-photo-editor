@@ -3,9 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
-    android:background="@color/black"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/black"
     tools:context=".editor.draw.DrawActivity">
 
     <com.phamnhantucode.photoeditor.views.ListenableImageView
@@ -40,11 +40,27 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <ImageView
+        android:id="@+id/backBtn"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="@dimen/margin_medium"
+        android:background="@drawable/bg_box_round_circle"
+        android:contentDescription="@null"
+        android:padding="@dimen/padding_medium"
+        android:src="@drawable/ic_back_ios"
+        app:layout_constraintBottom_toBottomOf="@id/toolbox"
+        app:layout_constraintDimensionRatio="H,1:1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/toolbox"
+
+        />
+
     <LinearLayout
         android:id="@+id/toolbox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_large"
+        android:layout_marginTop="@dimen/margin_large_x"
         android:background="@drawable/bg_box_round_circle"
         android:orientation="horizontal"
         android:padding="@dimen/padding_medium"
@@ -75,7 +91,7 @@
             android:contentDescription="@null"
             android:padding="@dimen/padding_medium"
             android:src="@drawable/ic_brush"
-            app:tint="@color/white"/>
+            app:tint="@color/white" />
 
         <ImageView
             android:id="@+id/iv_pen_neon"
@@ -99,14 +115,14 @@
             android:contentDescription="@null"
             android:padding="@dimen/padding_medium"
             android:src="@drawable/ic_eraser"
-            app:tint="@color/white"/>
+            app:tint="@color/white" />
     </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/nextBtn"
         android:layout_width="@dimen/size_ic_large_x"
         android:layout_height="@dimen/size_ic_large_x"
-        android:layout_margin="@dimen/margin_large_x"
+        android:layout_margin="@dimen/margin_large_xx"
         android:backgroundTint="@color/orange"
         android:contentDescription="@null"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -118,11 +134,11 @@
         android:id="@+id/colorPickerBtn"
         android:layout_width="@dimen/size_ic_large_x"
         android:layout_height="@dimen/size_ic_large_x"
-        android:layout_margin="@dimen/margin_large_x"
-        android:outlineSpotShadowColor="@color/white"
+        android:layout_margin="@dimen/margin_large_xx"
         android:contentDescription="@null"
-        app:layout_constraintStart_toStartOf="parent"
+        android:outlineSpotShadowColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:shapeAppearanceOverlay="@style/roundedCircle"
         app:srcCompat="@drawable/ic_color_picker"
         app:tint="@color/white"

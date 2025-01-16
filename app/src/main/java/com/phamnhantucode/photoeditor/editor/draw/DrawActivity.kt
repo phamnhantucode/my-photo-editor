@@ -24,6 +24,7 @@ import com.phamnhantucode.photoeditor.databinding.ActivityDrawBinding
 import com.phamnhantucode.photoeditor.extension.doIfAboveApi
 import com.phamnhantucode.photoeditor.extension.dp
 import com.phamnhantucode.photoeditor.extension.getContrastTextColor
+import com.phamnhantucode.photoeditor.extension.hideSystemBars
 import com.phamnhantucode.photoeditor.views.DrawOverlay
 
 class DrawActivity : AppCompatActivity() {
@@ -32,6 +33,7 @@ class DrawActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        hideSystemBars()
         binding = ActivityDrawBinding.inflate(layoutInflater)
         setContentView(binding.root)
         val imageUri = intent.getStringExtra(EXTRA_IMAGE_URI)
@@ -112,6 +114,10 @@ class DrawActivity : AppCompatActivity() {
             }
             ivBrush.setOnClickListener {
                 viewModel.setDrawMode(DrawOverlay.PaintType.BRUSH)
+            }
+            backBtn.setOnClickListener {
+                setResult(RESULT_CANCELED)
+                finish()
             }
         }
     }
