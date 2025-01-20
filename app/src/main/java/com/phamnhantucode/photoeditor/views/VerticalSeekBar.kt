@@ -77,6 +77,10 @@ class VerticalSeekBar @JvmOverloads constructor(
 
     init {
         setLayerType(LAYER_TYPE_SOFTWARE, null)
+        val typeArrays = context.obtainStyledAttributes(attrs, R.styleable.VerticalSeekBar)
+        maxValue = typeArrays.getFloat(R.styleable.VerticalSeekBar_max, maxValue)
+        minValue = typeArrays.getFloat(R.styleable.VerticalSeekBar_min, minValue)
+        currentValue = typeArrays.getFloat(R.styleable.VerticalSeekBar_progress, currentValue)
         currentValue = 20f
     }
 

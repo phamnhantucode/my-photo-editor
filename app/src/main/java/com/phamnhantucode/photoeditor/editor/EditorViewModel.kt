@@ -4,6 +4,7 @@ import android.app.Application
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.graphics.Typeface
 import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
@@ -30,6 +31,7 @@ class EditorViewModel(
             mode = TextEditorMode.FILL,
             color = Color.WHITE,
             size = Editor.TEXT_SIZE_DEFAULT,
+            typeface = Typeface.DEFAULT
         )
     )
     val textEditorState: LiveData<TextEditorState> = _textEditorState
@@ -113,5 +115,9 @@ class EditorViewModel(
     fun setTextEditorState(textEditorState: TextEditorState, isEditingText: Boolean = false) {
         this.isEditingText = isEditingText
         _textEditorState.value = textEditorState
+    }
+
+    fun setTextOverlayTypeface(typeface: Typeface) {
+        _textEditorState.value = _textEditorState.value?.copy(typeface = typeface)
     }
 }

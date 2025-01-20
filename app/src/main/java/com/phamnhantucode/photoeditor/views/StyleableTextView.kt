@@ -23,6 +23,7 @@ class StyleableTextView @JvmOverloads constructor(
         this.textViewState = textViewState
         setText(textViewState.text)
         textSize = textViewState.size
+        typeface = textViewState.typeface
         when (textViewState.mode) {
             TextEditorMode.FILL -> {
                 setTextColor(textViewState.color.getContrastTextColor())

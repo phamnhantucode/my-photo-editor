@@ -154,6 +154,7 @@ class EditorActivity : AppCompatActivity() {
 
     private fun LayoutTextInputOverlayBinding.updateTextEditor(state: TextEditorState) {
         etTextInput.textSize = state.size
+        etTextInput.typeface = state.typeface
         when (state.mode) {
             TextEditorMode.FILL -> {
                 etTextInput.setTextColor(state.color.getContrastTextColor())
@@ -224,7 +225,9 @@ class EditorActivity : AppCompatActivity() {
             if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
                 bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
             }
-            viewModel.toggleMoreOptions()
+            if (binding.menuMore.isVisible) {
+                viewModel.toggleMoreOptions()
+            }
         }
         binding.cropBtn.setOnClickListener {
             viewModel.originUri?.let { uri ->
@@ -293,6 +296,11 @@ class EditorActivity : AppCompatActivity() {
             fragment.show(supportFragmentManager, fragment.tag)
         }
         binding.textInputOverlay.apply {
+            textTypefaceWheel.setOnFontSelectedListener {  typeface ->
+                if (typeface != null) {
+                    viewModel.setTextOverlayTypeface(typeface)
+                }
+            }
             verticalSeekbar.apply {
                 currentValue = Editor.TEXT_SIZE_DEFAULT
                 shouldShowCircle = false
@@ -301,6 +309,9 @@ class EditorActivity : AppCompatActivity() {
                 }
             }
             cancelBtn.setOnClickListener {
+                if (viewModel.isEditingText && currentSelectedTextView != null) {
+                    editor.editText(currentSelectedTextView!!, currentSelectedTextView!!.textViewState!!)
+                }
                 binding.textInputOverlay.root.isVisible = false
                 viewModel.clearTextOverlayState()
                 etTextInput.text.clear()
