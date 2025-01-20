@@ -47,6 +47,10 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    implementation(files("C:\\Users\\ASUS\\Downloads\\htextview-fall-release.aar"))
+    implementation(files("C:\\Users\\ASUS\\Downloads\\htextview-base-release.aar"))
+    implementation(files("C:\\Users\\ASUS\\Downloads\\htextview-scale-release.aar"))
+    implementation(files("C:\\Users\\ASUS\\Downloads\\htextview-typer-release.aar"))
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -75,5 +79,5 @@ dependencies {
     kapt("com.github.bumptech.glide:compiler:4.16.0")
     implementation(libs.firebase.ui.storage)
     implementation("com.google.mediapipe:tasks-vision:0.10.14")
-    implementation("com.google.mlkit:face-detection:16.1.7")
+    implementation("com.github.Dimezis:BlurView:version-2.0.6")
 }

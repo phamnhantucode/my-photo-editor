@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
@@ -7,52 +8,96 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/toolbar"
-        android:layout_width="0dp"
-        android:layout_height="?attr/actionBarSize"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:title="@string/app_name" />
+    <ImageView
+        android:id="@+id/iv_bg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:contentDescription="@null"
+        android:scaleType="centerCrop"
+        app:srcCompat="@drawable/bg_main_2" />
 
-    <androidx.appcompat.widget.AppCompatImageButton
-        android:id="@+id/btn_add"
-        android:layout_width="@dimen/size_ic_btn"
-        android:layout_height="@dimen/size_ic_btn"
-        android:src="@drawable/ic_add"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/btn_album"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar" />
+    <eightbitlab.com.blurview.BlurView
+        android:id="@+id/blurView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginHorizontal="@dimen/margin_large_x"
+        android:layout_marginVertical="@dimen/margin_large_xxx"
+        android:background="@drawable/bg_round">
 
-    <TextView
-        android:id="@+id/tv_add"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/add"
-        app:layout_constraintEnd_toEndOf="@id/btn_add"
-        app:layout_constraintStart_toStartOf="@id/btn_add"
-        app:layout_constraintTop_toBottomOf="@id/btn_add" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-    <androidx.appcompat.widget.AppCompatImageButton
-        android:id="@+id/btn_album"
-        android:layout_width="@dimen/size_ic_btn"
-        android:layout_height="@dimen/size_ic_btn"
-        android:src="@drawable/ic_gallery"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/btn_add"
-        app:layout_constraintTop_toBottomOf="@id/toolbar" />
 
-    <TextView
-        android:id="@+id/tv_album"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/album"
-        app:layout_constraintEnd_toEndOf="@id/btn_album"
-        app:layout_constraintStart_toStartOf="@id/btn_album"
-        app:layout_constraintTop_toBottomOf="@id/btn_album" />
+            <ImageView
+                android:id="@+id/app_name_iv"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:contentDescription="@null"
+                android:src="@drawable/app_name_logo"
+                app:layout_constraintDimensionRatio="H,16:9"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+            <com.hanks.htextview.typer.TyperTextView
+                android:id="@+id/slogan_tv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margin_large_xxx"
+                app:typerSpeed="100"
+                android:textAppearance="@style/TextSloganHomeScreen"
+                android:textAlignment="center"
+                app:layout_constraintBottom_toTopOf="@id/btn_add"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/app_name_iv" />
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/btn_add"
+                android:layout_width="@dimen/size_ic_btn"
+                android:layout_height="@dimen/size_ic_btn"
+                android:backgroundTint="@color/white"
+                android:elevation="@dimen/small"
+                android:src="@drawable/ic_add"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/btn_album"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/app_name_iv" />
+
+            <TextView
+                android:id="@+id/tv_add"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/add"
+                app:layout_constraintEnd_toEndOf="@id/btn_add"
+                app:layout_constraintStart_toStartOf="@id/btn_add"
+                app:layout_constraintTop_toBottomOf="@id/btn_add" />
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/btn_album"
+                android:layout_width="@dimen/size_ic_btn"
+                android:layout_height="@dimen/size_ic_btn"
+                android:backgroundTint="@color/white"
+                android:elevation="@dimen/small"
+                android:src="@drawable/ic_gallery"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/btn_add"
+                app:layout_constraintTop_toBottomOf="@+id/app_name_iv" />
+
+            <TextView
+                android:id="@+id/tv_album"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/album"
+                app:layout_constraintEnd_toEndOf="@id/btn_album"
+                app:layout_constraintStart_toStartOf="@id/btn_album"
+                app:layout_constraintTop_toBottomOf="@id/btn_album" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </eightbitlab.com.blurview.BlurView>
+
+</FrameLayout>
