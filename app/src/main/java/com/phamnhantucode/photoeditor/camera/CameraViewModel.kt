@@ -4,24 +4,26 @@ import android.app.Application
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Canvas
 import android.graphics.Matrix
 import android.media.ExifInterface
 import android.net.Uri
 import androidx.annotation.OptIn
 import androidx.camera.core.*
-import androidx.camera.core.ImageAnalysis.OUTPUT_IMAGE_FORMAT_RGBA_8888
 import androidx.camera.view.LifecycleCameraController
 import androidx.camera.view.PreviewView
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.google.mediapipe.tasks.vision.facedetector.FaceDetectorResult
 import com.phamnhantucode.photoeditor.camera.effect.FilterMappingSurfaceEffect
 import com.phamnhantucode.photoeditor.camera.helper.FaceDetectorHelper
 import com.phamnhantucode.photoeditor.core.model.firebase.CameraSticker
 import com.phamnhantucode.photoeditor.core.model.ui.ImageFilter
+import com.phamnhantucode.photoeditor.views.CameraFaceDetectOverlayView
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -40,6 +42,9 @@ class CameraViewModel(
 
     private val _photoUri = MutableLiveData<Uri>()
     val photoUri: LiveData<Uri> = _photoUri
+
+    private val _cameraSelector = MutableLiveData(CameraSelector.DEFAULT_BACK_CAMERA)
+    val cameraSelector: LiveData<CameraSelector> = _cameraSelector
 
     private val _currentZoom = MutableLiveData(1f)
     val currentZoom: LiveData<Float> = _currentZoom
@@ -75,18 +80,22 @@ class CameraViewModel(
             cameraController?.bindToLifecycle(context as androidx.lifecycle.LifecycleOwner)
             cameraController?.cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
             surfaceView.controller = cameraController
-            faceDetectorHelper = FaceDetectorHelper(context = application, faceDetectorListener = object : FaceDetectorHelper.DetectorListener {
-                override fun onError(error: String, errorCode: Int) {
+            faceDetectorHelper = FaceDetectorHelper(
+                context = application,
+                faceDetectorListener = object : FaceDetectorHelper.DetectorListener {
+                    override fun onError(error: String, errorCode: Int) {
 
-                }
+                    }
 
-                override fun onResults(resultBundle: FaceDetectorHelper.ResultBundle) {
-                    _faceDetectorResult.postValue(resultBundle)
-                }
+                    override fun onResults(resultBundle: FaceDetectorHelper.ResultBundle) {
+                        _faceDetectorResult.postValue(resultBundle)
+                    }
 
-            })
+                })
             cameraController?.setImageAnalysisAnalyzer(cameraExecutor, { imageProxy ->
-                faceDetectorHelper.detectLivestreamFrame(imageProxy)
+                if (cameraState.value != CameraState.Processing) {
+                    faceDetectorHelper.detectLivestreamFrame(imageProxy)
+                }
                 imageProxy.close()
             })
             _cameraState.postValue(CameraState.Success)
@@ -100,11 +109,13 @@ class CameraViewModel(
         viewModelScope.launch {
             _cameraState.value = CameraState.Processing
             try {
-                cameraController?.cameraSelector = if (cameraController?.cameraSelector == CameraSelector.DEFAULT_FRONT_CAMERA) {
-                    CameraSelector.DEFAULT_BACK_CAMERA
-                } else {
-                    CameraSelector.DEFAULT_FRONT_CAMERA
-                }
+                cameraController?.cameraSelector =
+                    if (cameraController?.cameraSelector == CameraSelector.DEFAULT_FRONT_CAMERA) {
+                        CameraSelector.DEFAULT_BACK_CAMERA
+                    } else {
+                        CameraSelector.DEFAULT_FRONT_CAMERA
+                    }
+                _cameraSelector.postValue(cameraController?.cameraSelector)
                 _cameraState.value = CameraState.Success
             } catch (e: Exception) {
                 _cameraState.value = CameraState.Error(e)
@@ -112,59 +123,95 @@ class CameraViewModel(
         }
     }
 
-    fun takePicture() {
-        viewModelScope.launch {
-            _cameraState.value = CameraState.Processing
+    fun takePicture(faceDetectOverlay: CameraFaceDetectOverlayView) {
+        if (cameraState.value != CameraState.Processing) {
+            viewModelScope.launch {
+                _cameraState.value = CameraState.Processing
 
-            val photoFile = File(
-                getApplication<Application>().getExternalFilesDir(null),
-                SimpleDateFormat(FILENAME_FORMAT, Locale.US)
-                    .format(System.currentTimeMillis()) + ".jpg"
-            )
+                val photoFile = File(
+                    getApplication<Application>().getExternalFilesDir(null),
+                    SimpleDateFormat(FILENAME_FORMAT, Locale.US)
+                        .format(System.currentTimeMillis()) + ".jpg"
+                )
 
-            cameraController?.takePicture(
-                ImageCapture.OutputFileOptions.Builder(photoFile).build(),
-                cameraExecutor,
-                object : ImageCapture.OnImageSavedCallback {
-                    override fun onImageSaved(output: ImageCapture.OutputFileResults) {
-                        val bitmap = BitmapFactory.decodeFile(photoFile.absolutePath)
-                        val rotatedBitmap = bitmap?.let { rotateBitmapIfNeeded(it, photoFile.absolutePath) }
-                        val filteredBitmap =
-                            rotatedBitmap?.let {
-                                selectedFilter.value?.applyFilter(application,
-                                    it
+                cameraController?.takePicture(
+                    ImageCapture.OutputFileOptions.Builder(photoFile).build(),
+                    cameraExecutor,
+                    object : ImageCapture.OnImageSavedCallback {
+                        override fun onImageSaved(output: ImageCapture.OutputFileResults) {
+                            val bitmap = BitmapFactory.decodeFile(photoFile.absolutePath)
+                            val rotatedBitmap = bitmap?.let {
+                                rotateBitmapIfNeeded(
+                                    it,
+                                    photoFile.absolutePath,
+                                    cameraSelector.value
                                 )
+                            }?.copy(Bitmap.Config.ARGB_8888, true)
+
+                            val filteredBitmap =
+                                faceDetectOverlay.drawOnBitmap(rotatedBitmap!!).let {
+                                    selectedFilter.value?.applyFilter(
+                                        application,
+                                        it
+                                    )
+                                }
+
+                            filteredBitmap?.let {
+                                _bitmapPreview.postValue(it)
+                                photoFile.outputStream()
+                                    .use { os -> it.compress(Bitmap.CompressFormat.JPEG, 100, os) }
                             }
 
-                        filteredBitmap?.let {
-                            _bitmapPreview.postValue(it)
-                            photoFile.outputStream()
-                                .use { os -> it.compress(Bitmap.CompressFormat.JPEG, 100, os) }
+                            val savedUri = Uri.fromFile(photoFile)
+                            _photoUri.postValue(savedUri)
+                            _cameraState.postValue(CameraState.Success)
                         }
 
-                        val savedUri = Uri.fromFile(photoFile)
-                        _photoUri.postValue(savedUri)
-                        _cameraState.postValue(CameraState.Success)
+                        override fun onError(exc: ImageCaptureException) {
+                            _cameraState.postValue(CameraState.Error(exc))
+                        }
                     }
-
-                    override fun onError(exc: ImageCaptureException) {
-                        _cameraState.postValue(CameraState.Error(exc))
-                    }
-                }
-            )
-            (cameraEffect as? FilterMappingSurfaceEffect)?.release()
+                )
+                (cameraEffect as? FilterMappingSurfaceEffect)?.release()
+            }
         }
     }
 
-    private fun rotateBitmapIfNeeded(bitmap: Bitmap, photoPath: String): Bitmap {
+    private fun rotateBitmapIfNeeded(
+        bitmap: Bitmap,
+        photoPath: String,
+        cameraSelector: CameraSelector?,
+    ): Bitmap {
         val exif = ExifInterface(photoPath)
-        val orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
+        val orientation =
+            exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
         val matrix = Matrix()
+        if (cameraSelector == CameraSelector.DEFAULT_FRONT_CAMERA) {
+            matrix.postRotate(-90f)
+        }
 
         when (orientation) {
-            ExifInterface.ORIENTATION_ROTATE_90 -> matrix.postRotate(90f)
-            ExifInterface.ORIENTATION_ROTATE_180 -> matrix.postRotate(180f)
-            ExifInterface.ORIENTATION_ROTATE_270 -> matrix.postRotate(270f)
+            ExifInterface.ORIENTATION_NORMAL -> return bitmap
+            ExifInterface.ORIENTATION_FLIP_HORIZONTAL -> matrix.setScale(-1f, 1f)
+            ExifInterface.ORIENTATION_ROTATE_270 -> matrix.setRotate(-90f)
+            ExifInterface.ORIENTATION_ROTATE_180 -> matrix.setRotate(180f)
+            ExifInterface.ORIENTATION_ROTATE_90 -> matrix.setRotate(90f)
+            ExifInterface.ORIENTATION_FLIP_VERTICAL -> {
+                matrix.setRotate(180f)
+                matrix.postScale(-1f, 1f)
+            }
+
+            ExifInterface.ORIENTATION_TRANSPOSE -> {
+                matrix.setRotate(90f)
+                matrix.postScale(-1f, 1f)
+            }
+
+            ExifInterface.ORIENTATION_TRANSVERSE -> {
+                matrix.setRotate(-90f)
+                matrix.postScale(-1f, 1f)
+            }
+
+            else -> return bitmap
         }
 
         return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
@@ -198,11 +245,15 @@ class CameraViewModel(
     }
 
     fun applyFilter(filter: ImageFilter) {
-        val effects = mutableSetOf<CameraEffect>()
-        filter.toCameraEffect().let { effects.add(it) }
-        cameraEffect = effects.first()
-        cameraController?.setEffects(effects)
-        _selectedFilter.postValue(filter)
+        viewModelScope.launch(Dispatchers.IO) {
+            val effects = mutableSetOf<CameraEffect>()
+            filter.toCameraEffect().let { effects.add(it) }
+            cameraEffect = effects.first()
+            withContext(Dispatchers.Main) {
+                cameraController?.setEffects(effects)
+            }
+            _selectedFilter.postValue(filter)
+        }
     }
 
     fun setFaceSticker(sticker: CameraSticker?) {

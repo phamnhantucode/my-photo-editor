@@ -1,6 +1,7 @@
 package com.phamnhantucode.photoeditor.views
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Color
@@ -14,6 +15,8 @@ import androidx.core.content.ContextCompat
 import com.google.mediapipe.tasks.vision.facedetector.FaceDetectorResult
 import com.phamnhantucode.photoeditor.R
 import com.phamnhantucode.photoeditor.core.model.firebase.CameraSticker
+import kotlin.math.max
+import kotlin.math.min
 
 class CameraFaceDetectOverlayView(context: Context?, attrs: AttributeSet?) :
     View(context, attrs) {
@@ -28,11 +31,12 @@ class CameraFaceDetectOverlayView(context: Context?, attrs: AttributeSet?) :
     private var bounds = Rect()
     private var faceRects = listOf<RectF>()
 
-    private var isFrontCamera = true
+    var isFrontCamera = true
 
     private var cameraSticker: CameraSticker? = null
 
-    var boxDrawGuideRect = listOf<RectF>()
+    private var boxDrawGuideRect = listOf<RectF>()
+
 
     init {
         initPaints()
@@ -65,9 +69,6 @@ class CameraFaceDetectOverlayView(context: Context?, attrs: AttributeSet?) :
         super.draw(canvas)
 
         results?.let {
-            for (faceRect in faceRects) {
-//                canvas.drawRect(faceRect, boxPaint)
-            }
             boxDrawGuideRect.forEach { rect ->
                 val sticker =
                     cameraSticker?.partials?.get(boxDrawGuideRect.indexOf(rect))?.uri?.let {
@@ -91,24 +92,7 @@ class CameraFaceDetectOverlayView(context: Context?, attrs: AttributeSet?) :
     ) {
         results = detectionResults
 
-        val matrix = Matrix()
-
-        val scaleX = width.toFloat() / imageWidth
-        val scaleY = height.toFloat() / imageHeight
-        val scaleFitCenter = maxOf(scaleX, scaleY)
-
-        val newWidth = imageWidth * scaleFitCenter
-        val newHeight = imageHeight * scaleFitCenter
-
-        val translateX = (width - newWidth) / 2
-        val translateY = (height - newHeight) / 2
-
-        matrix.postScale(scaleFitCenter, scaleFitCenter)
-        matrix.postTranslate(translateX, translateY)
-
-        if (isFrontCamera) {
-            matrix.postScale(-1f, 1f, width / 2f, height / 2f)
-        }
+        val matrix = getScaleMatrix(imageWidth, imageHeight)
 
         faceRects = detectionResults.detections().map { detection ->
             val boundingBox = detection.boundingBox()
@@ -144,8 +128,51 @@ class CameraFaceDetectOverlayView(context: Context?, attrs: AttributeSet?) :
         invalidate()
     }
 
+    fun getScaleMatrix(imageWidth: Int, imageHeight: Int): Matrix {
+        val matrix = Matrix()
+
+        val maxWidth = max(width, imageWidth)
+        val maxHeight = max(height, imageHeight)
+        val minWidth = min(width, imageWidth)
+        val minHeight = min(height, imageHeight)
+
+        val scaleX = maxWidth / minWidth.toFloat()
+        val scaleY = maxHeight / minHeight.toFloat()
+        val scaleFitCenter = maxOf(scaleX, scaleY)
+
+        val newWidth = imageWidth * scaleFitCenter
+        val newHeight = imageHeight * scaleFitCenter
+
+        val translateX = (width - newWidth) / 2
+        val translateY = (height - newHeight) / 2
+
+
+        matrix.postScale(scaleFitCenter, scaleFitCenter)
+        matrix.postTranslate(translateX, translateY)
+
+        if (isFrontCamera) {
+            matrix.postScale(-1f, 1f, width / 2f, height / 2f)
+        }
+
+        return matrix
+    }
+
     fun setFaceSticker(sticker: CameraSticker?) {
         cameraSticker = sticker
+    }
+
+    fun getDrawBitmap(): Bitmap {
+        val scaledBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(scaledBitmap)
+        draw(canvas)
+        return scaledBitmap
+    }
+
+    fun drawOnBitmap(bitmap: Bitmap): Bitmap {
+        setResults(results!!, bitmap.height, bitmap.width)
+        val canvas = Canvas(bitmap)
+        draw(canvas)
+        return bitmap
     }
 
     companion object {

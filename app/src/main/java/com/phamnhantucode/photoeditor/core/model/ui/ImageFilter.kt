@@ -21,7 +21,7 @@ import java.util.Locale
 import java.util.logging.Filter
 
 data class ImageFilter(
-    var name: String? = null,
+    var name: String = "",
     var filterType: FilterType = FilterType.NONE,
     var currentValue: Float = 0f,
 ) {

@@ -32,7 +32,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -49,10 +49,6 @@
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:contentDescription="@null"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/switch_camera_btn"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
 
             />
 
@@ -60,20 +56,15 @@
             android:id="@+id/switch_camera_btn"
             android:layout_width="@dimen/size_ic_large"
             android:layout_height="@dimen/size_ic_large"
+            android:layout_gravity="center_vertical"
             android:layout_marginStart="@dimen/margin_large"
             android:contentDescription="@null"
             android:padding="@dimen/padding_medium"
             android:src="@drawable/ic_rotate"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/capture_btn"
-            app:layout_constraintTop_toTopOf="parent"
             app:tint="@color/white" />
+    </LinearLayout>
 
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <FrameLayout
         android:id="@+id/camera_tools"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -95,7 +86,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </FrameLayout>
 
     <ImageView
         android:id="@+id/face_sticker_btn"
@@ -114,9 +105,9 @@
         android:id="@+id/cancel_face_sticker_btn"
         android:layout_width="@dimen/size_ic_medium_large"
         android:layout_height="@dimen/size_ic_medium_large"
+        android:layout_marginTop="@dimen/margin_medium"
         android:background="@drawable/bg_overlay"
         android:contentDescription="@null"
-        android:layout_marginTop="@dimen/margin_medium"
         android:padding="@dimen/padding_medium"
         android:src="@drawable/ic_x"
         app:layout_constraintEnd_toEndOf="@+id/face_sticker_btn"
@@ -175,7 +166,7 @@
         app:layout_constraintStart_toStartOf="parent">
 
 
-        <com.phamnhantucode.photoeditor.views.FilterView
+        <com.phamnhantucode.photoeditor.views.FilterCameraView
             android:id="@+id/filter_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

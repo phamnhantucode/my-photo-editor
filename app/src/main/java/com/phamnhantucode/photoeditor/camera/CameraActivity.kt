@@ -15,14 +15,20 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.camera.core.CameraSelector
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import com.phamnhantucode.photoeditor.R
 import com.phamnhantucode.photoeditor.camera.fragment.CameraStickerBottomSheetDialogFragment
 import com.phamnhantucode.photoeditor.databinding.ActivityCameraBinding
 import com.phamnhantucode.photoeditor.editor.EditorActivity
 import com.phamnhantucode.photoeditor.extension.hideSystemBars
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 class CameraActivity() : AppCompatActivity() {
 
@@ -32,6 +38,9 @@ class CameraActivity() : AppCompatActivity() {
 
     private lateinit var binding: ActivityCameraBinding
     private val viewModel: CameraViewModel by viewModels()
+    private val stickerFragment = CameraStickerBottomSheetDialogFragment {
+        viewModel.setFaceSticker(it)
+    }
 
     private val scaleGestureDetector by lazy {
         ScaleGestureDetector(this, object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
@@ -82,12 +91,15 @@ class CameraActivity() : AppCompatActivity() {
         viewModel.initializeCamera(this, binding.cameraView)
     }
 
+    @OptIn(FlowPreview::class)
     @SuppressLint("ClickableViewAccessibility")
     private fun setupUI() {
         AppCompatResources.getDrawable(this, R.drawable.filter_demo)
             ?.let { binding.filterView.setOriginalPhoto(it.toBitmap()) }
         binding.apply {
-            captureBtn.setOnClickListener { viewModel.takePicture() }
+            captureBtn.setOnClickListener {
+                viewModel.takePicture(binding.faceDetectOverlay)
+            }
             switchCameraBtn.setOnClickListener {
                 viewModel.flipCamera(
                     this@CameraActivity,
@@ -100,9 +112,9 @@ class CameraActivity() : AppCompatActivity() {
             zoom4x.setOnClickListener { viewModel.setZoom(4f) }
 
             filterBtn.setOnClickListener { viewModel.toggleImageFilters() }
-            filterView.setOnFilterSelectedListener { filter ->
-                viewModel.applyFilter(filter)
-            }
+            filterView.getFilterFlow().debounce(300).onEach {
+                viewModel.applyFilter(it)
+            }.launchIn(lifecycleScope)
 
             cameraView.setOnTouchListener { _, event ->
                 scaleGestureDetector.onTouchEvent(event)
@@ -110,7 +122,11 @@ class CameraActivity() : AppCompatActivity() {
             }
 
             filterSeekbar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-                override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                override fun onProgressChanged(
+                    seekBar: SeekBar?,
+                    progress: Int,
+                    fromUser: Boolean,
+                ) {
                 }
 
                 override fun onStartTrackingTouch(seekBar: SeekBar?) {}
@@ -125,10 +141,11 @@ class CameraActivity() : AppCompatActivity() {
             })
 
             faceStickerBtn.setOnClickListener {
-                val fragment = CameraStickerBottomSheetDialogFragment {
-                    viewModel.setFaceSticker(it)
+                try {
+                    stickerFragment.show(supportFragmentManager, stickerFragment.tag)
+                } catch (e: IllegalStateException) {
+                    e.printStackTrace()
                 }
-                fragment.show(supportFragmentManager, fragment.tag)
             }
             cancelFaceStickerBtn.setOnClickListener {
                 viewModel.setFaceSticker(null)
@@ -151,7 +168,8 @@ class CameraActivity() : AppCompatActivity() {
 
         viewModel.isShowingImageFilters.observe(this) { isShowingFilters ->
             binding.filterView.isVisible = isShowingFilters
-            binding.filterSeekbar.isVisible = isShowingFilters || viewModel.selectedFilter.value?.filterType?.isAdjustable == true
+            binding.filterSeekbar.isVisible =
+                isShowingFilters && viewModel.selectedFilter.value?.filterType?.isAdjustable == true
         }
 
         viewModel.photoUri.observe(this) { uri ->
@@ -161,8 +179,10 @@ class CameraActivity() : AppCompatActivity() {
             })
         }
         viewModel.selectedFilter.observe(this) { filter ->
-            binding.filterSeekbar.visibility = if (filter.filterType.isAdjustable) View.VISIBLE else View.INVISIBLE
-            binding.filterSeekbar.progress = filter.filterType.normalizeToValueSeekbar(filter.currentValue)
+            binding.filterSeekbar.visibility =
+                if (filter.filterType.isAdjustable) View.VISIBLE else View.INVISIBLE
+            binding.filterSeekbar.progress =
+                filter.filterType.normalizeToValueSeekbar(filter.currentValue)
         }
         viewModel.faceDetectorResult.observe(this) { bundle ->
             binding.faceDetectOverlay.setResults(
@@ -175,11 +195,16 @@ class CameraActivity() : AppCompatActivity() {
 
             binding.cancelFaceStickerBtn.isVisible = sticker != null
             if (sticker == null) {
-                binding.faceStickerBtn.imageTintList = ColorStateList.valueOf(getColor(R.color.white))
+                binding.faceStickerBtn.imageTintList =
+                    ColorStateList.valueOf(getColor(R.color.white))
             } else {
-                binding.faceStickerBtn.imageTintList = ColorStateList.valueOf(getColor(R.color.text_selected))
+                binding.faceStickerBtn.imageTintList =
+                    ColorStateList.valueOf(getColor(R.color.text_selected))
             }
             binding.faceDetectOverlay.setFaceSticker(sticker)
+        }
+        viewModel.cameraSelector.observe(this) { selector ->
+            binding.faceDetectOverlay.isFrontCamera = selector == CameraSelector.DEFAULT_FRONT_CAMERA
         }
     }
 
