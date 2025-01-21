@@ -18,7 +18,6 @@ import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.View
 import com.phamnhantucode.photoeditor.extension.dp
-import com.phamnhantucode.photoeditor.extension.then
 
 class DrawOverlay @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0,
@@ -54,7 +53,7 @@ class DrawOverlay @JvmOverloads constructor(
         }
 
     private val penPaint = Paint().apply {
-        xfermode = PorterDuffXfermode(PorterDuff.Mode.OVERLAY)
+        xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC)
         color = paintColor
         strokeWidth = paintStrokeWidth
         style = Paint.Style.STROKE
@@ -73,7 +72,7 @@ class DrawOverlay @JvmOverloads constructor(
     }
 
     private val neonPaint = Paint().apply {
-        xfermode = PorterDuffXfermode(PorterDuff.Mode.OVERLAY)
+        xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC)
         color = paintColor
         strokeWidth = paintStrokeWidth
         maskFilter = BlurMaskFilter(12f, BlurMaskFilter.Blur.NORMAL)
@@ -84,7 +83,7 @@ class DrawOverlay @JvmOverloads constructor(
     }
 
     private val brushPaint = Paint().apply {
-        xfermode = PorterDuffXfermode(PorterDuff.Mode.OVERLAY)
+        xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC)
         color = paintColor
         strokeWidth = paintStrokeWidth
         style = Paint.Style.STROKE
@@ -103,15 +102,10 @@ class DrawOverlay @JvmOverloads constructor(
     var paintType = PaintType.PEN
         set(value) = run {
             field = value
-//            eraserRect.offsetTo(width / 2f, height / 2f)
             userCursorPoint.set(width / 2f, height / 2f)
             tempPointF.set(0f, 0f)
             invalidate()
         }
-
-    //
-//    private val eraserRadius = 20f.dp
-//    private var eraserRect = RectF(0f, 0f, eraserRadius * 2, eraserRadius * 2)
 
     private var onDrawStateChangeListener: ((Boolean) -> Unit)? = null
     private var isDrawing = false
@@ -120,32 +114,72 @@ class DrawOverlay @JvmOverloads constructor(
             onDrawStateChangeListener?.invoke(value)
         }
     private var tempPointF = PointF()
-    private var tempRect = RectF()
 
     private val pathStack = mutableListOf<StoredPath>()
+    private val redoStack = mutableListOf<StoredPath>()
     private var currentStoredPath: StoredPath? = null
 
-    private fun drawPathToBitmap(path: Path) {
-        if (canvasBm != null) {
+    private var onUndoRedoStateChangeListener: ((Boolean, Boolean) -> Unit)? = null
 
+    private fun canUndo(): Boolean = pathStack.isNotEmpty()
+    private fun canRedo(): Boolean = redoStack.isNotEmpty()
+
+    fun undo() {
+        if (pathStack.isNotEmpty()) {
+            val removedPath = pathStack.removeAt(pathStack.lastIndex)
+            redoStack.add(removedPath)
+            redrawPaths()
+            notifyUndoRedoState()
+        }
+    }
+
+    fun redo() {
+        if (redoStack.isNotEmpty()) {
+            val restoredPath = redoStack.removeAt(redoStack.lastIndex)
+            pathStack.add(restoredPath)
+            redrawPaths()
+            notifyUndoRedoState()
+        }
+    }
+
+    private fun redrawPaths() {
+        if (canvasBm != null) {
             canvasBm!!.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR)
             drawBottomLayer()
             for (storedPath in pathStack) {
                 canvasBm!!.drawPath(storedPath.path, storedPath.paint)
             }
+            invalidate()
+        }
+    }
 
-            if (paintType == PaintType.NEON) {
-                canvasBm!!.drawPath(path, penPaint)
+    private fun notifyUndoRedoState() {
+        onUndoRedoStateChangeListener?.invoke(canUndo(), canRedo())
+    }
+
+    fun setOnUndoRedoStateChangeListener(listener: (canUndo: Boolean, canRedo: Boolean) -> Unit) {
+        onUndoRedoStateChangeListener = listener
+        notifyUndoRedoState()
+    }
+
+    private fun drawPathToBitmap(path: Path) {
+        if (canvasBm != null) {
+            canvasBm!!.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR)
+            drawBottomLayer()
+            for (storedPath in pathStack) {
+                canvasBm!!.drawPath(storedPath.path, storedPath.paint)
             }
             if (isDrawing)
                 canvasBm!!.drawPath(path, getPaintFromType(paintType))
+            if (paintType == PaintType.NEON) {
+                canvasBm!!.drawPath(path, penPaint)
+            }
         }
     }
 
     private fun drawBottomLayer() {
         bitmapBottomLayer?.let {
             canvasBm!!.drawBitmap(it, 0f, 0f, null)
-            bitmap?.let { it1 -> canvasBm!!.drawBitmap(it1, 0f, 0f, null) }
         }
     }
 
@@ -160,11 +194,6 @@ class DrawOverlay @JvmOverloads constructor(
 
     private val canvasPadding = 16f.dp
     private val canvasRect = RectF()
-    var imageBorderColor = Color.BLACK
-        set(value) {
-            field = value
-            invalidate()
-        }
     private var scaleFactor = 1f
     private val scaleListener = object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
         override fun onScale(detector: ScaleGestureDetector): Boolean {
@@ -175,6 +204,7 @@ class DrawOverlay @JvmOverloads constructor(
         }
     }
     private val scaleDetector = ScaleGestureDetector(context, scaleListener)
+
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
@@ -189,6 +219,7 @@ class DrawOverlay @JvmOverloads constructor(
         bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
         canvasBm = Canvas(bitmap!!)
         drawBottomLayer()
+        redrawPaths()
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -221,6 +252,8 @@ class DrawOverlay @JvmOverloads constructor(
                     controlX = lastX,
                     controlY = lastY
                 )
+
+                notifyUndoRedoState()
             }
 
             MotionEvent.ACTION_MOVE -> {
@@ -253,15 +286,18 @@ class DrawOverlay @JvmOverloads constructor(
                     storedPath.path.lineTo(event.x, event.y)
                     pathStack.add(storedPath)
                     if (paintType == PaintType.NEON) {
-                        pathStack.add(storedPath.copy(
-                            paint = Paint(penPaint),
-                        ))
+                        pathStack.add(
+                            storedPath.copy(
+                                paint = Paint(penPaint),
+                            )
+                        )
                     }
                 }
                 currentStoredPath = null
 
                 drawPathToBitmap(currentPath)
                 postInvalidate()
+                notifyUndoRedoState()
             }
         }
         return if (paintType == PaintType.ERASER && event != null) {
@@ -300,6 +336,6 @@ class DrawOverlay @JvmOverloads constructor(
         var lastX: Float,
         var lastY: Float,
         var controlX: Float,
-        var controlY: Float
+        var controlY: Float,
     )
 }

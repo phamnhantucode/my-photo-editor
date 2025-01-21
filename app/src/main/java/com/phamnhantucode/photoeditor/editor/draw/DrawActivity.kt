@@ -74,6 +74,14 @@ class DrawActivity : AppCompatActivity() {
                 toolbox.isVisible = !isDrawing
                 verticalSeekbar.isVisible = !isDrawing
             }
+            drawView.setOnUndoRedoStateChangeListener { canUndo, canRedo ->
+                ivUndo.isEnabled = canUndo
+                ivRedo.isEnabled = canRedo
+                val alpha = if (canUndo) 1f else 0.5f
+                ivUndo.imageAlpha = (alpha * 255).toInt()
+                val redoAlpha = if (canRedo) 1f else 0.5f
+                ivRedo.imageAlpha = (redoAlpha * 255).toInt()
+            }
 
             //verticalSeekBar
             verticalSeekbar.setOnValueChanged {
@@ -118,6 +126,12 @@ class DrawActivity : AppCompatActivity() {
             backBtn.setOnClickListener {
                 setResult(RESULT_CANCELED)
                 finish()
+            }
+            ivUndo.setOnClickListener {
+                drawView.undo()
+            }
+            ivRedo.setOnClickListener {
+                drawView.redo()
             }
         }
     }
