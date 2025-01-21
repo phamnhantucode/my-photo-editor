@@ -26,9 +26,6 @@ class CameraFaceDetectOverlayView(context: Context?, attrs: AttributeSet?) :
     private var textBackgroundPaint = Paint()
     private var textPaint = Paint()
 
-    private var scaleFactor: FloatArray = FloatArray(2)
-
-    private var bounds = Rect()
     private var faceRects = listOf<RectF>()
 
     var isFrontCamera = true
@@ -128,7 +125,7 @@ class CameraFaceDetectOverlayView(context: Context?, attrs: AttributeSet?) :
         invalidate()
     }
 
-    fun getScaleMatrix(imageWidth: Int, imageHeight: Int): Matrix {
+    private fun getScaleMatrix(imageWidth: Int, imageHeight: Int): Matrix {
         val matrix = Matrix()
 
         val maxWidth = max(width, imageWidth)
@@ -140,18 +137,17 @@ class CameraFaceDetectOverlayView(context: Context?, attrs: AttributeSet?) :
         val scaleY = maxHeight / minHeight.toFloat()
         val scaleFitCenter = maxOf(scaleX, scaleY)
 
-        val newWidth = imageWidth * scaleFitCenter
-        val newHeight = imageHeight * scaleFitCenter
+        val newWidth = minWidth * scaleFitCenter
+        val newHeight = minHeight * scaleFitCenter
 
-        val translateX = (width - newWidth) / 2
-        val translateY = (height - newHeight) / 2
-
+        val translateX = (maxWidth - newWidth) / 2
+        val translateY = (maxHeight - newHeight) / 2
 
         matrix.postScale(scaleFitCenter, scaleFitCenter)
         matrix.postTranslate(translateX, translateY)
 
         if (isFrontCamera) {
-            matrix.postScale(-1f, 1f, width / 2f, height / 2f)
+            matrix.postScale(-1f, 1f, maxWidth / 2f, maxHeight / 2f)
         }
 
         return matrix
@@ -169,7 +165,12 @@ class CameraFaceDetectOverlayView(context: Context?, attrs: AttributeSet?) :
     }
 
     fun drawOnBitmap(bitmap: Bitmap): Bitmap {
-        setResults(results!!, bitmap.height, bitmap.width)
+        val matrix = getScaleMatrix(bitmap.width, bitmap.height)
+        boxDrawGuideRect = boxDrawGuideRect.map { rect ->
+            val newRect = RectF(rect)
+            matrix.mapRect(newRect)
+            newRect
+        }
         val canvas = Canvas(bitmap)
         draw(canvas)
         return bitmap
