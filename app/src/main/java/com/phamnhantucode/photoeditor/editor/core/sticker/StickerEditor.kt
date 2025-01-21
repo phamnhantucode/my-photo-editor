@@ -14,7 +14,6 @@ import com.phamnhantucode.photoeditor.views.EditorView
 class StickerEditor(
     private val editorView: EditorView,
     private val multiTouchListener: MultiTouchListener,
-    private val defaultTextTypeface: Typeface?,
     private val graphicManager: GraphicManager,
     private val editorViewState: EditorViewState,
     private val binding: ItemStickerEditorBinding,

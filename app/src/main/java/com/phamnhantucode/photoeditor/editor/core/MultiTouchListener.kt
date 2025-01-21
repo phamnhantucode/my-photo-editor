@@ -94,6 +94,8 @@ class MultiTouchListener(
                     editorView.getDeleteViewDeletableArea().contains(x, y)
                 if (isInsideDeleteArea) {
                     editor.removeView(v)
+                    editorView.scaleDeleteArea(1.0f)
+                    isViewScaled = false
                 } else {
                     if (!isInViewBounds(editorView.source, x, y)) {
                         viewState.currentSelectedView = null

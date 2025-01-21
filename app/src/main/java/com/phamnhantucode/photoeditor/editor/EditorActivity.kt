@@ -186,6 +186,7 @@ class EditorActivity : AppCompatActivity() {
             else -> {
                 etTextInput.setTextColor(state.color)
                 etTextInput.setBackgroundColor(Color.TRANSPARENT)
+                etTextInput.backgroundTintList = ColorStateList.valueOf(Color.TRANSPARENT)
             }
         }
     }

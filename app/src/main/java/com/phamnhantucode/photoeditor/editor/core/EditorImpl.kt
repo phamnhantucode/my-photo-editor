@@ -57,7 +57,6 @@ class EditorImpl(
         val sticker =  StickerEditor(
             editorView,
             multiTouchListener,
-            builder.textTypeface,
             graphicManager,
             editorViewState,
             ItemStickerEditorBinding.inflate(LayoutInflater.from(editorView.context))

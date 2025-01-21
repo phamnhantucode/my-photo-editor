@@ -16,7 +16,6 @@
         app:max="48"
         app:progress="18"
         app:min="12"
-        android:layout_marginHorizontal="@dimen/medium"
         android:elevation="@dimen/medium" />
 
     <EditText
@@ -35,65 +34,102 @@
         android:textAlignment="center"
         android:textColorHint="@color/black" />
 
-    <TextView
+<!--    <TextView-->
+<!--        android:id="@+id/saveBtn"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_gravity="top|end"-->
+<!--        android:layout_margin="@dimen/margin_large"-->
+<!--        android:background="@drawable/bg_box_round"-->
+<!--        android:backgroundTint="@color/white"-->
+<!--        android:elevation="@dimen/medium"-->
+<!--        android:paddingHorizontal="@dimen/padding_large"-->
+<!--        android:paddingVertical="@dimen/padding_medium"-->
+<!--        android:text="@string/save" />-->
+
+
+    <ImageView
         android:id="@+id/saveBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="top|end"
         android:layout_margin="@dimen/margin_large"
-        android:background="@drawable/bg_box_round"
-        android:backgroundTint="@color/white"
-        android:elevation="@dimen/medium"
-        android:paddingHorizontal="@dimen/padding_large"
-        android:paddingVertical="@dimen/padding_medium"
-        android:text="@string/save" />
+        android:padding="@dimen/padding_medium"
+        android:src="@drawable/ic_tick"
+        android:contentDescription="@null"
+        app:tint="@color/white"
+        />
 
 
-    <TextView
+<!--    <TextView-->
+<!--        android:id="@+id/cancelBtn"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_gravity="top|start"-->
+<!--        android:layout_margin="@dimen/margin_large"-->
+<!--        android:background="@drawable/bg_box_round"-->
+<!--        android:backgroundTint="@color/white"-->
+<!--        android:elevation="@dimen/medium"-->
+<!--        android:paddingHorizontal="@dimen/padding_large"-->
+<!--        android:paddingVertical="@dimen/padding_medium"-->
+<!--        android:text="@string/cancel" />-->
+
+    <ImageView
         android:id="@+id/cancelBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="top|start"
         android:layout_margin="@dimen/margin_large"
-        android:background="@drawable/bg_box_round"
-        android:backgroundTint="@color/white"
-        android:elevation="@dimen/medium"
-        android:paddingHorizontal="@dimen/padding_large"
-        android:paddingVertical="@dimen/padding_medium"
-        android:text="@string/cancel" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/colorPickerBtn"
-        android:layout_width="@dimen/size_ic_large"
-        android:layout_height="@dimen/size_ic_large"
-        android:layout_gravity="bottom|start"
-        android:layout_margin="@dimen/margin_large_x"
+        android:padding="@dimen/padding_medium"
+        android:src="@drawable/ic_x"
         android:contentDescription="@null"
-        android:outlineSpotShadowColor="@color/white"
-        app:srcCompat="@drawable/ic_color_picker"
-        app:fabCustomSize="@dimen/size_ic_large"
-        app:shapeAppearanceOverlay="@style/roundedCircle"
-        app:tint="@color/black"
-        tools:ignore="UnusedAttribute" />
-
-    <TextView
-        android:id="@+id/tv_demonstrateText"
-        android:layout_width="@dimen/size_ic_large"
-        android:layout_height="@dimen/size_ic_large"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/margin_large_x"
-        android:background="@drawable/bg_text_fill"
-        android:gravity="center"
-        android:text="@string/demo_text"
-        android:textColor="@color/black"
-        android:textSize="20sp"
-        android:textStyle="bold" />
-
-    <com.phamnhantucode.photoeditor.views.WheelSelectedView
-        android:id="@+id/textTypefaceWheel"
-        android:layout_width="200dp"
-        android:layout_height="100dp"
-        android:layout_gravity="center|bottom"
+        app:tint="@color/white"
         />
+
+    <LinearLayout
+        android:id="@+id/ll_text_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:orientation="horizontal">
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/colorPickerBtn"
+            android:layout_width="@dimen/size_ic_large"
+            android:layout_height="@dimen/size_ic_large"
+            android:layout_gravity="bottom|start"
+            android:layout_margin="@dimen/margin_large"
+            android:contentDescription="@null"
+            android:outlineSpotShadowColor="@color/white"
+            app:srcCompat="@drawable/ic_color_picker"
+            app:fabCustomSize="@dimen/size_ic_large"
+            app:shapeAppearanceOverlay="@style/roundedCircle"
+            app:tint="@color/black"
+            tools:ignore="UnusedAttribute" />
+
+        <com.phamnhantucode.photoeditor.views.WheelSelectedView
+            android:id="@+id/textTypefaceWheel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:requiresFadingEdge="horizontal"
+            android:fadingEdgeLength="40dp"
+            android:ellipsize="none"
+            android:layout_gravity="center_vertical" />
+
+        <TextView
+            android:id="@+id/tv_demonstrateText"
+            android:layout_width="@dimen/size_ic_large"
+            android:layout_height="@dimen/size_ic_large"
+            android:layout_gravity="center_vertical|end"
+            android:layout_margin="@dimen/margin_large"
+            android:background="@drawable/bg_text_fill"
+            android:gravity="center"
+            android:text="@string/demo_text"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
 
 </FrameLayout>
