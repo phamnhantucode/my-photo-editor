@@ -364,14 +364,12 @@ class FilterProcessor(
                 }
             }
         }
-        if (shaderProvider != null) {
-            glExecutor.execute {
-                glRenderer.release()
-                glRenderer.init(
-                    DynamicRange.SDR,
-                    mapOf(InputFormat.DEFAULT to shaderProvider)
-                )
-            }
+        glExecutor.execute {
+            glRenderer.release()
+            glRenderer.init(
+                DynamicRange.SDR,
+                mapOf(InputFormat.DEFAULT to shaderProvider)
+            )
         }
     }
 }

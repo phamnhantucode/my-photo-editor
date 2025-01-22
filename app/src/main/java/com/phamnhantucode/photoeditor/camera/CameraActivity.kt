@@ -13,6 +13,7 @@ import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.camera.core.CameraSelector
@@ -23,6 +24,7 @@ import androidx.lifecycle.lifecycleScope
 import com.phamnhantucode.photoeditor.R
 import com.phamnhantucode.photoeditor.camera.fragment.CameraStickerBottomSheetDialogFragment
 import com.phamnhantucode.photoeditor.databinding.ActivityCameraBinding
+import com.phamnhantucode.photoeditor.databinding.DialogLoadingBinding
 import com.phamnhantucode.photoeditor.editor.EditorActivity
 import com.phamnhantucode.photoeditor.extension.hideSystemBars
 import kotlinx.coroutines.FlowPreview
@@ -41,6 +43,7 @@ class CameraActivity() : AppCompatActivity() {
     private val stickerFragment = CameraStickerBottomSheetDialogFragment {
         viewModel.setFaceSticker(it)
     }
+    private lateinit var loadingDialog: AlertDialog
 
     private val scaleGestureDetector by lazy {
         ScaleGestureDetector(this, object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
@@ -68,10 +71,20 @@ class CameraActivity() : AppCompatActivity() {
         hideSystemBars()
         binding = ActivityCameraBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         checkPermissionAndStartCamera()
         setupUI()
+        setupLoadingDialog()
         observeViewModel()
+    }
+
+    private fun setupLoadingDialog() {
+
+        val layout = DialogLoadingBinding.inflate(layoutInflater)
+        loadingDialog = AlertDialog.Builder(this)
+            .setView(layout.root)
+            .create().apply {
+                window?.setBackgroundDrawableResource(android.R.color.transparent)
+            }
     }
 
     private fun checkPermissionAndStartCamera() {
@@ -204,26 +217,25 @@ class CameraActivity() : AppCompatActivity() {
             binding.faceDetectOverlay.setFaceSticker(sticker)
         }
         viewModel.cameraSelector.observe(this) { selector ->
-            binding.faceDetectOverlay.isFrontCamera = selector == CameraSelector.DEFAULT_FRONT_CAMERA
+            binding.faceDetectOverlay.isFrontCamera =
+                selector == CameraSelector.DEFAULT_FRONT_CAMERA
         }
     }
 
     private fun handleCameraState(state: CameraViewModel.CameraState) {
-        binding.progressbar.visibility = when (state) {
-            CameraViewModel.CameraState.Processing -> View.VISIBLE
-            else -> View.GONE
-        }
 
         when (state) {
-            is CameraViewModel.CameraState.Error -> {
-                Toast.makeText(
-                    this,
-                    state.exception.message ?: "Camera error occurred",
-                    Toast.LENGTH_SHORT
-                ).show()
+            is CameraViewModel.CameraState.Processing -> {
+                loadingDialog.show()
             }
 
-            else -> {}
+            is CameraViewModel.CameraState.Success -> {
+                loadingDialog.dismiss()
+            }
+
+            else -> {
+                loadingDialog.dismiss()
+            }
         }
     }
 

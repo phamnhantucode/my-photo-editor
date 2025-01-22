@@ -30,4 +30,6 @@
     <string name="save_replace">Save replace</string>
     <string name="discard_changes">Discard change</string>
     <string name="delete_images">Are you sure to delete %1$d images</string>
+    <string name="share_image">Share image</string>
+    <string name="file_provider_authority">.fileprovider</string>
 </resources>

@@ -60,6 +60,7 @@ class EditorActivity : AppCompatActivity() {
     private var currentSelectedTextView: StyleableTextView? = null
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<*>
     private lateinit var adapter: FilterAdapter
+    private lateinit var loadingDialog: AlertDialog
 
     private val cropActivityLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -78,7 +79,6 @@ class EditorActivity : AppCompatActivity() {
             result.data?.getStringExtra(DrawActivity.DRAW_OVERLAY_URI)?.let { uri ->
                 viewModel.setDrawBitmapBy(Uri.parse(uri))
             }
-
         }
     }
 
@@ -99,6 +99,7 @@ class EditorActivity : AppCompatActivity() {
         }
         setupUI()
         observeViewModel()
+        setupLoadingDialog()
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             binding.mainToolBox.setPadding(
@@ -115,6 +116,15 @@ class EditorActivity : AppCompatActivity() {
             )
             insets
         }
+    }
+
+    private fun setupLoadingDialog() {
+        val layout = DialogLoadingBinding.inflate(layoutInflater)
+        loadingDialog = AlertDialog.Builder(this)
+            .setView(layout.root)
+            .setCancelable(false)
+            .create()
+        loadingDialog.window?.setBackgroundDrawableResource(android.R.color.transparent);
     }
 
     private fun observeViewModel() {
@@ -143,6 +153,7 @@ class EditorActivity : AppCompatActivity() {
         viewModel.selectedFilter.observe(this) { filter ->
             editor.setFilter(filter)
             binding.seekBarFilter.isVisible = filter.filterType.isAdjustable
+
         }
     }
 
@@ -262,14 +273,8 @@ class EditorActivity : AppCompatActivity() {
             showTextEditingOverlay()
         }
         binding.saveBtn.setOnClickListener {
-            val layout = DialogLoadingBinding.inflate(layoutInflater)
-            val dialog = AlertDialog.Builder(this)
-                .setView(layout.root)
-                .setCancelable(false)
-                .create()
-            dialog.show()
+            loadingDialog.show()
             lifecycleScope.launch(Dispatchers.Main) {
-//                binding.editor.applyFilter()
                 withContext(Dispatchers.IO) {
                     val bitmap = Bitmap.createBitmap(
                         binding.editor.width,
@@ -278,8 +283,12 @@ class EditorActivity : AppCompatActivity() {
                     )
                     val canvas = Canvas(bitmap)
                     binding.editor.draw(canvas)
-                    val imageUri = PhotoEditorGallery.saveImage(this@EditorActivity, BitmapUtil.removeTransparency(bitmap))
-                    dialog.cancel()
+                    val imageUri = if (intent.action == ACTION_EDIT_SAVED_IMAGE) {
+                        PhotoEditorGallery.saveImage(this@EditorActivity, BitmapUtil.removeTransparency(bitmap), viewModel.originUri!!)
+                    } else {
+                        PhotoEditorGallery.saveImage(this@EditorActivity, BitmapUtil.removeTransparency(bitmap))
+                    }
+                    loadingDialog.dismiss()
                     startActivity(
                         Intent(this@EditorActivity, AlbumActivity::class.java).apply {
                             action = AlbumActivity.ACTION_IMAGE_PREVIEW
@@ -461,5 +470,6 @@ class EditorActivity : AppCompatActivity() {
 
     companion object {
         const val EXTRA_IMAGE_URI: String = "extra_image_uri"
+        const val ACTION_EDIT_SAVED_IMAGE: String = "com.phamnhantucode.photoeditor.editor.ACTION_EDIT_SAVED_IMAGE"
     }
 }

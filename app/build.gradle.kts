@@ -80,4 +80,6 @@ dependencies {
     implementation(libs.firebase.ui.storage)
     implementation("com.google.mediapipe:tasks-vision:0.10.14")
     implementation("com.github.Dimezis:BlurView:version-2.0.6")
+    implementation(libs.androidx.palette)
+    implementation("com.github.LottieFiles:dotlottie-android:0.5.0")
 }

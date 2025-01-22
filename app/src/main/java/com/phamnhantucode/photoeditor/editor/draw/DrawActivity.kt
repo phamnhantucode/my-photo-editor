@@ -138,7 +138,6 @@ class DrawActivity : AppCompatActivity() {
 
     private fun updateToolboxState() {
         binding.apply {
-
             ivPen.backgroundTintList = getColorStateList(android.R.color.transparent)
             ivEraser.backgroundTintList = getColorStateList(android.R.color.transparent)
             ivPenNeon.backgroundTintList = getColorStateList(android.R.color.transparent)

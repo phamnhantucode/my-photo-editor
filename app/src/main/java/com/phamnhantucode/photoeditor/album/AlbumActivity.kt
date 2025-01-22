@@ -1,5 +1,6 @@
 package com.phamnhantucode.photoeditor.album
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
@@ -61,6 +62,7 @@ class AlbumActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun setUpViewModelObserver() {
         viewModel.images.observe(this) {images ->
             imagesAdapter.images = images

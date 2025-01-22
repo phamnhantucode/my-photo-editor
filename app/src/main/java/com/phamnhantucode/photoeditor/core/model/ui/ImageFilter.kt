@@ -11,18 +11,16 @@ import jp.co.cyberagent.android.gpuimage.filter.GPUImageBrightnessFilter
 import jp.co.cyberagent.android.gpuimage.filter.GPUImageContrastFilter
 import jp.co.cyberagent.android.gpuimage.filter.GPUImageExposureFilter
 import jp.co.cyberagent.android.gpuimage.filter.GPUImageFilter
-import jp.co.cyberagent.android.gpuimage.filter.GPUImageHazeFilter
 import jp.co.cyberagent.android.gpuimage.filter.GPUImageHueFilter
 import jp.co.cyberagent.android.gpuimage.filter.GPUImageRGBDilationFilter
 import jp.co.cyberagent.android.gpuimage.filter.GPUImageSaturationFilter
 import jp.co.cyberagent.android.gpuimage.filter.GPUImageSharpenFilter
-import jp.co.cyberagent.android.gpuimage.filter.GPUImageSketchFilter
 import java.util.Locale
-import java.util.logging.Filter
 
 data class ImageFilter(
     var name: String = "",
     var filterType: FilterType = FilterType.NONE,
+    var guiFilter: GPUImageFilter = GPUImageFilter(),
     var currentValue: Float = 0f,
 ) {
     fun getFilter(): GPUImageFilter {
@@ -60,14 +58,30 @@ data class ImageFilter(
         return gpuImage.bitmapWithFilterApplied
     }
 
+    fun updateValue(currentValue: Float) {
+        this.currentValue = currentValue
+        when (filterType) {
+            FilterType.BRIGHTNESS -> (guiFilter as GPUImageBrightnessFilter).setBrightness(currentValue)
+            FilterType.CONTRAST -> (guiFilter as GPUImageContrastFilter).setContrast(currentValue)
+            FilterType.SATURATION -> (guiFilter as GPUImageSaturationFilter).setSaturation(currentValue)
+            FilterType.HUE -> (guiFilter as GPUImageHueFilter).setHue(currentValue)
+            FilterType.EXPOSURE -> (guiFilter as GPUImageExposureFilter).setExposure(currentValue)
+            FilterType.SHARPEN -> (guiFilter as GPUImageSharpenFilter).setSharpness(currentValue)
+            FilterType.BOX_BLUR -> (guiFilter as GPUImageBoxBlurFilter).setBlurSize(currentValue)
+            else -> guiFilter
+        }
+    }
+
     companion object {
         fun createFilter(filterType: FilterType): ImageFilter {
             return ImageFilter(
                 name = filterType.name.lowercase()
                     .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() },
                 filterType = filterType,
-                currentValue = filterType.getDemoValue()
-            )
+                currentValue = filterType.getDemoValue(),
+            ).apply {
+                guiFilter = getFilter()
+            }
         }
 
         fun createFilter(filterType: FilterType, value: Float): ImageFilter {

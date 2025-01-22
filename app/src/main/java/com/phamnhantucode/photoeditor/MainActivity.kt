@@ -2,6 +2,7 @@ package com.phamnhantucode.photoeditor
 
 import com.phamnhantucode.photoeditor.camera.CameraActivity
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.ViewOutlineProvider
 import androidx.activity.enableEdgeToEdge
@@ -11,6 +12,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import com.phamnhantucode.photoeditor.album.AlbumActivity
 import com.phamnhantucode.photoeditor.databinding.ActivityMainBinding
+import com.phamnhantucode.photoeditor.editor.EditorActivity
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
@@ -20,6 +22,7 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        handleIntent()
         binding.btnAdd.setOnClickListener {
             startActivity(Intent(this, CameraActivity::class.java))
         }
@@ -42,6 +45,19 @@ class MainActivity : AppCompatActivity() {
             }
         }
         setupEdgeInsets()
+    }
+
+    private fun handleIntent() {
+        if (intent.action == Intent.ACTION_SEND) {
+            val uri = intent.getParcelableExtra(Intent.EXTRA_STREAM) as? Uri ?: intent.data
+            if (uri != null) {
+                startActivity(Intent(this, EditorActivity::class.java).apply {
+                    putExtra(EditorActivity.EXTRA_IMAGE_URI, uri.toString())
+                })
+            } else {
+                finish()
+            }
+        }
     }
 
     private fun setupEdgeInsets() {

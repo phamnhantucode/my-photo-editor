@@ -36,6 +36,11 @@ class EditorView @JvmOverloads constructor(
 
     private var currentFilter: ImageFilter? = null
     private var originBitmap: Bitmap? = null
+        set(value) {
+            field = value
+            gpuImage.setImage(value)
+        }
+
     init {
         val sourceParams = setupImageSource()
         addView(imgSource, sourceParams)
@@ -89,12 +94,15 @@ class EditorView @JvmOverloads constructor(
         }
     }
 
-    fun setFilter(filter: ImageFilter?) {
-        val gpuImage = GPUImage(context)
-        gpuImage.setImage(originBitmap)
-        gpuImage.setFilter(filter?.getFilter())
+    private val gpuImage = GPUImage(context)
+    fun setFilter(filter: ImageFilter) {
+        if (filter.filterType == currentFilter?.filterType) {
+            currentFilter?.updateValue(filter.currentValue)
+        } else {
+            currentFilter = filter
+        }
+        gpuImage.setFilter(currentFilter?.guiFilter)
         imgSource.setImageBitmap(gpuImage.bitmapWithFilterApplied)
-        currentFilter = filter
     }
 
     fun setImageNeedFilter(bitmap: Bitmap?) {

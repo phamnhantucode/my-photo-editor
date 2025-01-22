@@ -127,19 +127,19 @@
                 android:gravity="start|center"
                 />
 
-            <TextView
-                android:id="@+id/shareBtn"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="start"
-                android:text="@string/share"
-                android:padding="@dimen/padding_medium"
-                android:textColor="@color/white"
-                app:drawableStartCompat="@drawable/ic_share"
-                android:drawablePadding="@dimen/padding_medium_large"
-                app:drawableTint="@color/white"
-                android:gravity="start|center"
-                />
+<!--            <TextView-->
+<!--                android:id="@+id/shareBtn"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_gravity="start"-->
+<!--                android:text="@string/share"-->
+<!--                android:padding="@dimen/padding_medium"-->
+<!--                android:textColor="@color/white"-->
+<!--                app:drawableStartCompat="@drawable/ic_share"-->
+<!--                android:drawablePadding="@dimen/padding_medium_large"-->
+<!--                app:drawableTint="@color/white"-->
+<!--                android:gravity="start|center"-->
+<!--                />-->
 
 
 

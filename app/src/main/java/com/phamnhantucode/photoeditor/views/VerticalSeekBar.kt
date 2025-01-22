@@ -52,9 +52,9 @@ class VerticalSeekBar @JvmOverloads constructor(
     private val triangleFullRect = Rect()
         get() = field.apply {
             set(
-                trianglePaintingRect.left,
                 0,
-                trianglePaintingRect.right,
+                0,
+                triangleSegmentTopWidth.toInt(),
                 height
             )
         }

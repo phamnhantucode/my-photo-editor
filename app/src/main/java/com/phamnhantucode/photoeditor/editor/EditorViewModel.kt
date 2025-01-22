@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.Typeface
 import android.net.Uri
+import androidx.core.net.toFile
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -17,7 +18,7 @@ import java.io.File
 import java.io.FileOutputStream
 
 class EditorViewModel(
-    application: Application,
+    private val application: Application,
 ) : AndroidViewModel(application) {
     private val _originBitmap = MutableLiveData<Bitmap>()
     val originBitmap: LiveData<Bitmap> = _originBitmap
@@ -47,18 +48,28 @@ class EditorViewModel(
     private val _selectedFilter = MutableLiveData<ImageFilter>()
     val selectedFilter: LiveData<ImageFilter> = _selectedFilter
 
+    val tempFile = createTempFile()
+
     fun setOriginBitmapBy(photoUri: Uri) {
-        _originBitmap.value = BitmapFactory.decodeFile(photoUri.path)
+            _originBitmap.value = application.contentResolver.openInputStream(photoUri)?.use {
+                BitmapFactory.decodeStream(it)
+            }
         originUri = photoUri
     }
 
     fun setOriginBitmapBy(bitmap: Bitmap) {
         _originBitmap.value = bitmap
+        resetTempFile()
         originUri = Uri.fromFile(
-            kotlin.io.createTempFile().apply {
+            tempFile.apply {
                 FileOutputStream(this).use { bitmap.compress(Bitmap.CompressFormat.JPEG, 100, it) }
             }
         )
+    }
+
+    private fun resetTempFile() {
+        tempFile.deleteOnExit()
+        tempFile.createNewFile()
     }
 
     private fun createTempFile() = File.createTempFile(
@@ -119,5 +130,10 @@ class EditorViewModel(
 
     fun setTextOverlayTypeface(typeface: Typeface) {
         _textEditorState.value = _textEditorState.value?.copy(typeface = typeface)
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        tempFile.deleteOnExit()
     }
 }

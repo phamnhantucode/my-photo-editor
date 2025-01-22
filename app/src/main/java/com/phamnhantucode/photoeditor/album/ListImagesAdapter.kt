@@ -1,6 +1,8 @@
 package com.phamnhantucode.photoeditor.album
 
 import android.annotation.SuppressLint
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
@@ -36,9 +38,9 @@ class ListImagesAdapter(
         private lateinit var image: MyImage
         fun bind(image: MyImage) {
             this.image = image
-            Glide.with(itemView.context)
+            Glide.with(binding.root)
                 .load(image.uri)
-                .placeholder(R.drawable.sample_img)
+                .placeholder(R.drawable.ic_download)
                 .into(binding.ivImage)
             changeViewVisibility()
             setViewAction(binding, image)

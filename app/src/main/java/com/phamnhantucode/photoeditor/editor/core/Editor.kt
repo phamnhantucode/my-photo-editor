@@ -21,7 +21,7 @@ interface Editor {
     fun setOnEditorListener(onEditorListener: OnEditorListener)
 
     fun removeView(v: View)
-    fun setFilter(filter: ImageFilter?)
+    fun setFilter(filter: ImageFilter)
     fun setImageFilter(bitmap: Bitmap?)
 
     class Builder(

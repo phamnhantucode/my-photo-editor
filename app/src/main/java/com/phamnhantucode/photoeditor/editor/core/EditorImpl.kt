@@ -74,7 +74,7 @@ class EditorImpl(
         graphicManager.removeView(v)
     }
 
-    override fun setFilter(filter: ImageFilter?) {
+    override fun setFilter(filter: ImageFilter) {
         editorView.setFilter(filter)
     }
 

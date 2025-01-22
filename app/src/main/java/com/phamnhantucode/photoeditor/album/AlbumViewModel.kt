@@ -32,7 +32,7 @@ class AlbumViewModel(
     }
 
     fun loadImages() {
-        _images.value = emptyList()
+        _images.postValue(emptyList())
         viewModelScope.launch {
             _images.value = loadImagesFromStorage()
         }
