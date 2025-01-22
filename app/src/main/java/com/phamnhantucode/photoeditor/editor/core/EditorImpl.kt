@@ -13,8 +13,8 @@ import com.phamnhantucode.photoeditor.views.EditorView
 import com.phamnhantucode.photoeditor.views.StyleableTextView
 
 class EditorImpl(
-    private val builder: Editor.Builder
-): Editor {
+    private val builder: Editor.Builder,
+) : Editor {
     private val editorView: EditorView = builder.editorView
     private var onEditorListener: OnEditorListener? = null
     private val editorViewState = EditorViewState()
@@ -54,7 +54,7 @@ class EditorImpl(
 
     override fun addSticker(bitmap: Bitmap) {
         val multiTouchListener = getMultiTouchListener()
-        val sticker =  StickerEditor(
+        val sticker = StickerEditor(
             editorView,
             multiTouchListener,
             graphicManager,

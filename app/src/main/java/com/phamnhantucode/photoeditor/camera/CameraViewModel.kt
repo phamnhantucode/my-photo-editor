@@ -4,14 +4,13 @@ import android.app.Application
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.Canvas
 import android.graphics.Matrix
-import android.media.ExifInterface
 import android.net.Uri
 import androidx.annotation.OptIn
 import androidx.camera.core.*
 import androidx.camera.view.LifecycleCameraController
 import androidx.camera.view.PreviewView
+import androidx.exifinterface.media.ExifInterface
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -52,9 +51,6 @@ class CameraViewModel(
     private val _isShowingImageFilters = MutableLiveData(false)
     val isShowingImageFilters: LiveData<Boolean> = _isShowingImageFilters
 
-    private val _filters = MutableLiveData<List<FilterCamera>>()
-    val filters: LiveData<List<FilterCamera>> = _filters
-
     private val _selectedFilter = MutableLiveData<ImageFilter>()
     val selectedFilter: LiveData<ImageFilter> = _selectedFilter
 
@@ -62,9 +58,6 @@ class CameraViewModel(
     val faceSticker: LiveData<CameraSticker?> = _faceSticker
 
     private var _bitmapPreview = MutableLiveData<Bitmap>()
-    val bitmapPreview: LiveData<Bitmap> = _bitmapPreview
-
-    private var count = 0
 
     private var cameraEffect: CameraEffect? = null
 
@@ -92,12 +85,12 @@ class CameraViewModel(
                     }
 
                 })
-            cameraController?.setImageAnalysisAnalyzer(cameraExecutor, { imageProxy ->
+            cameraController?.setImageAnalysisAnalyzer(cameraExecutor) { imageProxy ->
                 if (cameraState.value != CameraState.Processing) {
                     faceDetectorHelper.detectLivestreamFrame(imageProxy)
                 }
                 imageProxy.close()
-            })
+            }
             _cameraState.postValue(CameraState.Success)
         } catch (e: Exception) {
             _cameraState.postValue(CameraState.Error(e))
@@ -105,7 +98,7 @@ class CameraViewModel(
     }
 
 
-    fun flipCamera(context: Context, surfaceView: PreviewView) {
+    fun flipCamera() {
         viewModelScope.launch {
             _cameraState.value = CameraState.Processing
             try {
@@ -267,7 +260,6 @@ class CameraViewModel(
     }
 
     companion object {
-        private const val TAG = "CameraViewModel"
         private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
         private const val MAX_ZOOM = 4f
         private const val MIN_ZOOM = 1f

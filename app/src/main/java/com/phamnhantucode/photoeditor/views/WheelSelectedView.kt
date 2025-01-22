@@ -1,7 +1,12 @@
 package com.phamnhantucode.photoeditor.views
 
 import android.content.Context
-import android.graphics.*
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.Rect
+import android.graphics.RectF
+import android.graphics.Typeface
 import android.util.AttributeSet
 import android.view.GestureDetector
 import android.view.MotionEvent
@@ -16,7 +21,7 @@ import kotlin.math.abs
 class WheelSelectedView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0
+    defStyleAttr: Int = 0,
 ) : View(context, attrs, defStyleAttr) {
 
     private data class FontItem(
@@ -25,7 +30,7 @@ class WheelSelectedView @JvmOverloads constructor(
         var bounds: RectF = RectF(),
         var textWidth: Float = 0f,
         var textHeight: Float = 0f,
-        var centerX: Float = 0f
+        var centerX: Float = 0f,
     )
 
     private var fontSelectedListener: ((Typeface?) -> Unit)? = null
@@ -96,7 +101,7 @@ class WheelSelectedView @JvmOverloads constructor(
             maxTextHeight = maxOf(maxTextHeight, item.textHeight)
         }
 
-        fontItems.forEachIndexed{ index, item ->
+        fontItems.forEachIndexed { index, item ->
             item.bounds.set(
                 currentX - padding,
                 -viewTextSize / 2 - padding,
@@ -104,7 +109,7 @@ class WheelSelectedView @JvmOverloads constructor(
                 viewTextSize / 2 + padding
             )
             item.centerX = currentX + item.textWidth / 2
-            currentX += item.textWidth + itemSpacing +if (index == fontItems.size) 0f else elementPadding
+            currentX += item.textWidth + itemSpacing + if (index == fontItems.size) 0f else elementPadding
         }
 
         totalWidth = currentX - itemSpacing
@@ -162,10 +167,11 @@ class WheelSelectedView @JvmOverloads constructor(
             e1: MotionEvent?,
             e2: MotionEvent,
             distanceX: Float,
-            distanceY: Float
+            distanceY: Float,
         ): Boolean {
             scrollX += distanceX
-            scrollX = scrollX.coerceIn(0f, maxOf(0f, totalWidth - (width - (startPadding + endPadding))))
+            scrollX =
+                scrollX.coerceIn(0f, maxOf(0f, totalWidth - (width - (startPadding + endPadding))))
             updateSelectedItem()
             invalidate()
             return true
@@ -175,7 +181,7 @@ class WheelSelectedView @JvmOverloads constructor(
             e1: MotionEvent?,
             e2: MotionEvent,
             velocityX: Float,
-            velocityY: Float
+            velocityY: Float,
         ): Boolean {
             scroller.fling(
                 scrollX.toInt(), 0,

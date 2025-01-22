@@ -20,30 +20,11 @@ import com.phamnhantucode.photoeditor.core.model.ui.FilterType
 @SuppressLint("RestrictedApi")
 class FilterProcessor(
     private val value: Float = 0.25f,
-    private val filterType: FilterType = FilterType.BRIGHTNESS,
+    filterType: FilterType = FilterType.BRIGHTNESS,
 ) : SurfaceProcessor, OnFrameAvailableListener {
 
     companion object {
         private var value = 0.75f
-        private val BRIGHTNESS_SHADER_PROVIDER = object : ShaderProvider {
-            override fun createFragmentShader(
-                sampler: String,
-                fragCoords: String,
-            ): String? {
-                return """
-                    #extension GL_OES_EGL_image_external : require
-                    precision mediump float;
-                    uniform samplerExternalOES $sampler;
-                    uniform float uAlphaScale;
-                    varying vec2 $fragCoords;
-                    void main() {
-                        vec4 sampleColor = texture2D($sampler, $fragCoords);                        
-                        vec3 adjustedColor = sampleColor.rgb + vec3($value);
-                        gl_FragColor = vec4(adjustedColor, sampleColor.a * uAlphaScale);
-                    }
-                """.trimIndent()
-            }
-        }
         private const val GL_THREAD_NAME = "FilterProcessor"
     }
 
@@ -64,6 +45,7 @@ class FilterProcessor(
 
     private var renderWidth = 1050
     private var renderHeight = 1050
+
     init {
         setValueFilter(value)
         setFilter(filterType)
@@ -148,7 +130,7 @@ class FilterProcessor(
         }
     }
 
-    fun setValueFilter(value: Float) {
+    private fun setValueFilter(value: Float) {
         FilterProcessor.value = value
     }
 
@@ -173,6 +155,7 @@ class FilterProcessor(
                 """.trimIndent()
                 }
             }
+
             FilterType.CONTRAST -> object : ShaderProvider {
                 override fun createFragmentShader(
                     sampler: String,
@@ -192,6 +175,7 @@ class FilterProcessor(
                 """.trimIndent()
                 }
             }
+
             FilterType.EXPOSURE -> object : ShaderProvider {
                 override fun createFragmentShader(
                     sampler: String,
@@ -211,6 +195,7 @@ class FilterProcessor(
                 """.trimIndent()
                 }
             }
+
             FilterType.SATURATION -> object : ShaderProvider {
                 override fun createFragmentShader(
                     sampler: String,
@@ -232,6 +217,7 @@ class FilterProcessor(
                 """.trimIndent()
                 }
             }
+
             FilterType.HUE -> object : ShaderProvider {
 
                 override fun createFragmentShader(
@@ -269,10 +255,11 @@ class FilterProcessor(
                 """.trimIndent()
                 }
             }
-            FilterType.SHARPEN -> object :ShaderProvider {
+
+            FilterType.SHARPEN -> object : ShaderProvider {
                 override fun createFragmentShader(
                     sampler: String,
-                    fragCoords: String
+                    fragCoords: String,
                 ): String {
                     return "#extension GL_OES_EGL_image_external : require\n" +
                             "precision mediump float;\n" +
@@ -283,8 +270,8 @@ class FilterProcessor(
                             "\n" +
                             "void main() {\n" +
 
-                            "float imageWidthFactor = ${(1f/renderWidth)};\n" +
-                            "float imageHeightFactor = ${(1f/renderHeight)};\n" +
+                            "float imageWidthFactor = ${(1f / renderWidth)};\n" +
+                            "float imageHeightFactor = ${(1f / renderHeight)};\n" +
                             "    vec2 textureCoordinate = " + fragCoords + ";\n" +
                             "    vec2 widthStep = vec2(imageWidthFactor, 0.0);\n" +
                             "    vec2 heightStep = vec2(0.0, imageHeightFactor);\n" +
@@ -306,14 +293,15 @@ class FilterProcessor(
                             "    gl_FragColor = vec4((textureColor * centerMultiplier - (leftTextureColor * edgeMultiplier + " +
                             "rightTextureColor * edgeMultiplier + topTextureColor * edgeMultiplier + " +
                             "bottomTextureColor * edgeMultiplier)), texture2D(" + sampler + ", bottomTextureCoordinate).w * uAlphaScale);\n" +
-                            "}";
+                            "}"
                 }
             }
+
             FilterType.BOX_BLUR -> object : ShaderProvider {
                 override fun createFragmentShader(
                     samplerVarName: String,
-                    fragCoordsVarName: String
-                ): String? {
+                    fragCoordsVarName: String,
+                ): String {
                     return """
                     #extension GL_OES_EGL_image_external : require
                     precision mediump float;
@@ -321,8 +309,8 @@ class FilterProcessor(
                     uniform float uAlphaScale;
                     varying vec2 $fragCoordsVarName;
                     void main() {
-                        float texelWidthOffset = ${value/renderWidth};
-                        float texelHeightOffset = ${value/renderHeight};
+                        float texelWidthOffset = ${value / renderWidth};
+                        float texelHeightOffset = ${value / renderHeight};
                         
                         vec2 firstOffset = vec2(1.5 * texelWidthOffset, 1.5 * texelHeightOffset);
                         vec2 secondOffset = vec2(3.5 * texelWidthOffset, 3.5 * texelHeightOffset);
@@ -344,6 +332,7 @@ class FilterProcessor(
                     """.trimIndent()
                 }
             }
+
             else -> object : ShaderProvider {
                 override fun createFragmentShader(
                     sampler: String,

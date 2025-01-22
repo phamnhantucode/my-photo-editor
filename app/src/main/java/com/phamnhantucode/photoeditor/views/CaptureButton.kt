@@ -11,7 +11,7 @@ import android.util.AttributeSet
 import android.view.View
 
 class CaptureButton @JvmOverloads constructor(
-    context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
+    context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0,
 ) : View(context, attrs, defStyleAttr) {
 
     private val paint = Paint().apply {
@@ -56,7 +56,7 @@ class CaptureButton @JvmOverloads constructor(
         canvas.drawCircle(width / 2f, height / 2f, width * scale / 2f, paint.apply {
             style = Paint.Style.FILL
         })
-        canvas.drawCircle(width / 2f, height / 2f, width / 2f - 10f/2, paint.apply {
+        canvas.drawCircle(width / 2f, height / 2f, width / 2f - 10f / 2, paint.apply {
             strokeWidth = 10f
             style = Paint.Style.STROKE
         })

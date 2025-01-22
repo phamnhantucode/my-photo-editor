@@ -26,8 +26,8 @@ class VerticalSeekBar @JvmOverloads constructor(
     var shouldShowCircle: Boolean = true
     var onValueChangeListener = { _: Float -> }
 
-    var minValue = 0f
-    var maxValue = 100f
+    private var minValue = 0f
+    private var maxValue = 100f
 
 
     var currentValue = 0f

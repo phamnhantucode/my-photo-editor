@@ -1,8 +1,8 @@
 package com.phamnhantucode.photoeditor.editor.core.text
 
+import android.annotation.SuppressLint
 import android.graphics.Typeface
 import androidx.core.view.isVisible
-import androidx.viewbinding.ViewBinding
 import com.phamnhantucode.photoeditor.databinding.ItemTextEditorBinding
 import com.phamnhantucode.photoeditor.editor.core.EditorViewState
 import com.phamnhantucode.photoeditor.editor.core.Graphic
@@ -30,6 +30,7 @@ class TextEditor(
         setupView()
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun setupGesture() {
         val onGestureControl = buildGestureController(editorView, editorViewState)
         multiTouchListener.setOnGestureControl(onGestureControl)

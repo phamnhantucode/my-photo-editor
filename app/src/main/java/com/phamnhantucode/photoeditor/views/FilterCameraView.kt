@@ -10,7 +10,6 @@ import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
 import android.util.AttributeSet
-import android.util.Log
 import android.view.GestureDetector
 import android.view.GestureDetector.SimpleOnGestureListener
 import android.view.MotionEvent
@@ -21,8 +20,6 @@ import com.phamnhantucode.photoeditor.extension.dp
 import jp.co.cyberagent.android.gpuimage.GPUImage
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import java.io.ByteArrayOutputStream
 
@@ -105,8 +102,9 @@ class FilterCameraView @JvmOverloads constructor(
             )
 
             val finalX = scroller.finalX.toFloat()
-            selectedIndex = ((finalX + width / 2f - startPadding) / (ITEM_DEFAULT_WIDTH + space)).toInt()
-                .coerceIn(0, filterItems.size - 1)
+            selectedIndex =
+                ((finalX + width / 2f - startPadding) / (ITEM_DEFAULT_WIDTH + space)).toInt()
+                    .coerceIn(0, filterItems.size - 1)
 
             postDelayed({
                 fitSelectedItemCenter()

@@ -14,7 +14,7 @@ open class OptionDialog(
     private val labelPositive: String? = null,
     private val onPositive: () -> Unit = {},
     private val onNegative: () -> Unit = {},
-    private val onDismiss: () -> Unit = {}
+    private val onDismiss: () -> Unit = {},
 ) : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return activity?.let {
@@ -44,10 +44,10 @@ open class OptionDialog(
 }
 
 class DeleteOptionsDialog(
-    private val context: Context,
-    private val message: String? = null,
-    private val onCancelDelete: () -> Unit = {},
-    private val onDelete: () -> Unit
+    context: Context,
+    message: String? = null,
+    onCancelDelete: () -> Unit = {},
+    onDelete: () -> Unit
 ) : OptionDialog(
     message = message ?: context.resources.getString(R.string.delete_image),
     labelNegative = context.resources.getString(R.string.cancel),
@@ -57,9 +57,9 @@ class DeleteOptionsDialog(
 )
 
 class SaveOptionsDialog(
-    private val context: Context,
-    private val onSaveNew: () -> Unit = {},
-    private val onSaveReplace: () -> Unit
+    context: Context,
+    onSaveNew: () -> Unit = {},
+    onSaveReplace: () -> Unit
 ) : OptionDialog(
     message = context.resources.getString(R.string.save_image),
     labelNegative = context.resources.getString(R.string.save_new),

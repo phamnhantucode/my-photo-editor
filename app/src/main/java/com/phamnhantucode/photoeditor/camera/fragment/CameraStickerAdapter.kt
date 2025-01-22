@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.phamnhantucode.photoeditor.R
-import com.phamnhantucode.photoeditor.core.PhotoEditorFirebaseStorage
+import com.phamnhantucode.photoeditor.core.helper.PhotoEditorFirebaseStorage
 import com.phamnhantucode.photoeditor.core.model.firebase.CameraSticker
 import com.phamnhantucode.photoeditor.databinding.ItemStickerBinding
 
@@ -94,13 +94,15 @@ class CameraStickerAdapter(
             var count = 0
             updateDownloadingState(isDownloading = true)
             sticker.partials.forEach { partial ->
-                PhotoEditorFirebaseStorage.getInstance().downloadFile(itemView.context, partial.path!!) {
-                    count++
-                    partial.uri = it
-                    if (count == sticker.partials.size) {
-                        updateDownloadingState(isDownloading = false)
+                PhotoEditorFirebaseStorage.getInstance()
+                    .downloadFile(itemView.context, partial.path!!) {
+                        count++
+                        partial.uri = it
+                        if (count == sticker.partials.size) {
+                            updateDownloadingState(isDownloading = false)
+                            binding.downloadBtn.setImageResource(0)
+                        }
                     }
-                }
             }
         }
 
@@ -125,7 +127,6 @@ class CameraStickerAdapter(
     }
 
     companion object {
-        private const val TAG = "StickerAdapter"
         private const val STICKER_DOWNLOADING_ALPHA = 0.75f
     }
 }

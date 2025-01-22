@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.phamnhantucode.photoeditor.R
-import com.phamnhantucode.photoeditor.core.PhotoEditorFirebaseStorage
+import com.phamnhantucode.photoeditor.core.helper.PhotoEditorFirebaseStorage
 import com.phamnhantucode.photoeditor.core.model.firebase.Sticker
 import com.phamnhantucode.photoeditor.databinding.ItemStickerBinding
 
@@ -94,6 +94,7 @@ class StickerAdapter(
                 updateDownloadingState(isDownloading = true)
                 PhotoEditorFirebaseStorage.getInstance().downloadFile(itemView.context, path) {
                     updateDownloadingState(isDownloading = false)
+                    binding.downloadBtn.setImageResource(0)
                 }
             }
         }
@@ -109,7 +110,6 @@ class StickerAdapter(
     }
 
     companion object {
-        private const val TAG = "StickerAdapter"
         private const val STICKER_DOWNLOADING_ALPHA = 0.75f
     }
 }

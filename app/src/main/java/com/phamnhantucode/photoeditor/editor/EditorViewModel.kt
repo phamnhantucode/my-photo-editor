@@ -54,6 +54,8 @@ class EditorViewModel(
             _originBitmap.value = application.contentResolver.openInputStream(photoUri)?.use {
                 BitmapFactory.decodeStream(it)
             }
+
+        originUri?.toFile()?.delete()
         originUri = photoUri
     }
 
@@ -83,6 +85,7 @@ class EditorViewModel(
     }
 
     fun setDrawBitmapBy(parse: Uri?) {
+        drawUri?.toFile()?.delete()
         _drawBitmap.value = BitmapFactory.decodeFile(parse?.path)
         drawUri = parse
     }
@@ -135,5 +138,6 @@ class EditorViewModel(
     override fun onCleared() {
         super.onCleared()
         tempFile.deleteOnExit()
+        drawUri?.toFile()?.delete()
     }
 }

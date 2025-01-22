@@ -11,7 +11,7 @@ class NotificationDialog(
     private val message: String? = null,
     private val labelPositive: String? = null,
     private val onPositive: () -> Unit = {},
-): DialogFragment() {
+) : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return activity?.let {
             val builder = AlertDialog.Builder(it)

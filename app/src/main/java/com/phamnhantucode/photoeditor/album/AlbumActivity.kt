@@ -64,9 +64,10 @@ class AlbumActivity : AppCompatActivity() {
 
     @SuppressLint("NotifyDataSetChanged")
     private fun setUpViewModelObserver() {
-        viewModel.images.observe(this) {images ->
+        viewModel.images.observe(this) { images ->
             imagesAdapter.images = images
-            binding.tvSelectedLabel.text = resources.getString(R.string.selected, images.count { it.isSelected })
+            binding.tvSelectedLabel.text =
+                resources.getString(R.string.selected, images.count { it.isSelected })
         }
 
         viewModel.isSelectedMode.observe(this) { isSelectedMode ->
@@ -86,7 +87,9 @@ class AlbumActivity : AppCompatActivity() {
             ivDeleteBtn.setOnClickListener {
                 DeleteOptionsDialog(
                     context = this@AlbumActivity,
-                    message = resources.getString(R.string.delete_images, viewModel.images.value?.count { it.isSelected }),
+                    message = resources.getString(
+                        R.string.delete_images,
+                        viewModel.images.value?.count { it.isSelected }),
                     onDelete = {
                         lifecycleScope.launch {
                             viewModel.deleteSelectedImages()
@@ -147,7 +150,8 @@ class AlbumActivity : AppCompatActivity() {
     }
 
     companion object {
-        const val ACTION_IMAGE_PREVIEW: String = "com.phamnhantucode.photoeditor.album.ACTION_IMAGE_PREVIEW"
+        const val ACTION_IMAGE_PREVIEW: String =
+            "com.phamnhantucode.photoeditor.album.ACTION_IMAGE_PREVIEW"
         const val EXTRA_IMAGE_URI = "extra_image_uri"
     }
 }

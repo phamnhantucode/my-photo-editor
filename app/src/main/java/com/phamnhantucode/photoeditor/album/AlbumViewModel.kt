@@ -5,14 +5,14 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.phamnhantucode.photoeditor.album.model.MyImage
-import com.phamnhantucode.photoeditor.core.PhotoEditorGallery
+import com.phamnhantucode.photoeditor.core.helper.PhotoEditorGallery
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class AlbumViewModel(
-    private val application: Application
+    private val application: Application,
 ) : AndroidViewModel(application) {
 
     private val viewModelScope = CoroutineScope(Dispatchers.Main)
@@ -68,7 +68,7 @@ class AlbumViewModel(
     suspend fun deleteSelectedImages() {
         withContext(Dispatchers.IO) {
             val selectedImages = _images.value.orEmpty().filter { it.isSelected }
-            PhotoEditorGallery.deleteImages(application, selectedImages.map { it.uri })
+            PhotoEditorGallery.deleteImages(selectedImages.map { it.uri })
             loadImages()
         }
         _isSelectedMode.value = false

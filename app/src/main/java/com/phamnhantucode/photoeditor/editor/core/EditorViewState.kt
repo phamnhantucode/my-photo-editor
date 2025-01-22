@@ -3,8 +3,7 @@ package com.phamnhantucode.photoeditor.editor.core
 import android.view.View
 import java.util.Stack
 
-class EditorViewState(
-) {
+class EditorViewState {
     var currentSelectedView: View? = null
     private val addedViews: MutableList<View> = ArrayList()
     private val redoViews: Stack<View> = Stack()
@@ -14,14 +13,6 @@ class EditorViewState(
 
     val redoStackCount: Int
         get() = redoViews.size
-
-    fun clearCurrentSelectedView() {
-        currentSelectedView = null
-    }
-
-    fun getAddedView(index: Int): View {
-        return addedViews[index]
-    }
 
     fun clearAddedViews() {
         addedViews.clear()

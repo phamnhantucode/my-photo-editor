@@ -1,8 +1,6 @@
 package com.phamnhantucode.photoeditor.album
 
 import android.annotation.SuppressLint
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible

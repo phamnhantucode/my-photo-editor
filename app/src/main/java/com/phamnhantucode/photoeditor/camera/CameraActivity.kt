@@ -32,10 +32,10 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
-class CameraActivity() : AppCompatActivity() {
+class CameraActivity : AppCompatActivity() {
 
     init {
-        System.loadLibrary("NativeImageProcessor");
+        System.loadLibrary("NativeImageProcessor")
     }
 
     private lateinit var binding: ActivityCameraBinding
@@ -114,10 +114,7 @@ class CameraActivity() : AppCompatActivity() {
                 viewModel.takePicture(binding.faceDetectOverlay)
             }
             switchCameraBtn.setOnClickListener {
-                viewModel.flipCamera(
-                    this@CameraActivity,
-                    binding.cameraView
-                )
+                viewModel.flipCamera()
             }
 
             zoom1x.setOnClickListener { viewModel.setZoom(1f) }
@@ -247,9 +244,5 @@ class CameraActivity() : AppCompatActivity() {
             zoom2x.setTextColor(if (zoom in 2f..3.99f) selectedColor else defaultColor)
             zoom4x.setTextColor(if (zoom >= 4f) selectedColor else defaultColor)
         }
-    }
-
-    companion object {
-        private const val TAG = "CameraActivity"
     }
 }

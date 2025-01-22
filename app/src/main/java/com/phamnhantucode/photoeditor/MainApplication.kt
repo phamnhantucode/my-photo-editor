@@ -8,11 +8,11 @@ import com.bumptech.glide.annotation.GlideModule
 import com.bumptech.glide.module.AppGlideModule
 import com.firebase.ui.storage.images.FirebaseImageLoader
 import com.google.firebase.storage.StorageReference
-import com.phamnhantucode.photoeditor.core.PhotoEditorFirebaseStorage
+import com.phamnhantucode.photoeditor.core.helper.PhotoEditorFirebaseStorage
 import java.io.InputStream
 
 
-class MainApplication: Application() {
+class MainApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         PhotoEditorFirebaseStorage.getInstance().loadConfigFile(this)

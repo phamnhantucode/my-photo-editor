@@ -1,4 +1,4 @@
-package com.phamnhantucode.photoeditor.core
+package com.phamnhantucode.photoeditor.core.helper
 
 import android.content.Context
 import android.content.Intent
@@ -12,7 +12,7 @@ import java.io.File
 
 object PhotoEditorGallery {
 
-    suspend fun saveImage(context: Context, bitmap: Bitmap): Uri {
+    fun saveImage(context: Context, bitmap: Bitmap): Uri {
         val imageName = System.currentTimeMillis().toString() + ".png"
         val file = File("${context.filesDir}/$IMAGE_GALLERY_PATH", imageName)
         file.parentFile?.mkdirs()
@@ -27,19 +27,11 @@ object PhotoEditorGallery {
         return imageDir.listFiles()?.map { it.toUri() } ?: emptyList()
     }
 
-    fun deleteImages(context: Context, imageUris: List<Uri>) {
+    fun deleteImages(imageUris: List<Uri>) {
         imageUris.forEach {
             val file = it.path?.let { it1 -> File(it1) }
             file?.delete()
         }
-    }
-
-    fun saveImage(context: Context, bitmap: Bitmap, saveToUri: Uri): Uri {
-        val file = saveToUri.toFile()
-        file.outputStream().use {
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, it)
-        }
-        return saveToUri
     }
 
     fun shareImage(context: Context, imageUri: Uri) {

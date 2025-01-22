@@ -465,5 +465,4 @@ internal class ScaleGestureDetector(private val mListener: OnScaleGestureListene
          */
         private const val PRESSURE_THRESHOLD = 0.67f
     }
-
 }

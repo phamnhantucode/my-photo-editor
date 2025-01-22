@@ -1,5 +1,6 @@
 package com.phamnhantucode.photoeditor.views
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
@@ -16,7 +17,7 @@ import kotlin.math.roundToInt
 class RulerView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0
+    defStyleAttr: Int = 0,
 ) : View(context, attrs, defStyleAttr) {
 
     private val mScroller: Scroller = Scroller(context)
@@ -30,24 +31,19 @@ class RulerView @JvmOverloads constructor(
     private var mMove = 0f
     private var mLastX = 0
 
-    // Line styling
     private var centerLineWidth = 6f
-    private var sideLineWidth =6f
+    private var sideLineWidth = 6f
     private var centerLineHeight = 60f
     private var sideLineHeight = 40f
 
-    // Value handling
     private var currentValue = 0f
     private var step = 1f
 
-    // Colors
     private var sideLineColor: Int = Color.parseColor("#bcbcbc")
     private var centerLineColor: Int = Color.parseColor("#f24b16")
 
-    // Callback
     private var onValueChanged: ((Float) -> Unit)? = null
 
-    // Value transformer
     private var valueTransformer: ((Float) -> String) = { it.toString() }
 
     init {
@@ -103,8 +99,6 @@ class RulerView @JvmOverloads constructor(
         )
 
         // Draw side lines
-
-
         for (i in 1..10) {
             val xOffset = i * perWidth
             var startY = bottomY - sideLineHeight
@@ -152,6 +146,7 @@ class RulerView @JvmOverloads constructor(
         )
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
         val action = event.action
         val xPosition = event.x.toInt()
@@ -163,10 +158,12 @@ class RulerView @JvmOverloads constructor(
                 mLastX = xPosition
                 mMove = 0f
             }
+
             MotionEvent.ACTION_MOVE -> {
                 mMove += (mLastX - xPosition)
                 updateValueFromMove()
             }
+
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                 handleFling(event)
                 return false

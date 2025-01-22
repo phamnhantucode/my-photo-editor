@@ -38,51 +38,52 @@ class FilterView @JvmOverloads constructor(
     private var filterSelectedListener: ((ImageFilter) -> Unit)? = null
     private var gpuImage: GPUImage? = null
 
-    private val gestureDetector = GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
-        override fun onDown(e: MotionEvent): Boolean {
-            return true
-        }
+    private val gestureDetector =
+        GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
+            override fun onDown(e: MotionEvent): Boolean {
+                return true
+            }
 
-        override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
-            val index = ((scrollX + e.x) / DEFAULT_SIZE).toInt()
-            selectedFilter = filters.getOrNull(index) ?: ImageFilter()
-            filterSelectedListener?.invoke(selectedFilter)
-            invalidate()
-            return super.onSingleTapConfirmed(e)
-        }
+            override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
+                val index = ((scrollX + e.x) / DEFAULT_SIZE).toInt()
+                selectedFilter = filters.getOrNull(index) ?: ImageFilter()
+                filterSelectedListener?.invoke(selectedFilter)
+                invalidate()
+                return super.onSingleTapConfirmed(e)
+            }
 
-        override fun onScroll(
-            e1: MotionEvent?,
-            e2: MotionEvent,
-            distanceX: Float,
-            distanceY: Float
-        ): Boolean {
-            scrollX = (scrollX + distanceX).toInt()
-            scrollX = max(0, min(scrollX, maxScrollX))
-            invalidate()
-            return true
-        }
+            override fun onScroll(
+                e1: MotionEvent?,
+                e2: MotionEvent,
+                distanceX: Float,
+                distanceY: Float,
+            ): Boolean {
+                scrollX = (scrollX + distanceX).toInt()
+                scrollX = max(0, min(scrollX, maxScrollX))
+                invalidate()
+                return true
+            }
 
-        override fun onFling(
-            e1: MotionEvent?,
-            e2: MotionEvent,
-            velocityX: Float,
-            velocityY: Float
-        ): Boolean {
-            scroller.fling(
-                scrollX,
-                0,
-                -velocityX.toInt(),
-                0,
-                0,
-                maxScrollX,
-                0,
-                0
-            )
-            postInvalidateOnAnimation()
-            return true
-        }
-    })
+            override fun onFling(
+                e1: MotionEvent?,
+                e2: MotionEvent,
+                velocityX: Float,
+                velocityY: Float,
+            ): Boolean {
+                scroller.fling(
+                    scrollX,
+                    0,
+                    -velocityX.toInt(),
+                    0,
+                    0,
+                    maxScrollX,
+                    0,
+                    0
+                )
+                postInvalidateOnAnimation()
+                return true
+            }
+        })
 
     init {
         isClickable = true
@@ -118,7 +119,7 @@ class FilterView @JvmOverloads constructor(
     }
 
     private fun updateMaxScroll() {
-        maxScrollX = max(0, ((filteredBitmaps.size * (DEFAULT_SIZE + spacing.toInt())) -  width) / 2)
+        maxScrollX = max(0, ((filteredBitmaps.size * (DEFAULT_SIZE + spacing.toInt())) - width) / 2)
     }
 
     fun setOnFilterSelectedListener(listener: (ImageFilter) -> Unit) {
@@ -168,7 +169,13 @@ class FilterView @JvmOverloads constructor(
             filteredBitmaps.getOrNull(i)?.let { bitmap ->
                 canvas.drawBitmap(bitmap, left, 0f, null)
                 if (selectedFilter == filters[i]) {
-                    canvas.drawRect(left, 0f, left + DEFAULT_SIZE, DEFAULT_SIZE.toFloat(), selectedPaint)
+                    canvas.drawRect(
+                        left,
+                        0f,
+                        left + DEFAULT_SIZE,
+                        DEFAULT_SIZE.toFloat(),
+                        selectedPaint
+                    )
                 }
             }
         }

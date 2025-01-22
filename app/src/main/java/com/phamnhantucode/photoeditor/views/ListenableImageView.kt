@@ -30,5 +30,4 @@ class ListenableImageView @JvmOverloads constructor(
         super.setImageResource(resId)
         onImageChangeListener?.invoke(this)
     }
-
 }

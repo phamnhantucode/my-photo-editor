@@ -40,11 +40,6 @@ data class ImageFilter(
         }
     }
 
-    fun setFilterValue(value: Float) {
-        val maxMinValue = filterType.getMaxMinValue()
-        currentValue = value.coerceIn(maxMinValue.first, maxMinValue.second)
-    }
-
     fun toCameraEffect(): CameraEffect {
         return FilterMappingSurfaceEffect(
             processor = FilterProcessor(
@@ -82,7 +77,7 @@ data class ImageFilter(
     }
 
     companion object {
-        fun createFilter(filterType: FilterType): ImageFilter {
+        private fun createFilter(filterType: FilterType): ImageFilter {
             return ImageFilter(
                 name = filterType.name.lowercase()
                     .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() },
@@ -91,22 +86,6 @@ data class ImageFilter(
             ).apply {
                 guiFilter = getFilter()
             }
-        }
-
-        fun createFilter(filterType: FilterType, value: Float): ImageFilter {
-            return ImageFilter(
-                name = filterType.name,
-                filterType = filterType,
-                currentValue = value
-            )
-        }
-
-        fun createFilter(filterType: FilterType, valueSeekbar: Int): ImageFilter {
-            return ImageFilter(
-                name = filterType.name,
-                filterType = filterType,
-                currentValue = filterType.normalizeToValueFilter(valueSeekbar)
-            )
         }
 
         fun mockFilters(context: Context? = null): List<ImageFilter> {
@@ -166,7 +145,7 @@ enum class FilterType {
     val isAdjustable: Boolean
         get() = this != NONE
 
-    fun getMaxMinValue(): Pair<Float, Float> {
+    private fun getMaxMinValue(): Pair<Float, Float> {
         return when (this) {
             BRIGHTNESS -> -1f to 1f
             CONTRAST -> 0.0f to 4.0f

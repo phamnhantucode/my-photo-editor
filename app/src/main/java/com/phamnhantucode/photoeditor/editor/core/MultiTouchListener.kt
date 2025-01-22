@@ -8,8 +8,6 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.View.OnTouchListener
 import androidx.core.view.isVisible
-import com.phamnhantucode.photoeditor.core.isCenterInside
-import com.phamnhantucode.photoeditor.extension.getVisibleRect
 import com.phamnhantucode.photoeditor.views.EditorView
 import kotlin.math.max
 import kotlin.math.min

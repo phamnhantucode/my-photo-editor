@@ -24,8 +24,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.lang.Exception
-import kotlin.math.abs
 
 class CropActivity : AppCompatActivity() {
     private lateinit var binding: ActivityCropBinding
@@ -57,7 +55,8 @@ class CropActivity : AppCompatActivity() {
     private fun setupUI() {
         binding.apply {
             ucropView.apply {
-                cropImageView.setTransformImageListener(object : TransformImageView.TransformImageListener {
+                cropImageView.setTransformImageListener(object :
+                    TransformImageView.TransformImageListener {
                     override fun onLoadComplete() {
                         binding.rulerRotation.setValue(binding.ucropView.cropImageView.currentAngle)
                         binding.rulerRotation.setStep(1f)
@@ -141,7 +140,7 @@ class CropActivity : AppCompatActivity() {
                 binding.ucropView.cropImageView.setImageToWrapCropBounds()
             }
 
-            rulerRotation.setOnValueChanged {value ->
+            rulerRotation.setOnValueChanged { value ->
                 resetToolboxTimeout()
                 viewModel.setRotationAngle(value)
                 binding.ucropView.cropImageView.setImageToWrapCropBounds()
@@ -155,7 +154,10 @@ class CropActivity : AppCompatActivity() {
                 ) {
                     if (fromUser) {
                         resetToolboxTimeout()
-                        val scale = progress.valueBasedOnPosition(binding.ucropView.cropImageView.minScale, binding.ucropView.cropImageView.maxScale)
+                        val scale = progress.valueBasedOnPosition(
+                            binding.ucropView.cropImageView.minScale,
+                            binding.ucropView.cropImageView.maxScale
+                        )
                         viewModel.setScale(scale)
                         val deltaScale = scale - binding.ucropView.cropImageView.currentScale
                         if (deltaScale > 0) {
@@ -230,13 +232,11 @@ class CropActivity : AppCompatActivity() {
                 }
             }
         }
-        viewModel.scale.observe(this) { scale ->
-        }
         viewModel.rotationAngle.observe(this) { angle ->
             binding.ucropView.cropImageView.postRotate(angle - binding.ucropView.cropImageView.currentAngle)
             binding.rulerRotation.setValue(angle)
         }
-        viewModel.selectedRatio.observe(this) {ratio ->
+        viewModel.selectedRatio.observe(this) { ratio ->
             binding.ucropView.cropImageView.setTargetAspectRatio(
                 if (ratio == CropViewModel.SelectedRatio.ORIGIN) CropImageView.SOURCE_IMAGE_ASPECT_RATIO
                 else ratio.getRatio()
@@ -250,6 +250,7 @@ class CropActivity : AppCompatActivity() {
                         sixTeenByNine.setTextColor(getColor(R.color.white))
                         origin.setTextColor(getColor(R.color.white))
                     }
+
                     CropViewModel.SelectedRatio.RATIO_3_2 -> {
                         oneByOne.setTextColor(getColor(R.color.white))
                         fourByThree.setTextColor(getColor(R.color.white))
@@ -257,6 +258,7 @@ class CropActivity : AppCompatActivity() {
                         sixTeenByNine.setTextColor(getColor(R.color.white))
                         origin.setTextColor(getColor(R.color.white))
                     }
+
                     CropViewModel.SelectedRatio.RATIO_4_3 -> {
                         oneByOne.setTextColor(getColor(R.color.white))
                         fourByThree.setTextColor(getColor(R.color.text_selected))
@@ -264,6 +266,7 @@ class CropActivity : AppCompatActivity() {
                         sixTeenByNine.setTextColor(getColor(R.color.white))
                         origin.setTextColor(getColor(R.color.white))
                     }
+
                     CropViewModel.SelectedRatio.RATIO_16_9 -> {
                         oneByOne.setTextColor(getColor(R.color.white))
                         fourByThree.setTextColor(getColor(R.color.white))
@@ -271,12 +274,16 @@ class CropActivity : AppCompatActivity() {
                         sixTeenByNine.setTextColor(getColor(R.color.text_selected))
                         origin.setTextColor(getColor(R.color.white))
                     }
+
                     CropViewModel.SelectedRatio.ORIGIN -> {
                         oneByOne.setTextColor(getColor(R.color.white))
                         fourByThree.setTextColor(getColor(R.color.white))
                         threeByTwo.setTextColor(getColor(R.color.white))
                         sixTeenByNine.setTextColor(getColor(R.color.white))
                         origin.setTextColor(getColor(R.color.text_selected))
+                    }
+                    else -> {
+
                     }
                 }
             }
@@ -326,6 +333,5 @@ class CropActivity : AppCompatActivity() {
     companion object {
         const val EXTRA_IMAGE_URI = "extra_image_uri"
         const val RESULT_CROPPED_URI = "result_cropped_uri"
-        const val POW_SCALE = 1000
     }
 }

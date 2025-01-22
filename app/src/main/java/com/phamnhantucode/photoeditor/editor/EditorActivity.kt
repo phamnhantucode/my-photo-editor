@@ -31,8 +31,8 @@ import com.phamnhantucode.photoeditor.MainActivity
 import com.phamnhantucode.photoeditor.R
 import com.phamnhantucode.photoeditor.album.AlbumActivity
 import com.phamnhantucode.photoeditor.album.preview.PreviewImageActivity
-import com.phamnhantucode.photoeditor.core.BitmapUtil
-import com.phamnhantucode.photoeditor.core.PhotoEditorGallery
+import com.phamnhantucode.photoeditor.core.utils.BitmapUtil
+import com.phamnhantucode.photoeditor.core.helper.PhotoEditorGallery
 import com.phamnhantucode.photoeditor.core.model.ui.ImageFilter
 import com.phamnhantucode.photoeditor.databinding.ActivityEditorBinding
 import com.phamnhantucode.photoeditor.databinding.DialogLoadingBinding
@@ -124,7 +124,7 @@ class EditorActivity : AppCompatActivity() {
             .setView(layout.root)
             .setCancelable(false)
             .create()
-        loadingDialog.window?.setBackgroundDrawableResource(android.R.color.transparent);
+        loadingDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
     }
 
     private fun observeViewModel() {
@@ -371,7 +371,6 @@ class EditorActivity : AppCompatActivity() {
             bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetFilter)
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
             adapter = FilterAdapter(
-                viewModel.originBitmap.value!!,
                 onFilterClickListener = { filter ->
                     viewModel.setSelectedFilter(filter)
                     seekBarFilter.progress =

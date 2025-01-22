@@ -3,29 +3,25 @@ package com.phamnhantucode.photoeditor.album.preview
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.res.ColorStateList
-import android.graphics.Bitmap
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.view.MotionEvent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.FileProvider
 import androidx.core.graphics.drawable.toBitmap
-import androidx.core.net.toFile
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.isVisible
 import androidx.palette.graphics.Palette
 import com.phamnhantucode.photoeditor.R
-import com.phamnhantucode.photoeditor.core.PhotoEditorGallery
+import com.phamnhantucode.photoeditor.core.helper.PhotoEditorGallery
 import com.phamnhantucode.photoeditor.databinding.ActivityPreviewImageBinding
 import com.phamnhantucode.photoeditor.editor.EditorActivity
-import com.phamnhantucode.photoeditor.extension.dp
 import com.phamnhantucode.photoeditor.extension.getContrastTextColor
 
 class PreviewImageActivity : AppCompatActivity() {
     private lateinit var binding: ActivityPreviewImageBinding
+
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,16 +51,25 @@ class PreviewImageActivity : AppCompatActivity() {
                     PhotoEditorGallery.shareImage(this@PreviewImageActivity, imageUri)
                 }
                 editBtn.setOnClickListener {
-                    startActivity(Intent(this@PreviewImageActivity, EditorActivity::class.java).apply {
-                        action = EditorActivity.ACTION_EDIT_SAVED_IMAGE
-                        putExtra(EditorActivity.EXTRA_IMAGE_URI, imageUri.toString())
-                    })
+                    startActivity(
+                        Intent(
+                            this@PreviewImageActivity,
+                            EditorActivity::class.java
+                        ).apply {
+                            action = EditorActivity.ACTION_EDIT_SAVED_IMAGE
+                            putExtra(EditorActivity.EXTRA_IMAGE_URI, imageUri.toString())
+                        })
                 }
             }
         }
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { _, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            binding.toolbar.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            binding.toolbar.setPadding(
+                systemBars.left,
+                systemBars.top,
+                systemBars.right,
+                systemBars.bottom
+            )
             insets
         }
     }
@@ -83,7 +88,7 @@ class PreviewImageActivity : AppCompatActivity() {
             .setDuration(300).start()
     }
 
-    private fun setDominantColor(){
+    private fun setDominantColor() {
         Palette.from(binding.imageView.drawable.toBitmap()).generate { palette ->
             val color = palette?.lightMutedSwatch?.rgb ?: Color.BLACK
             val tintColor = color.getContrastTextColor()

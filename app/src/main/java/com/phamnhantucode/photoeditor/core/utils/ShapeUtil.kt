@@ -1,4 +1,4 @@
-package com.phamnhantucode.photoeditor.core
+package com.phamnhantucode.photoeditor.core.utils
 
 import android.graphics.Rect
 

@@ -10,7 +10,7 @@ import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.phamnhantucode.photoeditor.core.PhotoEditorFirebaseStorage
+import com.phamnhantucode.photoeditor.core.helper.PhotoEditorFirebaseStorage
 import com.phamnhantucode.photoeditor.databinding.FragmentStickerBottomDialogBinding
 import com.phamnhantucode.photoeditor.editor.adapter.StickerAdapter
 
@@ -36,11 +36,7 @@ class StickerBottomSheetDialogFragment(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.apply {
             var stickers = PhotoEditorFirebaseStorage.getInstance().getStickers()
-            if (stickers.isEmpty()) {
-                emptyView.isVisible = true
-            } else {
-                emptyView.isVisible = false
-            }
+            emptyView.isVisible = stickers.isEmpty()
             stickerAdapter.submitList(stickers)
             rvSticker.layoutManager =
                 GridLayoutManager(context, 3, GridLayoutManager.VERTICAL, false)
@@ -50,18 +46,12 @@ class StickerBottomSheetDialogFragment(
                 etSearch.setText("")
             }
 
-            etSearch.doOnTextChanged { text, start, before, count ->
+            etSearch.doOnTextChanged { text, _, _, _ ->
                 val searchKey = text.toString()
                 stickers = PhotoEditorFirebaseStorage.getInstance().getStickers(searchKey)
-                if (stickers.isEmpty()) {
-                    emptyView.isVisible = true
-                } else {
-                    emptyView.isVisible = false
-                }
+                emptyView.isVisible = stickers.isEmpty()
                 stickerAdapter.submitList(stickers)
             }
         }
     }
-
-
 }

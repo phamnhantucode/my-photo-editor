@@ -2,7 +2,6 @@ package com.phamnhantucode.photoeditor.editor.core.sticker
 
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
-import android.graphics.Typeface
 import com.phamnhantucode.photoeditor.databinding.ItemStickerEditorBinding
 import com.phamnhantucode.photoeditor.editor.core.EditorViewState
 import com.phamnhantucode.photoeditor.editor.core.Graphic
@@ -17,7 +16,7 @@ class StickerEditor(
     private val graphicManager: GraphicManager,
     private val editorViewState: EditorViewState,
     private val binding: ItemStickerEditorBinding,
-): Graphic(
+) : Graphic(
     editorView.context,
     binding,
     ViewType.STICKER,
@@ -38,12 +37,9 @@ class StickerEditor(
         rootView.setOnTouchListener(multiTouchListener)
     }
 
-    override fun setupView() {
+    override fun setupView() {}
 
-    }
-
-    override fun updateView() {
-    }
+    override fun updateView() {}
 
     fun buildView(bitmap: Bitmap) {
         binding.ivSticker.setImageBitmap(bitmap)

@@ -7,7 +7,6 @@ import android.view.View
 import android.widget.ImageView
 import com.phamnhantucode.photoeditor.core.model.ui.ImageFilter
 import com.phamnhantucode.photoeditor.editor.core.text.TextEditorState
-import com.phamnhantucode.photoeditor.extension.sp
 import com.phamnhantucode.photoeditor.views.EditorView
 import com.phamnhantucode.photoeditor.views.StyleableTextView
 
@@ -26,7 +25,7 @@ interface Editor {
 
     class Builder(
         val context: Context,
-        val editorView: EditorView
+        val editorView: EditorView,
     ) {
         val imageView: ImageView = editorView.source
 
