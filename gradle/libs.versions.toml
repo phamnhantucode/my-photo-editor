@@ -1,24 +1,60 @@
 [versions]
 agp = "8.7.2"
-kotlin = "1.9.24"
-coreKtx = "1.15.0"
+androidphotofilters = "1.0.2"
+cameraEffects = "1.4.1"
+cameraLifecycle = "1.2.2"
+colorpicker = "2.3"
+compressor = "3.0.1"
+firebaseBom = "33.7.0"
+firebaseUiStorage = "8.0.2"
+fotoapparat = "2.7.0"
+gpuimage = "2.1.0"
+gson = "2.10.1"
+kotlin = "2.1.0"
+coreKtx = "1.10.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 appcompat = "1.7.0"
+lottie = "3.4.0"
 material = "1.12.0"
 activity = "1.9.3"
 constraintlayout = "2.2.0"
+lifecycleLivedataKtx = "2.8.7"
+palette = "1.0.0"
+ucrop = "2.2.10"
+glide = "4.14.2"
 
 [libraries]
+androidphotofilters = { module = "com.github.zomato:androidphotofilters", version.ref = "androidphotofilters" }
+androidx-camera-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "cameraLifecycle" }
+androidx-camera-core = { module = "androidx.camera:camera-core", version.ref = "cameraLifecycle" }
+androidx-camera-effects = { module = "androidx.camera:camera-effects", version.ref = "cameraEffects" }
+androidx-camera-extensions = { module = "androidx.camera:camera-extensions", version.ref = "cameraLifecycle" }
+androidx-camera-lifecycle = { module = "androidx.camera:camera-lifecycle", version.ref = "cameraLifecycle" }
+androidx-camera-view = { module = "androidx.camera:camera-view", version.ref = "cameraLifecycle" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-palette = { module = "androidx.palette:palette", version.ref = "palette" }
+colorpicker = { module = "com.github.Dhaval2404:ColorPicker", version.ref = "colorpicker" }
+compressor = { module = "id.zelory:compressor", version.ref = "compressor" }
+firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
+firebase-storage = { module = "com.google.firebase:firebase-storage" }
+firebase-ui-storage = { module = "com.firebaseui:firebase-ui-storage", version.ref = "firebaseUiStorage" }
+fotoapparat = { module = "io.fotoapparat:fotoapparat", version.ref = "fotoapparat" }
+gpuimage = { module = "jp.co.cyberagent.android:gpuimage", version.ref = "gpuimage" }
+gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+lottie = { module = "com.airbnb.android:lottie", version.ref = "lottie" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+androidx-lifecycle-livedata-ktx = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "lifecycleLivedataKtx" }
+androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycleLivedataKtx" }
+ucrop = { module = "com.github.yalantis:ucrop", version.ref = "ucrop" }
+glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

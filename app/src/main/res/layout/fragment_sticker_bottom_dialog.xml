@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <EditText
+        android:id="@+id/etSearch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/margin_large"
+        android:layout_marginTop="@dimen/margin_large"
+        android:autofillHints=""
+        android:background="@drawable/bg_box_round"
+        android:backgroundTint="@color/green_400"
+        android:hint="@string/search"
+        android:inputType="text"
+        android:paddingHorizontal="@dimen/padding_large"
+        android:paddingVertical="@dimen/padding_medium"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="LabelFor" />
+
+    <ImageView
+        android:id="@+id/cleanTextBtn"
+        android:layout_width="@dimen/size_ic_small"
+        android:layout_height="@dimen/size_ic_small"
+        android:layout_margin="@dimen/margin_large"
+        android:contentDescription="@null"
+        android:src="@drawable/ic_x"
+        app:layout_constraintBottom_toBottomOf="@id/etSearch"
+        app:layout_constraintDimensionRatio="H,1:1"
+        app:layout_constraintEnd_toEndOf="@id/etSearch"
+        app:layout_constraintTop_toTopOf="@id/etSearch"
+        app:tint="@color/white" />
+
+    <ImageView
+        android:id="@+id/emptyView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_empty"
+        android:contentDescription="@null"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/etSearch"
+        />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvSticker"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_small"
+        android:orientation="vertical"
+        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/etSearch"
+        app:spanCount="3"
+        tools:listitem="@layout/item_sticker" />
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,3 +1,35 @@
 <resources>
     <string name="app_name">Photo Editor</string>
+    <string name="add">Add</string>
+    <string name="album">Album</string>
+    <string name="zoom_1x">1x</string>
+    <string name="zoom_2x">2x</string>
+    <string name="zoom_4x">4x</string>
+    <string name="share">Share</string>
+    <string name="oneByOne">1:1</string>
+    <string name="fourByThree">4:3</string>
+    <string name="origin">Origin</string>
+    <string name="threeByTwo">3:2</string>
+    <string name="sixTeenByNine">16:9</string>
+    <string name="remove_background">Remove background</string>
+    <string name="enter_text_here">Enter text here</string>
+    <string name="save">Save</string>
+    <string name="demo_text">Aa</string>
+    <string name="cancel">Cancel</string>
+    <string name="drag_to_delete">Drag to delete</string>
+    <string name="search">Search</string>
+    <string name="filter">Filter</string>
+    <string name="filter_name">Filter Name</string>
+    <string name="selected">Selected %1$d</string>
+    <string name="notice">Notice</string>
+    <string name="ok">Okey</string>
+    <string name="delete_image">Are you sure to delete this image?</string>
+    <string name="delete">Delete</string>
+    <string name="save_image">Save image</string>
+    <string name="save_new">Save new</string>
+    <string name="save_replace">Save replace</string>
+    <string name="discard_changes">Discard change</string>
+    <string name="delete_images">Are you sure to delete %1$d images</string>
+    <string name="share_image">Share image</string>
+    <string name="file_provider_authority">.fileprovider</string>
 </resources>

@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    tools:context=".editor.crop.CropActivity">
+
+    <com.yalantis.ucrop.view.UCropView
+        android:id="@+id/ucropView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:contentDescription="@null"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/backBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_large"
+        android:background="@android:color/transparent"
+        android:padding="@dimen/padding_large"
+        android:src="@drawable/ic_back"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/cropBtn"
+        android:layout_width="@dimen/size_ic_large_x"
+        android:layout_height="@dimen/size_ic_large_x"
+        android:layout_margin="@dimen/margin_large_x"
+        android:backgroundTint="@color/orange"
+        android:contentDescription="@null"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/ic_next" />
+
+    <LinearLayout
+        android:id="@+id/toolBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_box_round_circle"
+        android:orientation="horizontal"
+        android:padding="@dimen/padding_medium"
+        app:layout_constraintBottom_toBottomOf="@id/cropBtn"
+        app:layout_constraintEnd_toStartOf="@+id/cropBtn"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/cropBtn">
+
+        <ImageView
+            android:id="@+id/ratioBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:contentDescription="@null"
+            android:padding="@dimen/margin_large"
+            app:tint="@color/white"
+            android:layout_marginHorizontal="@dimen/margin_small"
+            app:srcCompat="@drawable/ic_aspect_ratio" />
+
+        <ImageView
+            android:id="@+id/rotateBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:contentDescription="@null"
+            android:padding="@dimen/margin_large"
+            android:layout_marginHorizontal="@dimen/margin_small"
+            app:srcCompat="@drawable/ic_rotate"
+            app:tint="@color/white" />
+
+        <ImageView
+            android:id="@+id/scaleBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:contentDescription="@null"
+            android:padding="@dimen/margin_large"
+            android:layout_marginHorizontal="@dimen/margin_small"
+            app:srcCompat="@drawable/ic_scale"
+            app:tint="@color/white" />
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/ratioToolBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@id/toolBox"
+        app:layout_constraintEnd_toEndOf="@id/toolBox"
+        app:layout_constraintStart_toStartOf="@id/toolBox"
+        android:background="@drawable/bg_box_round_circle"
+        android:layout_marginBottom="@dimen/margin_large"
+        android:padding="@dimen/medium"
+        >
+        <TextView
+            android:id="@+id/oneByOne"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/padding_small"
+            android:layout_marginHorizontal="@dimen/margin_small"
+            android:text="@string/oneByOne"
+            />
+        <TextView
+            android:id="@+id/fourByThree"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/padding_small"
+            android:layout_marginHorizontal="@dimen/margin_small"
+            android:text="@string/fourByThree"
+            />
+        <TextView
+            android:id="@+id/origin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/padding_small"
+            android:text="@string/origin"
+            android:layout_marginHorizontal="@dimen/margin_small"
+            android:textColor="@color/text_selected"
+            />
+
+        <TextView
+            android:id="@+id/threeByTwo"
+            android:layout_width="wrap_content"
+            android:padding="@dimen/padding_small"
+            android:layout_marginHorizontal="@dimen/margin_small"
+            android:layout_height="wrap_content"
+            android:text="@string/threeByTwo"
+            />
+
+        <TextView
+            android:id="@+id/sixTeenByNine"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sixTeenByNine"
+            android:padding="@dimen/padding_small"
+            android:layout_marginHorizontal="@dimen/margin_small"
+            />
+
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/rotateToolBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        android:background="@drawable/bg_box_round_circle"
+        android:layout_marginBottom="@dimen/margin_large"
+        app:layout_constraintBottom_toTopOf="@id/toolBox"
+        app:layout_constraintEnd_toEndOf="@id/toolBox"
+        app:layout_constraintStart_toStartOf="@id/toolBox">
+        <ImageView
+            android:id="@+id/cancelRotateBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:contentDescription="@null"
+            android:padding="@dimen/margin_large"
+            android:layout_marginHorizontal="@dimen/margin_small"
+            app:srcCompat="@drawable/ic_x_border"
+            app:tint="@color/white" />
+        <com.phamnhantucode.photoeditor.views.RulerView
+            android:id="@+id/rulerRotation"
+            android:layout_width="150dp"
+            android:layout_height="56dp"
+            android:layout_gravity="center"
+            app:numDigits="1"
+            app:numValue="0"
+            app:numMinValue="-45"
+            app:numMaxValue="45"
+            />
+        <ImageView
+            android:id="@+id/rotateLeftBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:contentDescription="@null"
+            android:padding="@dimen/margin_large"
+            android:layout_marginHorizontal="@dimen/margin_small"
+            app:srcCompat="@drawable/ic_rotate_left"
+            app:tint="@color/white" />
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/scaleToolBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        android:background="@drawable/bg_box_round_circle"
+        android:layout_marginBottom="@dimen/margin_large"
+        android:padding="@dimen/medium"
+        app:layout_constraintBottom_toTopOf="@id/toolBox"
+        app:layout_constraintEnd_toEndOf="@id/toolBox"
+        app:layout_constraintStart_toStartOf="@id/toolBox">
+        <SeekBar
+            android:id="@+id/rulerScale"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:paddingVertical="@dimen/padding_medium"
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="@dimen/margin_large"/>
+    </LinearLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

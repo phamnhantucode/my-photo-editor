@@ -2,4 +2,16 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="bg_overlay_camera">#55000000</color>
+    <color name="text_selected">#F4CB36</color>
+    <color name="blue">#41BDFF</color>
+    <color name="orange">#E0BB00</color>
+    <color name="bg_tool_box">#67545454</color>
+    <color name="bg_btn_circle">#DAA4A4A4</color>
+    <color name="white_overlay">#69FFFFFF</color>
+    <color name="bg_view_overlay">#51000000</color>
+    <color name="green_400">#4BD1A9</color>
+    <color name="bottomsheet">#F8F8F8</color>
+    <color name="iv_mask">#5D434343</color>
+    <color name="color_overlay_camera">#50000000</color>
 </resources>

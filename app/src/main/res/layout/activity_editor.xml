@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:fitsSystemWindows="true"
+    tools:context=".editor.EditorActivity">
+
+    <com.phamnhantucode.photoeditor.views.EditorView
+        android:id="@+id/editor"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:contentDescription="@null"/>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/mainToolBox"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingTop="@dimen/padding_large">
+
+        <ImageView
+            android:id="@+id/backBtn"
+            android:layout_width="@dimen/xx_large"
+            android:layout_height="@dimen/xx_large"
+            android:layout_marginHorizontal="@dimen/large"
+            android:background="@drawable/bg_btn_cirlce"
+            android:contentDescription="@null"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_back_ios"
+            app:tint="@color/white" />
+
+        <ImageView
+            android:id="@+id/moreBtn"
+            android:layout_width="@dimen/xx_large"
+            android:layout_height="@dimen/xx_large"
+            android:layout_marginHorizontal="@dimen/large"
+            android:background="@drawable/bg_btn_cirlce"
+            android:contentDescription="@null"
+            android:padding="@dimen/padding_medium"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_more"
+            app:tint="@color/white" />
+
+
+        <ImageView
+            android:id="@+id/drawBtn"
+            android:layout_width="@dimen/xx_large"
+            android:layout_height="@dimen/xx_large"
+            android:layout_marginHorizontal="@dimen/large"
+            android:background="@drawable/bg_btn_cirlce"
+            android:contentDescription="@null"
+            android:padding="@dimen/padding_medium"
+            app:layout_constraintEnd_toStartOf="@id/moreBtn"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_drawing"
+            app:tint="@color/white" />
+
+
+        <ImageView
+            android:id="@+id/stickerBtn"
+            android:layout_width="@dimen/xx_large"
+            android:layout_height="@dimen/xx_large"
+            android:layout_marginHorizontal="@dimen/large"
+            android:background="@drawable/bg_btn_cirlce"
+            android:contentDescription="@null"
+            android:padding="@dimen/padding_medium"
+            app:layout_constraintEnd_toStartOf="@id/drawBtn"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_sticker"
+            app:tint="@color/white" />
+
+
+        <ImageView
+            android:id="@+id/textBtn"
+            android:layout_width="@dimen/xx_large"
+            android:layout_height="@dimen/xx_large"
+            android:layout_marginHorizontal="@dimen/large"
+            android:background="@drawable/bg_btn_cirlce"
+            android:contentDescription="@null"
+            android:padding="@dimen/padding_medium_large"
+            app:layout_constraintEnd_toStartOf="@id/stickerBtn"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_text"
+            app:tint="@color/white" />
+
+        <LinearLayout
+            android:id="@+id/menuMore"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_large"
+            android:background="@drawable/bg_box_round"
+            android:orientation="vertical"
+            android:padding="@dimen/padding_medium"
+            app:layout_constraintEnd_toEndOf="@+id/moreBtn"
+            app:layout_constraintStart_toStartOf="@id/textBtn"
+            app:layout_constraintTop_toBottomOf="@+id/moreBtn">
+            <TextView
+                android:id="@+id/removeBgBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:text="@string/remove_background"
+                android:padding="@dimen/padding_medium"
+                android:textColor="@color/white"
+                app:drawableStartCompat="@drawable/ic_remove_bg"
+                android:drawablePadding="@dimen/padding_medium_large"
+                app:drawableTint="@color/white"
+                android:gravity="start|center"
+
+                />
+
+            <TextView
+                android:id="@+id/filterBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:text="@string/filter"
+                android:padding="@dimen/padding_medium"
+                android:textColor="@color/white"
+                app:drawableStartCompat="@drawable/ic_filter"
+                android:drawablePadding="@dimen/padding_medium_large"
+                app:drawableTint="@color/white"
+                android:gravity="start|center"
+                />
+
+<!--            <TextView-->
+<!--                android:id="@+id/shareBtn"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_gravity="start"-->
+<!--                android:text="@string/share"-->
+<!--                android:padding="@dimen/padding_medium"-->
+<!--                android:textColor="@color/white"-->
+<!--                app:drawableStartCompat="@drawable/ic_share"-->
+<!--                android:drawablePadding="@dimen/padding_medium_large"-->
+<!--                app:drawableTint="@color/white"-->
+<!--                android:gravity="start|center"-->
+<!--                />-->
+
+
+
+        </LinearLayout>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/cropBtn"
+            android:layout_width="@dimen/size_ic_large_x"
+            android:layout_height="@dimen/size_ic_large_x"
+            android:layout_margin="@dimen/margin_large_x"
+            android:backgroundTint="@color/orange"
+            android:contentDescription="@null"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:srcCompat="@drawable/ic_crop"
+            app:tint="@color/white" />
+
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/saveBtn"
+            android:layout_width="@dimen/size_ic_large_x"
+            android:layout_height="@dimen/size_ic_large_x"
+            android:layout_margin="@dimen/margin_large_x"
+            android:backgroundTint="@color/blue"
+            android:contentDescription="@null"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:srcCompat="@drawable/ic_tick"
+            app:tint="@color/white" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <include
+        android:id="@+id/textInputOverlay"
+        layout="@layout/layout_text_input_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/bottomSheetFilter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/bottomsheet"
+        android:elevation="@dimen/large"
+        app:behavior_hideable="true"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            >
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvFilter"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                android:orientation="horizontal"
+                android:paddingHorizontal="@dimen/padding_large"
+                android:layout_marginBottom="@dimen/margin_large"
+                android:layout_marginTop="@dimen/margin_large_x"
+                tools:listitem="@layout/item_image_filter"
+                />
+            <SeekBar
+                android:id="@+id/seekBarFilter"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
