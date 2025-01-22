@@ -282,12 +282,17 @@ class EditorActivity : AppCompatActivity() {
                         Bitmap.Config.ARGB_8888
                     )
                     val canvas = Canvas(bitmap)
-                    binding.editor.draw(canvas)
-                    val imageUri = if (intent.action == ACTION_EDIT_SAVED_IMAGE) {
-                        PhotoEditorGallery.saveImage(this@EditorActivity, BitmapUtil.removeTransparency(bitmap), viewModel.originUri!!)
-                    } else {
-                        PhotoEditorGallery.saveImage(this@EditorActivity, BitmapUtil.removeTransparency(bitmap))
+                    withContext(Dispatchers.Main) {
+                        binding.editor.getDraw(canvas)
                     }
+//                    val imageUri = if (intent.action == ACTION_EDIT_SAVED_IMAGE) {
+//                        PhotoEditorGallery.saveImage(this@EditorActivity, BitmapUtil.removeTransparency(bitmap), viewModel.originUri!!)
+//                    } else {
+                    val imageUri = PhotoEditorGallery.saveImage(
+                        this@EditorActivity,
+                        BitmapUtil.removeTransparency(bitmap)
+                    )
+//                    }
                     loadingDialog.dismiss()
                     startActivity(
                         Intent(this@EditorActivity, AlbumActivity::class.java).apply {
@@ -306,7 +311,7 @@ class EditorActivity : AppCompatActivity() {
             fragment.show(supportFragmentManager, fragment.tag)
         }
         binding.textInputOverlay.apply {
-            textTypefaceWheel.setOnFontSelectedListener {  typeface ->
+            textTypefaceWheel.setOnFontSelectedListener { typeface ->
                 if (typeface != null) {
                     viewModel.setTextOverlayTypeface(typeface)
                 }
@@ -320,7 +325,10 @@ class EditorActivity : AppCompatActivity() {
             }
             cancelBtn.setOnClickListener {
                 if (viewModel.isEditingText && currentSelectedTextView != null) {
-                    editor.editText(currentSelectedTextView!!, currentSelectedTextView!!.textViewState!!)
+                    editor.editText(
+                        currentSelectedTextView!!,
+                        currentSelectedTextView!!.textViewState!!
+                    )
                 }
                 binding.textInputOverlay.root.isVisible = false
                 viewModel.clearTextOverlayState()
@@ -370,7 +378,7 @@ class EditorActivity : AppCompatActivity() {
                         filter.filterType.normalizeToValueSeekbar(filter.currentValue)
                 }
             )
-            val filters = ImageFilter.mockFilters()
+            val filters = ImageFilter.mockFilters(context = this@EditorActivity)
             viewModel.setSelectedFilter(filters.first())
             adapter.submitList(filters)
             rvFilter.adapter = adapter
@@ -470,6 +478,7 @@ class EditorActivity : AppCompatActivity() {
 
     companion object {
         const val EXTRA_IMAGE_URI: String = "extra_image_uri"
-        const val ACTION_EDIT_SAVED_IMAGE: String = "com.phamnhantucode.photoeditor.editor.ACTION_EDIT_SAVED_IMAGE"
+        const val ACTION_EDIT_SAVED_IMAGE: String =
+            "com.phamnhantucode.photoeditor.editor.ACTION_EDIT_SAVED_IMAGE"
     }
 }

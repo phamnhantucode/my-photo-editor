@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.view.MotionEvent
@@ -58,7 +59,6 @@ class PreviewImageActivity : AppCompatActivity() {
                         action = EditorActivity.ACTION_EDIT_SAVED_IMAGE
                         putExtra(EditorActivity.EXTRA_IMAGE_URI, imageUri.toString())
                     })
-                    finish()
                 }
             }
         }
@@ -84,26 +84,15 @@ class PreviewImageActivity : AppCompatActivity() {
     }
 
     private fun setDominantColor(){
-        val originBitmap = binding.imageView.drawable.toBitmap()
-        val croppedBitmap = Bitmap.createBitmap(
-            originBitmap,
-            0,
-            0,
-            originBitmap.width,
-            56.dp
-        )
-        Palette.from(originBitmap).generate { palette ->
-            binding.root.setBackgroundColor(palette?.mutedSwatch?.rgb ?: 0)
-        }
-        Palette.from(croppedBitmap).generate { palette ->
-            val color = palette?.dominantSwatch?.rgb ?: 0
+        Palette.from(binding.imageView.drawable.toBitmap()).generate { palette ->
+            val color = palette?.lightMutedSwatch?.rgb ?: Color.BLACK
             val tintColor = color.getContrastTextColor()
             binding.apply {
+                root.setBackgroundColor(color)
                 toolbar.setNavigationIconTint(tintColor)
                 shareBtn.imageTintList = ColorStateList.valueOf(tintColor)
                 editBtn.imageTintList = ColorStateList.valueOf(tintColor)
             }
-            croppedBitmap.recycle()
         }
     }
 

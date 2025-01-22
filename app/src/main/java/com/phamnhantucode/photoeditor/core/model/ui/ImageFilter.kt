@@ -2,7 +2,9 @@ package com.phamnhantucode.photoeditor.core.model.ui
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import androidx.camera.core.CameraEffect
+import com.phamnhantucode.photoeditor.R
 import com.phamnhantucode.photoeditor.camera.effect.FilterMappingSurfaceEffect
 import com.phamnhantucode.photoeditor.camera.effect.processor.FilterProcessor
 import jp.co.cyberagent.android.gpuimage.GPUImage
@@ -22,6 +24,7 @@ data class ImageFilter(
     var filterType: FilterType = FilterType.NONE,
     var guiFilter: GPUImageFilter = GPUImageFilter(),
     var currentValue: Float = 0f,
+    var demoBitmap: Bitmap? = null,
 ) {
     fun getFilter(): GPUImageFilter {
         return when (filterType) {
@@ -61,9 +64,15 @@ data class ImageFilter(
     fun updateValue(currentValue: Float) {
         this.currentValue = currentValue
         when (filterType) {
-            FilterType.BRIGHTNESS -> (guiFilter as GPUImageBrightnessFilter).setBrightness(currentValue)
+            FilterType.BRIGHTNESS -> (guiFilter as GPUImageBrightnessFilter).setBrightness(
+                currentValue
+            )
+
             FilterType.CONTRAST -> (guiFilter as GPUImageContrastFilter).setContrast(currentValue)
-            FilterType.SATURATION -> (guiFilter as GPUImageSaturationFilter).setSaturation(currentValue)
+            FilterType.SATURATION -> (guiFilter as GPUImageSaturationFilter).setSaturation(
+                currentValue
+            )
+
             FilterType.HUE -> (guiFilter as GPUImageHueFilter).setHue(currentValue)
             FilterType.EXPOSURE -> (guiFilter as GPUImageExposureFilter).setExposure(currentValue)
             FilterType.SHARPEN -> (guiFilter as GPUImageSharpenFilter).setSharpness(currentValue)
@@ -100,8 +109,15 @@ data class ImageFilter(
             )
         }
 
-        fun mockFilters(): List<ImageFilter> {
-            return listOf(
+        fun mockFilters(context: Context? = null): List<ImageFilter> {
+            val gpuImage = GPUImage(context)
+            gpuImage.setImage(
+                BitmapFactory.decodeResource(
+                    context?.resources,
+                    R.drawable.filter_demo
+                )
+            )
+            val list = listOf(
                 createFilter(FilterType.NONE),
                 createFilter(FilterType.BRIGHTNESS),
                 createFilter(FilterType.CONTRAST),
@@ -111,7 +127,13 @@ data class ImageFilter(
                 createFilter(FilterType.RGB_DILATION),
                 createFilter(FilterType.SHARPEN),
                 createFilter(FilterType.BOX_BLUR),
-            )
+            ).onEach {
+                if (context != null) {
+                    gpuImage.setFilter(it.getFilter())
+                    it.demoBitmap = gpuImage.bitmapWithFilterApplied
+                }
+            }
+            return list
         }
 
         fun mockCameraFilters(): List<ImageFilter> {

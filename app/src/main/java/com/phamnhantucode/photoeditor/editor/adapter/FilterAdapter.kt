@@ -9,6 +9,7 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.phamnhantucode.photoeditor.R
 import com.phamnhantucode.photoeditor.core.model.ui.ImageFilter
 import com.phamnhantucode.photoeditor.databinding.ItemImageFilterBinding
@@ -46,19 +47,19 @@ class FilterAdapter(
         private val gpuImage = GPUImage(binding.root.context)
         @SuppressLint("NotifyDataSetChanged")
         fun bind(filter: ImageFilter) {
-            binding.tvFilterName.text = filter.name
-            gpuImage.setImage(AppCompatResources.getDrawable(binding.root.context, R.drawable.filter_demo)?.toBitmap())
-            gpuImage.setFilter(filter.getFilter())
-            binding.ivFilterDemo.setImageBitmap(gpuImage.bitmapWithFilterApplied)
-            binding.root.setOnClickListener {
-                selectedFilter = filter
-                notifyDataSetChanged()
-                onFilterClickListener(filter)
-            }
             if (selectedFilter == filter) {
                 binding.root.background = AppCompatResources.getDrawable(binding.root.context, R.drawable.bg_box_round)
             } else {
                 binding.root.setBackgroundColor(0)
+            }
+            binding.tvFilterName.text = filter.name
+            Glide.with(binding.root.context)
+                .load(filter.demoBitmap)
+                .into(binding.ivFilterDemo)
+            binding.root.setOnClickListener {
+                selectedFilter = filter
+                notifyDataSetChanged()
+                onFilterClickListener(filter)
             }
         }
     }

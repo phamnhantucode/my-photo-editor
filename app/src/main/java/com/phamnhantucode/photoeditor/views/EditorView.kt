@@ -2,7 +2,9 @@ package com.phamnhantucode.photoeditor.views
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.graphics.Rect
+import android.opengl.GLSurfaceView
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
@@ -16,8 +18,6 @@ import com.phamnhantucode.photoeditor.core.model.ui.ImageFilter
 import com.phamnhantucode.photoeditor.databinding.LayoutDeleteGraphicBinding
 import com.phamnhantucode.photoeditor.extension.doIfAboveApi
 import jp.co.cyberagent.android.gpuimage.GPUImage
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 class EditorView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null,
@@ -30,16 +30,14 @@ class EditorView @JvmOverloads constructor(
     val overlay: ImageView
         get() = drawOverlay
 
+    private var glSurfaceView = GLSurfaceView(context)
+
     private val deleteViewBinding = LayoutDeleteGraphicBinding.inflate(LayoutInflater.from(context))
     val deleteView: View
         get() = deleteViewBinding.root
 
     private var currentFilter: ImageFilter? = null
     private var originBitmap: Bitmap? = null
-        set(value) {
-            field = value
-            gpuImage.setImage(value)
-        }
 
     init {
         val sourceParams = setupImageSource()
@@ -53,6 +51,22 @@ class EditorView @JvmOverloads constructor(
             LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT
         )
         addView(deleteView, deleteParams)
+
+        imgSource.addOnLayoutChangeListener { v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
+            gpuImage = GPUImage(v.context)
+            gpuImage.setImage(originBitmap)
+            removeView(glSurfaceView)
+            glSurfaceView = GLSurfaceView(v.context)
+            val params = LayoutParams(
+                (right - left), (bottom - top)
+            )
+            params.addRule(CENTER_IN_PARENT, TRUE)
+            addView(glSurfaceView, params)
+            gpuImage.setGLSurfaceView(glSurfaceView)
+            gpuImage.requestRender()
+            drawOverlay.bringToFront()
+            deleteView.bringToFront()
+        }
     }
 
     private fun setupImageSource(): LayoutParams {
@@ -82,19 +96,25 @@ class EditorView @JvmOverloads constructor(
     }
 
     fun scaleDeleteArea(scale: Float = 1.25f) {
-        deleteViewBinding.deleteGraphicBtn.animate().scaleX(scale).scaleY(scale).setDuration(200).start()
+        deleteViewBinding.deleteGraphicBtn.animate().scaleX(scale).scaleY(scale).setDuration(200)
+            .start()
         // vibrate()
         if (scale > 1.0f) {
             val vibrate = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
             doIfAboveApi(Build.VERSION_CODES.O) {
                 doIfAboveApi(Build.VERSION_CODES.Q) {
                     vibrate.vibrate(VibrationEffect.createOneShot(100, VibrationEffect.EFFECT_TICK))
-                } ?: vibrate.vibrate(VibrationEffect.createOneShot(100, VibrationEffect.DEFAULT_AMPLITUDE))
+                } ?: vibrate.vibrate(
+                    VibrationEffect.createOneShot(
+                        100,
+                        VibrationEffect.DEFAULT_AMPLITUDE
+                    )
+                )
             } ?: vibrate.vibrate(100)
         }
     }
 
-    private val gpuImage = GPUImage(context)
+    private var gpuImage = GPUImage(context)
     fun setFilter(filter: ImageFilter) {
         if (filter.filterType == currentFilter?.filterType) {
             currentFilter?.updateValue(filter.currentValue)
@@ -102,38 +122,25 @@ class EditorView @JvmOverloads constructor(
             currentFilter = filter
         }
         gpuImage.setFilter(currentFilter?.guiFilter)
-        imgSource.setImageBitmap(gpuImage.bitmapWithFilterApplied)
+//        imgSource.setImageBitmap(gpuImage.bitmapWithFilterApplied)
     }
 
     fun setImageNeedFilter(bitmap: Bitmap?) {
         originBitmap = bitmap
-//        gpuImage = GPUImage(context)
-//        gpuImage.setImage(bitmap)
-//        removeView(glFilterOverlay)
-//        glFilterOverlay = GLSurfaceView(context)
-//        val width = imgSource.width
-//        val height = imgSource.height
-//        val layoutParams = if (width > 0 && height > 0) {
-//            LayoutParams(width, height)
-//        } else {
-//            LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
-//        }.apply {
-//            addRule(CENTER_IN_PARENT, TRUE)
-//        }
-//        addView(glFilterOverlay, layoutParams)
-//        drawOverlay.bringToFront()
-//        deleteView.bringToFront()
-//        gpuImage.setGLSurfaceView(glFilterOverlay)
-//        requestLayout()
     }
 
-    suspend fun applyFilter() = withContext(Dispatchers.IO) {
+    private fun applyFilter() {
         val gpuImage = GPUImage(context)
         gpuImage.setImage(imgSource.drawable.toBitmap())
         gpuImage.setFilter(currentFilter?.getFilter())
-        withContext(Dispatchers.Main) {
-            imgSource.setImageBitmap(gpuImage.bitmapWithFilterApplied)
-        }
+        imgSource.setImageBitmap(gpuImage.bitmapWithFilterApplied)
+    }
+
+    fun getDraw(canvas: Canvas) {
+        glSurfaceView.visibility = View.GONE
+        applyFilter()
+        super.draw(canvas)
+        glSurfaceView.visibility = View.VISIBLE
     }
 
     companion object {
