@@ -26,6 +26,7 @@
         android:background="@android:color/transparent"
         android:padding="@dimen/padding_large"
         android:src="@drawable/ic_back"
+        android:tint="@color/white"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

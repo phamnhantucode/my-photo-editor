@@ -20,28 +20,16 @@ interface Editor {
     fun setOnEditorListener(onEditorListener: OnEditorListener)
 
     fun removeView(v: View)
+
     fun setFilter(filter: ImageFilter)
+
     fun setImageFilter(bitmap: Bitmap?)
 
     class Builder(
         val context: Context,
         val editorView: EditorView,
     ) {
-        val imageView: ImageView = editorView.source
-
         var textTypeface: Typeface? = null
-
-        var isTextPinchScalable = true
-
-        fun setDefaultTextTypeface(textTypeface: Typeface?): Builder {
-            this.textTypeface = textTypeface
-            return this
-        }
-
-        fun setPinchTextScalable(isTextPinchScalable: Boolean): Builder {
-            this.isTextPinchScalable = isTextPinchScalable
-            return this
-        }
 
         fun build(): Editor {
             return EditorImpl(this)

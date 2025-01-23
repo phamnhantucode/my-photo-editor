@@ -186,6 +186,7 @@
         android:layout_height="wrap_content"
         android:background="@color/bottomsheet"
         android:elevation="@dimen/large"
+        android:paddingBottom="@dimen/padding_large"
         app:behavior_hideable="true"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
         >

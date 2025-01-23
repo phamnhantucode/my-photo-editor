@@ -163,6 +163,8 @@ class DrawOverlay @JvmOverloads constructor(
     }
 
     private fun drawPathToBitmap(path: Path) {
+
+        canvasBm?.clipRect(drawableArea)
         if (canvasBm != null) {
             canvasBm!!.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR)
             drawBottomLayer()

@@ -138,6 +138,5 @@ class EditorViewModel(
     override fun onCleared() {
         super.onCleared()
         tempFile.deleteOnExit()
-        drawUri?.toFile()?.delete()
     }
 }

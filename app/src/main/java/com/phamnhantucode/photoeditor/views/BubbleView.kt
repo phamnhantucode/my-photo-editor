@@ -49,7 +49,7 @@ class BubbleView @JvmOverloads constructor(
         reset()
     }
 
-    private fun reset() {
+    fun reset() {
         post {
             currentX = (width - (bubbleBitmap?.width ?: 0)) / 2f
             currentY = (height - (bubbleBitmap?.height ?: 0)) / 2f
@@ -156,8 +156,7 @@ class BubbleView @JvmOverloads constructor(
         wallStickDuration = 0L
     }
 
-    override fun onDetachedFromWindow() {
-        super.onDetachedFromWindow()
+    fun cancel() {
         job.cancel()
     }
 
