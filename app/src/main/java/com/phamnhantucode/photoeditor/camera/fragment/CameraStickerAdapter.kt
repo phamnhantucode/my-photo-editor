@@ -69,6 +69,7 @@ class CameraStickerAdapter(
         }
 
         private fun handleStickerClick(sticker: CameraSticker) {
+            var count = 0
             sticker.partials.forEach { partial ->
                 if (sticker.isDownloaded) {
                     partial.path?.let {
@@ -81,10 +82,13 @@ class CameraStickerAdapter(
                 } else {
                     updateDownloadingState(isDownloading = true)
                     PhotoEditorFirebaseStorage.getInstance()
-                        .downloadFile(itemView.context, partial.path!!) { uri ->
-                            updateDownloadingState(isDownloading = false)
-                            partial.uri = uri
-                            onStickerClickListener(sticker)
+                        .downloadFile(itemView.context, partial.path!!) {
+                            count++
+                            partial.uri = it
+                            if (count == sticker.partials.size) {
+                                updateDownloadingState(isDownloading = false)
+                                onStickerClickListener(sticker)
+                            }
                         }
                 }
             }

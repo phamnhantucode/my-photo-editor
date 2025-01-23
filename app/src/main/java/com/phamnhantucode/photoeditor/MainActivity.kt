@@ -1,5 +1,6 @@
 package com.phamnhantucode.photoeditor
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.hardware.Sensor
 import android.hardware.SensorEvent
@@ -19,6 +20,8 @@ import com.phamnhantucode.photoeditor.camera.CameraActivity
 import com.phamnhantucode.photoeditor.databinding.ActivityMainBinding
 import com.phamnhantucode.photoeditor.editor.EditorActivity
 import kotlinx.coroutines.launch
+import kotlin.io.path.inputStream
+import kotlin.io.path.outputStream
 
 class MainActivity : AppCompatActivity(), SensorEventListener {
     private lateinit var binding: ActivityMainBinding
@@ -74,12 +77,19 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         }
     }
 
+    @SuppressLint("NewApi")
     private fun handleIntent() {
         if (intent.action == Intent.ACTION_SEND) {
             val uri = intent.getParcelableExtra(Intent.EXTRA_STREAM) as? Uri ?: intent.data
             if (uri != null) {
+                val file = kotlin.io.path.createTempFile("shared", "")
+                contentResolver.openInputStream(uri)?.use { input ->
+                    file.outputStream().use { output ->
+                        input.copyTo(output)
+                    }
+                }
                 startActivity(Intent(this, EditorActivity::class.java).apply {
-                    putExtra(EditorActivity.EXTRA_IMAGE_URI, uri.toString())
+                    putExtra(EditorActivity.EXTRA_IMAGE_URI, Uri.fromFile(file.toFile()).toString())
                 })
             } else {
                 finish()
@@ -113,11 +123,18 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     override fun onResume() {
         super.onResume()
         sensorManager.registerListener(this, accelerator, SensorManager.SENSOR_DELAY_NORMAL)
+        binding.ivBubble.reset()
     }
 
     override fun onPause() {
         super.onPause()
         sensorManager.unregisterListener(this)
+        binding.ivBubble.cancel()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        binding.ivBubble.cancel()
     }
 
     override fun onSensorChanged(event: SensorEvent?) {

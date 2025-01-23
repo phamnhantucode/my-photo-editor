@@ -68,7 +68,6 @@ class TextEditor(
             }
 
             override fun onLongClick() {
-                updateView()
             }
         }
     }

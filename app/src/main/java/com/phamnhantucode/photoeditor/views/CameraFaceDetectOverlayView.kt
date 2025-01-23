@@ -66,9 +66,9 @@ class CameraFaceDetectOverlayView(context: Context?, attrs: AttributeSet?) :
         super.draw(canvas)
 
         results?.let {
-            boxDrawGuideRect.forEach { rect ->
+            boxDrawGuideRect.forEachIndexed { index, rect ->
                 val sticker =
-                    cameraSticker?.partials?.get(boxDrawGuideRect.indexOf(rect))?.uri?.let {
+                    cameraSticker?.partials?.get(index)?.uri?.let {
                         BitmapFactory.decodeFile(it.path)
                     }
                 if (sticker != null) {
